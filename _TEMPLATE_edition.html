@@ -128,7 +128,7 @@ body {
 }
 ::selection { background: var(--fl-tint-blue-bg); color: var(--fl-text); }
 
-.nl-page { max-width: 740px; margin: 0 auto; padding: 64px 28px 120px; }
+.nl-page { max-width: 740px; margin: 0 auto; padding: 28px 28px 120px; }
 
 /* ---- 헤더 (그라데이션 없는 노션 페이지) ---- */
 .nl-icon { font-size: 58px; line-height: 1; }
@@ -174,7 +174,7 @@ body {
 
 /* ---- 탭 바 (doc-lenses 스타일, 노션 플랫) ---- */
 .nl-tabs {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: 44px; z-index: 20;
   display: flex; flex-wrap: wrap; gap: 6px;
   margin-top: 30px; padding: 12px 0;
   background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle);
@@ -280,14 +280,32 @@ body {
 .nl-footer__next { margin-top: 14px; padding: 13px 16px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); }
 .nl-footer__disc { margin-top: 14px; font-size: 11.5px; color: var(--fl-text-quaternary); }
 
-/* ---- 테마 토글 (단일 라인 아이콘) ---- */
+/* ---- 상단 네비게이션 ---- */
+.topnav {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  background: color-mix(in srgb, var(--fl-bg) 86%, transparent);
+  -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px);
+  border-bottom: 1px solid var(--fl-border-subtle);
+}
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+  border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary);
+  transition: background var(--fl-dur-fast), color var(--fl-dur-fast);
+}
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+/* ---- 테마 토글 (네비 내 단일 아이콘) ---- */
 .nl-theme {
-  position: fixed; top: 14px; right: 14px; z-index: 50;
-  width: 36px; height: 36px;
+  width: 34px; height: 34px; flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--fl-surface); border: 1px solid var(--fl-border);
-  border-radius: var(--fl-radius-md); box-shadow: var(--fl-shadow-sm);
-  color: var(--fl-text-secondary); cursor: pointer;
+  background: transparent; border: 1px solid var(--fl-border);
+  border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer;
   transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast);
 }
 .nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
@@ -296,6 +314,21 @@ body {
 body:not(.fl-dark) .nl-ico-sun { display: block; }
 body.fl-dark .nl-ico-moon { display: block; }
 
+/* ---- 출처 링크 ---- */
+.nl-src {
+  display: inline-flex; align-items: center; gap: 3px;
+  color: var(--fl-text-tertiary); text-decoration: none;
+  border-bottom: 1px dashed var(--fl-border); transition: color var(--fl-dur-fast), border-color var(--fl-dur-fast);
+}
+.nl-src:hover { color: var(--fl-accent); border-bottom-color: var(--fl-accent); }
+.nl-src__ext { font-size: 0.85em; opacity: 0.7; }
+.nl-hl__src {
+  margin-top: 14px; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; color: var(--fl-text-tertiary);
+}
+.nl-hl__src a { color: var(--tc, var(--fl-accent)); border-bottom: 1px dashed var(--tc, var(--fl-accent)); text-decoration: none; padding-bottom: 1px; }
+.nl-hl__src a:hover { opacity: 0.8; }
+
 @media (prefers-reduced-motion: reduce) {
   .nl-panel { animation: none; }
   body { transition: none; }
@@ -303,7 +336,10 @@ body.fl-dark .nl-ico-moon { display: block; }
 
 /* ---- 모바일 / 외부 접속 최적화 ---- */
 @media (max-width: 640px) {
-  .nl-page { padding: 40px 16px 96px; }
+  .nl-page { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .topnav__link { padding: 6px 10px; }
   .nl-icon { font-size: 48px; }
   .nl-title { font-size: 28px; }
   .nl-lead { font-size: 15.5px; }
@@ -336,11 +372,20 @@ body.fl-dark .nl-ico-moon { display: block; }
 
 <body class="folio">
 
-<!-- 테마 토글 — 기본은 시스템 설정 따름, 클릭 시 라이트/다크 고정 -->
-<button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
-  <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-  <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-</button>
+<!-- 상단 네비게이션 — 어느 호에서나 전체 목록으로 이동 -->
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html">
+    <span class="topnav__logo">준</span>
+    <span class="topnav__brand-t">메이커준의 AI 위클리</span>
+  </a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📚 전체 뉴스레터</a>
+  <!-- 테마 토글 — 기본은 시스템 설정 따름, 클릭 시 라이트/다크 고정 -->
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
 
 <main class="nl-page">
   <div id="header"></div>
@@ -376,14 +421,15 @@ const NEWSLETTER = {
         kicker: "이 주제의 핵심",
         title: "AI가 ‘답해주는 도구’에서 ‘대신 일해주는 동료’로 넘어가는 중",
         summary: "한 번의 질문에 답하던 AI가, 이제 여러 단계를 스스로 밟아 결과물까지 만들어 옵니다. 자료를 찾아 요약하고, 문서를 만들고, 정해진 시간에 알아서 보내주는 ‘에이전트’가 일상 도구로 들어오고 있어요.",
+        source: "MIT Technology Review", url: "https://www.technologyreview.com/topic/artificial-intelligence/",
         foryou: "거창한 기술이 아니라, 반복되는 내 업무 한 가지를 떠올려 보세요. 그게 바로 가장 먼저 맡겨볼 수 있는 일입니다."
       },
       articles: [
-        { tag: "새 기능", source: "제품 동향", time: "이번 주",
+        { tag: "새 기능", source: "Anthropic 뉴스", url: "https://www.anthropic.com/news", time: "이번 주",
           title: "글·이미지·음성을 한 번에 — 멀티모달이 ‘기본’이 되다",
           summary: "이제 AI에게 캡처 이미지를 보여주며 말로 묻고, 표로 답을 받는 식의 사용이 자연스러워졌습니다. 입력 방식의 벽이 빠르게 사라지는 중이에요.",
           foryou: "스크린샷 한 장 붙여넣고 ‘이거 표로 정리해줘’ 한마디면 됩니다. 가장 쉽게 체감하는 변화예요." },
-        { tag: "흐름", source: "분석", time: "1주 전",
+        { tag: "흐름", source: "Google AI 블로그", url: "https://blog.google/technology/ai/", time: "1주 전",
           title: "검색·메신저·문서 — 매일 쓰는 도구 안으로 AI가 들어온다",
           summary: "따로 AI 사이트를 찾지 않아도, 늘 쓰던 업무 도구 안에서 요약·초안·번역이 붙는 방향으로 제품들이 움직이고 있습니다.",
           foryou: "새 도구를 배우는 부담 없이, 쓰던 자리에서 한 단계씩 익히면 충분합니다." }
@@ -397,14 +443,15 @@ const NEWSLETTER = {
         kicker: "이 주제의 핵심",
         title: "바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 일을 맡길 수 있다",
         summary: "지금 보는 이 페이지도 사람이 일일이 코딩한 게 아니라 ‘이런 뉴스레터를 만들어줘’라는 말 한마디에서 시작됐어요. 자료 조사부터 디자인, 매일 발행까지 AI에게 맡기는 시대입니다.",
+        source: "이 템플릿 저장소 (GitHub)", url: "https://github.com/imakerjun/ai-newsletter",
         foryou: "오늘 30분이면 나만의 버전을 따라 만들 수 있어요. 맨 아래 ‘따라하기’ 순서대로만 하면 됩니다."
       },
       articles: [
-        { tag: "업무 활용", source: "활용 가이드", time: "이번 주",
+        { tag: "업무 활용", source: "Claude 활용 가이드", url: "https://docs.anthropic.com/", time: "이번 주",
           title: "회의록·보고서·이메일 — 초안은 AI에게, 판단은 나에게",
           summary: "빈 문서를 마주하는 시간을 줄이는 게 핵심입니다. AI에게 거친 초안을 받고, 사람은 검토·결정에 집중하는 분업이 가장 현실적인 활용법이에요.",
           foryou: "‘완성’을 시키지 말고 ‘초안’을 시키세요. 훨씬 빠르고, 결과도 좋아집니다." },
-        { tag: "꼭 알아두기", source: "리터러시", time: "상시",
+        { tag: "꼭 알아두기", source: "Anthropic 뉴스", url: "https://www.anthropic.com/news", time: "상시",
           title: "AI를 믿되 확인하기 — 환각과 정보보안 기본기",
           summary: "AI는 그럴듯하게 틀릴 수 있고(환각), 회사 자료·개인정보를 함부로 입력해서도 안 됩니다. ‘출처 확인’과 ‘민감정보 입력 금지’ 두 가지만 지켜도 안전합니다.",
           foryou: "이름·연락처·계정 정보 같은 민감정보는 넣지 않기 — 가장 먼저 익혀야 할 한 가지입니다." }
@@ -455,7 +502,10 @@ const NEWSLETTER = {
       <article class="nl-card">
         <div class="nl-card__meta">
           <span class="nl-tag">${esc(a.tag)}</span>
-          <span class="nl-card__dot"></span><span>${esc(a.source)}</span>
+          <span class="nl-card__dot"></span>
+          ${a.url
+            ? `<a class="nl-src" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}<span class="nl-src__ext">↗</span></a>`
+            : `<span>${esc(a.source)}</span>`}
           <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
@@ -481,6 +531,9 @@ const NEWSLETTER = {
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>
         <h2 class="nl-hl__title">${esc(t.highlight.title)}</h2>
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
+        ${t.highlight.url
+          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
+          : ""}
         <div class="nl-foryou nl-foryou--lg">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>
           <span class="nl-foryou__text">${html(t.highlight.foryou)}</span>

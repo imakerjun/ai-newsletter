@@ -35,6 +35,7 @@ tint_options: [blue, purple, green, orange, pink]
 1. **오늘 날짜**를 `YYYY-MM-DD`(Asia/Seoul)로 구한다. → `{DATE}`
 2. `interests`의 각 관심사마다 **최신 소식을 웹 검색**한다(최근 7일 우선).
    - 신뢰 가능한 출처(공식 블로그, 릴리스 노트, 1차 자료)를 우선한다.
+   - 각 항목의 **원문 URL과 매체명**을 반드시 함께 기록한다(데이터의 `source`·`url` 필드).
    - 관심사별로 **핵심 1건(highlight) + 더 읽을거리 2건(articles)** 을 고른다.
 3. 각 항목에 **`나를 위한 한 줄`(foryou)** 을 쓴다 — `persona_context`에 맞춰
    "이 소식이 내 교육/코칭/업무에 왜 중요한지"를 한 문장으로.
@@ -66,7 +67,10 @@ tint_options: [blue, purple, green, orange, pink]
 ## 2. 콘텐츠 규칙
 
 - 사실 검증: 출처가 모호하면 단정하지 말고 "~로 보인다/논의되는 중" 톤으로.
-- 데모가 아닌 **실제 발행**에서는 각 기사에 가능하면 출처 링크를 포함한다(요약 신뢰도↑).
+- **출처 링크 필수**: highlight와 각 article 모두 `source`(매체명) + `url`(원문 링크)을 채운다.
+  - 데이터 형태: `highlight: { ..., source: "매체명", url: "https://..." }`,
+    `articles: [{ tag, source: "매체명", url: "https://...", time, title, summary, foryou }]`
+  - `url`은 **실제 원문 주소**여야 한다. 확인하지 못한 링크는 지어내지 말고 그 항목을 빼라(허위 링크 금지).
 - `tint`는 `tint_options` 중에서만 쓴다(디자인 일관성).
 - 분량: highlight 요약 3~4문장, article 요약 2~3문장. 길어지지 않게.
 - 문체: 정중한 평서체("~합니다"), 과장·홍보톤 금지.

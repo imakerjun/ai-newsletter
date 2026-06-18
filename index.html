@@ -66,7 +66,27 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 
-.hub { max-width: 720px; margin: 0 auto; padding: 64px 28px 120px; }
+.hub { max-width: 720px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 상단 네비게이션 */
+.topnav {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  background: color-mix(in srgb, var(--fl-bg) 86%, transparent);
+  -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px);
+  border-bottom: 1px solid var(--fl-border-subtle);
+}
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+  border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary);
+  transition: background var(--fl-dur-fast), color var(--fl-dur-fast);
+}
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
 .hub__icon { font-size: 56px; line-height: 1; }
 .hub__eyebrow {
   margin-top: 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
@@ -119,12 +139,12 @@ a { color: inherit; text-decoration: none; }
 .hub__footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
 .hub__footer b { color: var(--fl-text-secondary); }
 
-/* 테마 토글 */
+/* 테마 토글 (네비 내) */
 .nl-theme {
-  position: fixed; top: 14px; right: 14px; z-index: 50; width: 36px; height: 36px;
+  width: 34px; height: 34px; flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md);
-  box-shadow: var(--fl-shadow-sm); color: var(--fl-text-secondary); cursor: pointer;
+  background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md);
+  color: var(--fl-text-secondary); cursor: pointer;
   transition: background var(--fl-dur-fast), color var(--fl-dur-fast);
 }
 .nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
@@ -134,7 +154,10 @@ body:not(.fl-dark) .nl-ico-sun { display: block; }
 body.fl-dark .nl-ico-moon { display: block; }
 
 @media (max-width: 600px) {
-  .hub { padding: 44px 18px 96px; }
+  .hub { padding: 20px 18px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .topnav__link { padding: 6px 10px; }
   .hub__title { font-size: 30px; }
   .ed-row__date { width: 78px; }
 }
@@ -144,10 +167,18 @@ body.fl-dark .nl-ico-moon { display: block; }
 
 <body class="folio">
 
-<button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
-  <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-  <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-</button>
+<header class="topnav">
+  <a class="topnav__brand" href="index.html">
+    <span class="topnav__logo">준</span>
+    <span class="topnav__brand-t">메이커준의 AI 위클리</span>
+  </a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 전체 뉴스레터</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
 
 <main class="hub" id="hub"></main>
 
