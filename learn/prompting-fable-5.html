@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>깊이 읽기 — Claude Fable 5 프롬프트 작성 (5가지 렌즈)</title>
+<meta name="description" content="어려운 공식문서를 어원·요약·비유·퀴즈·원문 5가지 렌즈로 다시 읽는 학습 페이지." />
+
+<script>
+  (function () { try { var s = localStorage.getItem("nl-theme"); if (s) document.documentElement.dataset.nlTheme = s; } catch (e) {} })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — 저장소 전체와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13); --fl-border-strong: rgba(15,14,12,0.20);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-success: #2f8a5d; --fl-danger: #c84c47; --fl-danger-bg: #fbe4e4;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12); --fl-border-strong: rgba(255,253,248,0.20);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-success: #6fc193; --fl-danger: #e08580; --fl-danger-bg: rgba(200,76,71,0.20);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--fl-bg); color: var(--fl-text); font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6; transition: background var(--fl-dur-normal), color var(--fl-dur-normal); }
+a { color: inherit; text-decoration: none; }
+
+/* 상단 네비 (저장소 공통) */
+.topnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 9px 20px; background: color-mix(in srgb, var(--fl-bg) 86%, transparent); -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px); border-bottom: 1px solid var(--fl-border-subtle); }
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+.nl-theme { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer; transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+.lens { max-width: 760px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 헤더 */
+.lens__icon { font-size: 52px; line-height: 1; }
+.lens__eyebrow { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-tint-purple); background: var(--fl-tint-purple-bg); padding: 3px 10px; border-radius: 999px; }
+.lens__title { font-size: 34px; font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; margin: 14px 0 0; word-break: keep-all; }
+.lens__oneliner { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 60ch; word-break: keep-all; }
+.lens__source { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 18px; border-bottom: 1px solid var(--fl-border-subtle); }
+.lens__source a { color: var(--fl-text-link); border-bottom: 1px dashed var(--fl-border); padding-bottom: 1px; }
+.lens__source a:hover { border-bottom-color: var(--fl-text-link); }
+
+/* 렌즈 탭 */
+.lens-tabs { position: sticky; top: 44px; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; padding: 12px 0; background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle); }
+.lens-tab { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.lens-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.lens-tab[aria-selected="true"] { background: var(--fl-text); color: var(--fl-bg); border-color: var(--fl-text); font-weight: 600; }
+
+/* 렌즈 본문 */
+@keyframes lens-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lens-panel { animation: lens-fade 0.3s var(--fl-ease-out); padding-top: 26px; }
+.lens-panel__hint { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); font-size: 13px; color: var(--fl-text-secondary); line-height: 1.6; }
+.lens-panel__hint b { color: var(--fl-text); }
+
+/* prose */
+.lens-prose { font-size: 15px; line-height: 1.75; color: var(--fl-text); word-break: keep-all; }
+.lens-prose h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; letter-spacing: -0.01em; }
+.lens-prose h3:first-child { margin-top: 0; }
+.lens-prose p { margin: 0 0 14px; color: var(--fl-text-secondary); }
+.lens-prose strong { color: var(--fl-text); font-weight: 700; }
+.lens-prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--fl-text-secondary); }
+.lens-prose li { margin: 0 0 7px; }
+.lens-prose code { font-family: var(--fl-font-mono); font-size: 0.9em; background: var(--fl-surface-3); padding: 1px 5px; border-radius: 4px; color: var(--fl-text); }
+.lens-prose .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); margin: 0 0 16px; line-height: 1.6; }
+.lens-prose .callout__i { font-size: 18px; flex-shrink: 0; }
+.lens-prose .callout p { margin: 0; color: var(--fl-text); }
+.lens-prose .etymo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 12px 14px; border-left: 3px solid var(--fl-tint-purple); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; margin: 0 0 12px; }
+.lens-prose .etymo b { font-size: 15px; }
+.lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* quiz */
+.quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
+.quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
+.quiz-q span { color: var(--fl-tint-purple); margin-right: 6px; }
+.quiz-opts { display: grid; gap: 8px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 9px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.5; color: var(--fl-text); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 10px 13px; cursor: pointer; transition: background var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.quiz-opt:hover:not(:disabled) { background: var(--fl-hover); }
+.quiz-opt__mark { flex-shrink: 0; font-weight: 700; color: var(--fl-text-tertiary); }
+.quiz-opt--correct { background: var(--fl-tint-green-bg); border-color: var(--fl-success); }
+.quiz-opt--correct .quiz-opt__mark { color: var(--fl-success); }
+.quiz-opt--wrong { background: var(--fl-danger-bg); border-color: var(--fl-danger); }
+.quiz-opt--wrong .quiz-opt__mark { color: var(--fl-danger); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 12px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius); font-size: 13.5px; line-height: 1.65; color: var(--fl-text-secondary); }
+.quiz-explain.open { display: block; }
+.quiz-explain b { color: var(--fl-text); }
+
+.lens__footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.lens__footer b { color: var(--fl-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; } body { transition: none; } }
+@media (max-width: 640px) {
+  .lens { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .lens__title { font-size: 26px; }
+  .lens-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 22px -16px 0; padding: 11px 16px; scrollbar-width: none; }
+  .lens-tabs::-webkit-scrollbar { display: none; }
+  .lens-tab { flex: 0 0 auto; }
+}
+</style>
+</head>
+
+<body class="folio">
+
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html"><span class="topnav__logo">준</span><span class="topnav__brand-t">메이커준의 AI 학습 허브</span></a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📰 뉴스레터</a>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 깊이 읽기</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main class="lens">
+  <div id="head"></div>
+  <nav class="lens-tabs" id="tabs" role="tablist" aria-label="읽기 렌즈"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="foot"></div>
+</main>
+
+<script>
+/* ============================================================================
+   렌즈 문서 데이터 — 어려운 원문 1개를 5가지 렌즈로 재구성.
+   이 객체만 교체하면 새 학습 문서가 됩니다. (kind: prose | quiz)
+   ============================================================================ */
+const LENS_DOC = {
+  meta: {
+    icon: "🪄",
+    title: "Claude Fable 5 프롬프트 작성",
+    oneliner: "‘가장 어려운 문제’를 끝까지 끌고 가는 모델. effort·장기 실행·서브에이전트·메모리를 어떻게 다루는지 5가지 렌즈로 다시 읽습니다.",
+    sourceTitle: "Anthropic 공식문서 (한국어)",
+    sourceUrl: "https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+    fetched: "2026-06-18 기준",
+    tags: ["프롬프트 엔지니어링", "에이전트", "공식문서"]
+  },
+  lenses: [
+    {
+      id: "etymology", icon: "🔤", label: "어원", kind: "prose",
+      hint: "낯선 이름과 용어가 <b>어디서 왔는지</b>부터 풀면 개념이 친숙해집니다. (학습용 해석)",
+      body: `
+        <h3>‘Fable’ — 라틴어 <code>fabula</code>(이야기)에서</h3>
+        <div class="etymo"><b>Fable</b><span>← 라틴어 <code>fabula</code> ‘이야기·우화’ ← <code>fari</code> ‘말하다’</span></div>
+        <p>영어 <strong>fable</strong>은 교훈을 담은 짧은 이야기(이솝 우화)를 뜻합니다. 어근은 ‘말하다’예요. 함께 발표된 <strong>Mythos</strong>도 그리스어 <code>mŷthos</code>(이야기·신화)에서 왔습니다 — 두 모델 모두 ‘이야기’ 계열의 이름이죠.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>왜 ‘이야기’일까요? 짧은 한 마디 답이 아니라 <strong>긴 호흡의 서사처럼 며칠에 걸친 작업을 끝까지 이어가는</strong> 모델이라는 점과 잘 맞아떨어집니다. 이름이 곧 성격의 힌트예요.</p></div>
+        <h3>곁들이면 좋은 용어 어원</h3>
+        <div class="etymo"><b>prompt</b><span>← 라틴어 <code>promptus</code> ‘꺼내놓은·준비된’ → 잠재력을 ‘끌어내는’ 말</span></div>
+        <div class="etymo"><b>scaffolding</b><span>건축의 ‘비계(飛階)’ — 작업을 받치는 임시 구조물. 에이전트를 받치는 지시·도구·검증 구조를 뜻합니다.</span></div>
+        <div class="etymo"><b>effort</b><span>← 라틴어 <code>ex-</code>(밖으로)+<code>fortis</code>(힘) → ‘힘을 쏟다’. 모델이 얼마나 ‘힘을 들일지’ 조절하는 손잡이.</span></div>
+        <p style="color:var(--fl-text-tertiary);font-size:13px">※ 어원 해석은 이해를 돕기 위한 학습용 연결이며, 공식 작명 의도와 다를 수 있습니다.</p>
+      `
+    },
+    {
+      id: "tldr", icon: "⚡", label: "한입요약", kind: "prose",
+      hint: "30초 안에 핵심만. 자세한 근거는 다른 렌즈와 <b>원문</b>에서.",
+      body: `
+        <h3>핵심 7줄</h3>
+        <ul>
+          <li><strong>가장 어려운 문제에 쓰세요.</strong> Fable 5는 길고 복잡하고 모호한 엔드투엔드 작업(사람이 몇 시간~몇 주 걸리는 일)에 특히 강합니다. 쉬운 일로만 시험하면 역량을 과소평가하게 됩니다.</li>
+          <li><strong>effort가 주 손잡이.</strong> 기본 <code>high</code>, 최고난도 <code>xhigh</code>, 일상은 <code>medium/low</code>. 낮은 effort도 종종 이전 모델의 <code>xhigh</code>를 능가합니다.</li>
+          <li><strong>지시는 짧은 원칙으로.</strong> 행동을 하나하나 열거하는 대신 “간결하게”, “경계는 여기까지” 같은 한 줄 원칙이면 충분할 만큼 지시 준수력이 좋아졌습니다.</li>
+          <li><strong>턴이 길어집니다.</strong> 타임아웃·스트리밍·진행 표시를 조정하고, 블로킹 대신 <strong>비동기(예약 작업)</strong>로 확인하도록 하네스를 재구성하세요.</li>
+          <li><strong>장기 실행은 ‘근거’로.</strong> 진행 보고를 실제 도구 결과에 대조하도록 지시하면 허위 보고가 거의 사라집니다.</li>
+          <li><strong>검증은 따로.</strong> 자기 비평보다 <strong>새 컨텍스트의 검증자 서브에이전트</strong>가 낫습니다. 병렬 서브에이전트를 적극 위임하고 메모리(파일당 교훈 1개)를 주세요.</li>
+          <li><strong>이유를 함께, 말은 읽기 쉽게.</strong> “무엇을”뿐 아니라 “왜”를 주고, 사용자에게 보내는 최종 메시지는 전문용어를 풀어 결론부터 적습니다.</li>
+        </ul>
+      `
+    },
+    {
+      id: "easy", icon: "🧒", label: "비유로 쉽게", kind: "prose",
+      hint: "어려운 말을 <b>일상 비유</b>로 바꿔 봅니다. 정확함보다 ‘감 잡기’가 목표예요.",
+      body: `
+        <h3>Fable 5 = ‘일 잘하는 시니어 동료’</h3>
+        <p>신입에게는 체크리스트를 100줄 써줘야 하지만, <strong>믿을 만한 시니어</strong>에게는 “목표와 이유”만 말해도 알아서 끝까지 해옵니다. Fable 5가 그래요 — 잔소리(세세한 지시)를 줄이고 의도를 주는 쪽이 더 잘 됩니다.</p>
+        <h3>effort = 요리 불세기</h3>
+        <p>어려운 요리엔 <strong>강불(xhigh)</strong>, 매일 먹는 계란프라이엔 <strong>약불(low)</strong>. 무조건 강불이면 타거나(과한 정리·장황함) 시간이 오래 걸립니다. 일이 되는데 너무 오래 걸리면 불을 낮추세요.</p>
+        <h3>긴 작업 = 오래 걸리는 출장</h3>
+        <p>출장 간 동료에게 전화기 붙들고 “지금 뭐해? 지금은?” 하지 않죠(블로킹). “끝나면 알려줘”라고 하고 내 일을 합니다(<strong>비동기·예약 확인</strong>). Fable 5의 긴 턴도 그렇게 다루세요.</p>
+        <h3>자체 검증 = 내 답을 ‘다른 사람’이 검토</h3>
+        <p>내가 쓴 글을 내가 보면 오타를 놓칩니다. <strong>새로운 눈(별도 검증자 서브에이전트)</strong>이 사양과 대조하면 훨씬 잘 잡아요. ‘자기가 자기 답 보기’보다 낫습니다.</p>
+        <h3>메모리 = 업무 노트</h3>
+        <p>잘된 방법·고친 실수를 <strong>파일에 한 줄씩</strong> 적어두면 다음에 같은 실수를 안 합니다. 틀린 노트는 지우고, 이미 기록된 건 또 적지 않습니다.</p>
+        <div class="callout"><span class="callout__i">🧭</span><p>한 문장 요약: <strong>“똑똑한 동료에게 목표·이유를 주고, 불세기를 맞추고, 멀리 보내 비동기로 받고, 다른 눈으로 검증하고, 노트를 남긴다.”</strong></p></div>
+      `
+    },
+    {
+      id: "quiz", icon: "🧪", label: "퀴즈", kind: "quiz",
+      hint: "보기를 눌러 바로 확인하세요. 자가 점검용입니다.",
+      quiz: [
+        {
+          q: "Fable 5를 가장 잘 쓰는 방법은?",
+          options: ["간단하고 반복적인 작업 위주로 쓴다", "길고 복잡하고 모호한 엔드투엔드 문제에 쓴다", "되도록 짧은 단답 질문만 던진다"],
+          answer: 1,
+          explain: "Fable 5는 사람이 몇 시간~몇 주 걸리는 어려운 문제에 특히 강합니다. 쉬운 일로만 시험하면 역량을 과소평가하게 됩니다."
+        },
+        {
+          q: "일상 작업인데 결과는 나오지만 너무 오래 걸립니다. 먼저 무엇을?",
+          options: ["effort를 낮춘다 (low/medium)", "프롬프트에 ‘빨리’를 반복해 적는다", "더 큰 모델로 바꾼다"],
+          answer: 0,
+          explain: "effort가 지능·지연·비용의 주 손잡이입니다. 낮은 effort도 종종 이전 모델 최고치를 능가하므로, 빠르고 상호작용적인 작업엔 낮추세요."
+        },
+        {
+          q: "장기 자율 실행에서 ‘했다’는 허위 진행 보고를 줄이려면?",
+          options: ["보고를 더 자주 시킨다", "진행 주장을 실제 도구 결과에 대조하도록 지시한다", "보고를 아예 끄게 한다"],
+          answer: 1,
+          explain: "‘보고 전에 각 주장을 이번 세션의 도구 결과로 검증하라’는 지시가 허위 보고를 거의 제거했습니다. 검증 안 된 건 그렇다고 말하게 합니다."
+        },
+        {
+          q: "긴 작업의 품질 검증으로 더 권장되는 방식은?",
+          options: ["모델이 자기 답을 스스로 비평", "새 컨텍스트를 가진 검증자 서브에이전트가 사양과 대조", "검증은 사람만 한다"],
+          answer: 1,
+          explain: "자기 비평보다, 별도의 새 컨텍스트를 가진 검증자 서브에이전트가 사양과 대조하는 편이 더 나은 경향이 있습니다."
+        },
+        {
+          q: "다음 중 Fable 5에서 피해야 할 지시는?",
+          options: ["요청과 함께 ‘왜’ 이유를 준다", "내부 추론을 응답에 그대로 재현·전사하라고 시킨다", "사용자 메시지는 결론부터 쉽게 쓰라고 한다"],
+          answer: 1,
+          explain: "추론을 응답 텍스트로 재현·전사하라는 지시는 reasoning_extraction 거부를 유발해 폴백이 늘 수 있습니다. 추론 가시성은 구조화된 thinking 블록으로 얻으세요."
+        }
+      ]
+    },
+    {
+      id: "source", icon: "📄", label: "원문", kind: "prose",
+      hint: "이 페이지는 학습용 <b>요약·각색본</b>입니다. 정확한 내용은 반드시 원문을 확인하세요.",
+      body: `
+        <h3>출처</h3>
+        <p><strong>Claude Fable 5 프롬프트 작성</strong> — Anthropic 공식문서(한국어).<br/>
+        <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/prompting-claude-fable-5" target="_blank" rel="noopener">platform.claude.com → prompting-claude-fable-5 ↗</a></p>
+        <h3>원문에서 가져온 핵심 지시 예시</h3>
+        <div class="callout"><span class="callout__i">📌</span><p><strong>행동의 근거:</strong> “When you have enough information to act, act. … If you are weighing a choice, give a recommendation, not an exhaustive survey.”</p></div>
+        <div class="callout"><span class="callout__i">📌</span><p><strong>진행 보고 근거화:</strong> “Before reporting progress, audit each claim against a tool result from this session. Only report work you can point to evidence for.”</p></div>
+        <div class="callout"><span class="callout__i">📌</span><p><strong>자율 파이프라인:</strong> “You are operating autonomously. … For reversible actions that follow from the original request, proceed without asking.”</p></div>
+        <h3>더 읽기</h3>
+        <ul>
+          <li>모델 소개·가격·가용성: <a href="https://platform.claude.com/docs/ko/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5" target="_blank" rel="noopener">Claude Fable 5 / Mythos 5 소개 ↗</a></li>
+          <li>전 모델 공통 기법: <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/claude-prompting-best-practices" target="_blank" rel="noopener">프롬프트 작성 모범 사례 ↗</a></li>
+        </ul>
+      `
+    }
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const d = LENS_DOC, m = d.meta, lenses = d.lenses;
+
+  // 헤더
+  document.getElementById("head").innerHTML = `
+    <div class="lens__icon">${esc(m.icon)}</div>
+    <span class="lens__eyebrow">📚 깊이 읽기 · 5가지 렌즈</span>
+    <h1 class="lens__title">${esc(m.title)}</h1>
+    <p class="lens__oneliner">${esc(m.oneliner)}</p>
+    <div class="lens__source">
+      <span>📄 출처 <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceTitle)} ↗</a></span>
+      <span>🗓️ ${esc(m.fetched)}</span>
+      <span>🏷️ ${m.tags.map(esc).join(" · ")}</span>
+    </div>`;
+
+  // 탭
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = lenses.map((l, i) => `
+    <button class="lens-tab" role="tab" data-i="${i}" aria-selected="${i === 0}">${esc(l.icon)} ${esc(l.label)}</button>`).join("");
+
+  const panelEl = document.getElementById("panel");
+  function renderQuiz(items) {
+    return items.map((it, qi) => `
+      <div class="quiz-item">
+        <p class="quiz-q"><span>Q${qi + 1}.</span>${esc(it.q)}</p>
+        <div class="quiz-opts" data-answer="${it.answer}">
+          ${it.options.map((o, oi) => `
+            <button class="quiz-opt" type="button" data-oi="${oi}">
+              <span class="quiz-opt__mark">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span>
+            </button>`).join("")}
+        </div>
+        <div class="quiz-explain"><b>해설.</b> ${esc(it.explain)}</div>
+      </div>`).join("");
+  }
+  function render(i) {
+    const l = lenses[i];
+    panelEl.innerHTML = `
+      ${l.hint ? `<div class="lens-panel__hint"><span>${esc(l.icon)}</span><span>${l.hint}</span></div>` : ""}
+      ${l.kind === "quiz" ? renderQuiz(l.quiz) : `<div class="lens-prose">${l.body}</div>`}`;
+    panelEl.className = "lens-panel";
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".lens-tab");
+    if (!b) return;
+    const i = +b.dataset.i;
+    tabsEl.querySelectorAll(".lens-tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // 퀴즈 채점 (위임)
+  panelEl.addEventListener("click", (e) => {
+    const opt = e.target.closest(".quiz-opt");
+    if (!opt) return;
+    const opts = opt.closest(".quiz-opts");
+    if (opt.disabled) return;
+    const answer = +opts.dataset.answer;
+    const chosen = +opt.dataset.oi;
+    opts.querySelectorAll(".quiz-opt").forEach((b) => {
+      b.disabled = true;
+      const oi = +b.dataset.oi;
+      if (oi === answer) b.classList.add("quiz-opt--correct");
+      if (oi === chosen && chosen !== answer) b.classList.add("quiz-opt--wrong");
+    });
+    const ex = opts.parentElement.querySelector(".quiz-explain");
+    if (ex) ex.classList.add("open");
+  });
+
+  // 푸터
+  document.getElementById("foot").innerHTML = `
+    <footer class="lens__footer">
+      <p>📚 <b>깊이 읽기</b> — 어려운 문서를 5가지 렌즈로 다시 읽는 학습 페이지. 원문을 대체하지 않으며, 정확한 내용은 출처를 확인하세요.</p>
+      <p>Folio 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외) · 학습 템플릿: doc-lenses 각색</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : (mq ? mq.matches : false); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => { const n = dark() ? "light" : "dark"; try { localStorage.setItem("nl-theme", n); } catch (e) {} root.dataset.nlTheme = n; apply(); });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

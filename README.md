@@ -1,14 +1,16 @@
-# 🗞️ 나만의 AI 뉴스레터 (Claude Cowork 템플릿)
+# 🧠 나만의 AI 학습 허브 (Claude Cowork 템플릿)
 
-내 관심사에 맞춘 AI 소식을, 내 취향의 디자인으로, 매일 아침 자동 발행하는 개인 뉴스레터.
-**코딩을 몰라도** Claude Cowork에게 시키면 됩니다.
+AI를 따라잡는 두 가지 길을 한 곳에. **코딩을 몰라도** Claude Cowork에게 시키면 됩니다.
 
-- 📄 **아카이브(목록)**: `index.html` — 발행한 호가 쌓이는 곳
-- 📰 **한 호**: `editions/{날짜}.html` — 관심사별 탭 + 주제마다 핵심 1건
-- 🤖 **발행 사양**: [`AGENT.md`](./AGENT.md) — 에이전트가 매일 따라 하는 지시서
-- 🎨 디자인: Folio(Notion 스타일) 디자인 시스템 기반, 단일 HTML, 라이트/다크 자동
+- 📰 **받아보기 (자동)** — 내 관심사 맞춤 AI 뉴스레터가 매일 아침 자동 발행됩니다.
+  - 아카이브(목록): `index.html` · 한 호: `editions/{날짜}.html` (관심사별 탭 + 주제마다 핵심 1건)
+- 📚 **깊이 읽기 (수동)** — 공부하고 싶은 어려운 문서를 **5가지 렌즈**(🔤어원·⚡한입요약·🧒비유·🧪퀴즈·📄원문)로 재구성해 다시 읽습니다.
+  - 라이브러리: `learn/index.html` · 한 문서: `learn/{슬러그}.html`
+- 🤖 **사양**: [`AGENT.md`](./AGENT.md) — 자동 발행 + 수동 렌즈 생성 지시서
+- 🎨 디자인: Folio(Notion 스타일) 기반, 단일 HTML, 라이트/다크 자동 · 전부 같은 GitHub Pages로 배포·누적
 
-> 데모/예시 콘텐츠가 들어 있습니다. 실제 발행 시 에이전트가 최신 소식으로 교체합니다.
+> 받아보기(자동) + 깊이 읽기(수동)가 **한 허브에 계속 쌓입니다.** 현재는 데모/예시 콘텐츠가 들어 있고, 실제 사용 시 최신 내용으로 교체됩니다.
+> 깊이 읽기는 [doc-lenses](https://github.com/imakerjun/learning-templates/tree/main/doc-lenses) 학습 템플릿을 기술 문서용으로 각색했습니다.
 
 ---
 
@@ -73,10 +75,14 @@ python3 -m http.server 8000
 ## 구조
 ```
 .
-├── index.html               # 아카이브 허브 (ARCHIVE.editions 배열로 호 목록 관리)
+├── index.html               # 📰 뉴스레터 아카이브 허브 (ARCHIVE.editions 배열)
 ├── editions/
-│   └── 2026-06-18.html       # 한 호 (NEWSLETTER 데이터 객체로 콘텐츠 관리)
-├── _TEMPLATE_edition.html    # 한 호의 고정 구조 템플릿 (에이전트가 데이터만 교체)
-├── AGENT.md                  # 발행 자동화 사양
+│   └── 2026-06-18.html       # 뉴스레터 한 호 (NEWSLETTER 데이터 객체)
+├── _TEMPLATE_edition.html    # 뉴스레터 한 호의 고정 구조 템플릿
+├── learn/                    # 📚 깊이 읽기(렌즈 학습) 트랙
+│   ├── index.html            #   렌즈 라이브러리 (LIBRARY.docs 배열)
+│   ├── prompting-fable-5.html#   한 문서 — 5가지 렌즈 (LENS_DOC 데이터 객체)
+│   └── _TEMPLATE_lens.html   #   렌즈 문서의 고정 구조 템플릿
+├── AGENT.md                  # 자동 발행 + 수동 렌즈 생성 사양
 └── README.md
 ```
