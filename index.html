@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>메이커준의 AI 위클리 — 아카이브</title>
+<meta name="description" content="러닝 에이전트가 매일 발행하는 개인화 AI 뉴스레터 아카이브. 지난 호를 모두 모아둔 곳." />
+
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("nl-theme");
+      if (saved) document.documentElement.dataset.nlTheme = saved;
+    } catch (e) {}
+  })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — editions/* 와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-family: var(--fl-font-sans);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--fl-bg); color: var(--fl-text);
+  font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6;
+  transition: background var(--fl-dur-normal), color var(--fl-dur-normal);
+}
+a { color: inherit; text-decoration: none; }
+
+.hub { max-width: 720px; margin: 0 auto; padding: 64px 28px 120px; }
+.hub__icon { font-size: 56px; line-height: 1; }
+.hub__eyebrow {
+  margin-top: 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--fl-text-tertiary); display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px; background: var(--fl-tint-blue-bg); color: var(--fl-tint-blue);
+}
+.hub__title { font-size: 40px; font-weight: 800; line-height: 1.12; letter-spacing: -0.025em; margin: 14px 0 0; word-break: keep-all; }
+.hub__title b { color: var(--fl-accent); }
+.hub__lead { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 56ch; word-break: keep-all; }
+.hub__meta { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 24px; border-bottom: 1px solid var(--fl-border-subtle); }
+.hub__meta b { color: var(--fl-text-secondary); font-weight: 600; }
+
+.hub__section { margin-top: 30px; }
+.hub__label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-text-tertiary); display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.hub__label::after { content: ""; flex: 1; height: 1px; background: var(--fl-border-subtle); }
+
+/* 최신 호 — 강조 카드 */
+.ed-latest {
+  display: block; padding: 22px 24px; border-radius: var(--fl-radius-lg);
+  background: var(--fl-tint-blue-bg); border: 1px solid var(--fl-tint-blue);
+  transition: box-shadow var(--fl-dur-fast), transform var(--fl-dur-fast);
+}
+.ed-latest:hover { box-shadow: var(--fl-shadow-md); transform: translateY(-2px); }
+.ed-latest__badge {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--fl-tint-blue);
+  padding: 3px 10px; border-radius: 999px; background: var(--fl-bg); border: 1px solid var(--fl-tint-blue); margin-bottom: 12px;
+}
+.ed-latest__date { font-size: 13px; color: var(--fl-text-secondary); }
+.ed-latest__title { font-size: 21px; font-weight: 800; line-height: 1.3; letter-spacing: -0.012em; margin: 8px 0 0; color: var(--fl-text); word-break: keep-all; }
+.ed-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.ed-tag { display: inline-flex; padding: 1px 9px; height: 21px; align-items: center; border-radius: var(--fl-radius-sm); background: var(--fl-tint-gray-bg); color: var(--fl-tint-gray); font-size: 11.5px; font-weight: 600; }
+.ed-go { margin-top: 14px; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--fl-accent); }
+
+/* 지난 호 목록 */
+.ed-list { display: grid; gap: 8px; }
+.ed-row {
+  display: flex; align-items: center; gap: 14px; padding: 13px 16px;
+  border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md);
+  background: var(--fl-surface); transition: border-color var(--fl-dur-fast), background var(--fl-dur-fast);
+}
+.ed-row:hover { border-color: var(--fl-border); background: var(--fl-hover); }
+.ed-row__date { flex-shrink: 0; width: 96px; font-size: 12.5px; color: var(--fl-text-tertiary); font-variant-numeric: tabular-nums; }
+.ed-row__label { flex-shrink: 0; font-size: 11.5px; font-weight: 700; color: var(--fl-tint-blue); }
+.ed-row__title { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--fl-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ed-row__arrow { flex-shrink: 0; color: var(--fl-text-quaternary); }
+
+.hub__empty { padding: 18px; border: 1px dashed var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+.hub__footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.hub__footer b { color: var(--fl-text-secondary); }
+
+/* 테마 토글 */
+.nl-theme {
+  position: fixed; top: 14px; right: 14px; z-index: 50; width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md);
+  box-shadow: var(--fl-shadow-sm); color: var(--fl-text-secondary); cursor: pointer;
+  transition: background var(--fl-dur-fast), color var(--fl-dur-fast);
+}
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+@media (max-width: 600px) {
+  .hub { padding: 44px 18px 96px; }
+  .hub__title { font-size: 30px; }
+  .ed-row__date { width: 78px; }
+}
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
+</style>
+</head>
+
+<body class="folio">
+
+<button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+  <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+  <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
+<main class="hub" id="hub"></main>
+
+<script>
+/* ============================================================================
+   아카이브 데이터 — 새 호를 발행하면 editions 배열 맨 앞에 항목 1개만 추가.
+   (스케줄 에이전트가 매일 이 배열을 갱신 → 커밋 → 푸시 → Pages 자동 배포)
+   ============================================================================ */
+const ARCHIVE = {
+  meta: {
+    icon: "🗞️",
+    title: ["메이커준의 ", "AI 위클리"],
+    lead: "러닝 에이전트가 내 관심사에 맞춰 발행하는 개인화 AI 뉴스레터. 지난 호를 여기에 모아둡니다.",
+    owner: "메이커준",
+    cadence: "매주(또는 매일)"
+  },
+  editions: [
+    {
+      date: "2026-06-18",
+      weekday: "목",
+      label: "Vol.07",
+      title: "에이전트가 PR을 끝까지 끌고 간다 — 이번 주 4개 관심사 큐레이션",
+      topics: ["개발자 AI", "AI 디자인", "AI 교육", "에이전트 만들기"],
+      href: "editions/2026-06-18.html"
+    }
+    // ← 다음 호는 이 위에 추가됩니다.
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const m = ARCHIVE.meta;
+  const eds = ARCHIVE.editions.slice();
+  const latest = eds[0];
+  const rest = eds.slice(1);
+
+  const fmt = (d, w) => { const [y, mo, da] = d.split("-"); return `${y}.${mo}.${da}${w ? " (" + w + ")" : ""}`; };
+
+  const latestHTML = latest ? `
+    <a class="ed-latest" href="${esc(latest.href)}">
+      <span class="ed-latest__badge">⭐ 최신 호 · ${esc(latest.label)}</span>
+      <div class="ed-latest__date">🗓️ ${esc(fmt(latest.date, latest.weekday))}</div>
+      <div class="ed-latest__title">${esc(latest.title)}</div>
+      <div class="ed-tags">${latest.topics.map((t) => `<span class="ed-tag">${esc(t)}</span>`).join("")}</div>
+      <div class="ed-go">읽으러 가기 →</div>
+    </a>` : `<div class="hub__empty">아직 발행된 호가 없습니다. 첫 호가 발행되면 여기에 표시됩니다.</div>`;
+
+  const restHTML = rest.length ? `
+    <div class="hub__section">
+      <div class="hub__label">지난 호</div>
+      <div class="ed-list">
+        ${rest.map((e) => `
+          <a class="ed-row" href="${esc(e.href)}">
+            <span class="ed-row__date">${esc(fmt(e.date))}</span>
+            <span class="ed-row__label">${esc(e.label)}</span>
+            <span class="ed-row__title">${esc(e.title)}</span>
+            <span class="ed-row__arrow">→</span>
+          </a>`).join("")}
+      </div>
+    </div>` : "";
+
+  document.getElementById("hub").innerHTML = `
+    <div class="hub__icon">${esc(m.icon)}</div>
+    <span class="hub__eyebrow">📚 아카이브</span>
+    <h1 class="hub__title">${esc(m.title[0])}<b>${esc(m.title[1])}</b></h1>
+    <p class="hub__lead">${esc(m.lead)}</p>
+    <div class="hub__meta">
+      <span>✍️ 발행 <b>${esc(m.owner)}</b></span>
+      <span>📨 주기 <b>${esc(m.cadence)}</b></span>
+      <span>🗂️ 총 <b>${eds.length}</b>호</span>
+    </div>
+
+    <div class="hub__section">
+      <div class="hub__label">최신 호</div>
+      ${latestHTML}
+    </div>
+    ${restHTML}
+
+    <footer class="hub__footer">
+      <p>이 페이지는 러닝 에이전트가 매일 갱신합니다 · <b>Folio</b> 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외)</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const sysDark = () => (mq ? mq.matches : false);
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : sysDark(); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => {
+    const next = dark() ? "light" : "dark";
+    try { localStorage.setItem("nl-theme", next); } catch (e) {}
+    root.dataset.nlTheme = next; apply();
+  });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

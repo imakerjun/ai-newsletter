@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>메이커준의 AI 위클리 — 관심사별 렌즈 뉴스레터</title>
+<meta name="description" content="러닝 에이전트가 관심사 주제별 탭으로 큐레이션하는 개인화 AI 뉴스레터. 각 주제마다 하나의 핵심 하이라이트." />
+
+<!-- 시스템 다크/라이트를 페인트 전에 반영 (FOUC 방지) -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("nl-theme"); // "light" | "dark" | null(=시스템)
+      if (saved) document.documentElement.dataset.nlTheme = saved;
+    } catch (e) {}
+  })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* ============================================================================
+   Folio Design System — 토큰 서브셋 (단일 HTML 인라인)
+   원본: claude.ai/design "노션 디자인 시스템" · Notion 컬러 팔레트
+   ============================================================================ */
+.folio, .folio * { box-sizing: border-box; }
+
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans);
+  font-feature-settings: "ss03", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* scales */
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  /* ---- LIGHT (기본) — Notion 컬러 ---- */
+  --fl-bg: #ffffff;
+  --fl-surface: #ffffff;
+  --fl-surface-2: #f7f6f3;
+  --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55, 53, 47, 0.06);
+  --fl-active: rgba(55, 53, 47, 0.12);
+
+  --fl-text: #37352f;
+  --fl-text-secondary: #525049;
+  --fl-text-tertiary: #787774;
+  --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+
+  --fl-border-subtle: rgba(15, 14, 12, 0.08);
+  --fl-border: rgba(15, 14, 12, 0.13);
+  --fl-border-strong: rgba(15, 14, 12, 0.20);
+
+  --fl-accent: #2d6fc5;
+
+  /* Notion 인라인 톤 (플랫) */
+  --fl-tint-gray: #777570;   --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-tint-green: #2f8a5d;  --fl-tint-green-bg: #ddedea;
+  --fl-tint-blue: #2d6dc4;   --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-pink: #c34e8b;   --fl-tint-pink-bg: #f4dfeb;
+  --fl-tint-red: #c84c47;    --fl-tint-red-bg: #fbe4e4;
+
+  --fl-shadow-sm: 0 1px 3px rgba(15, 14, 12, 0.06), 0 1px 2px rgba(15, 14, 12, 0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15, 14, 12, 0.04), 0 6px 16px rgba(15, 14, 12, 0.08);
+  color-scheme: light;
+}
+
+/* ---- DARK 값 (한 곳에 정의) ---- */
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918;
+  --fl-surface: #202020;
+  --fl-surface-2: #1c1c1b;
+  --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255, 253, 248, 0.055);
+  --fl-active: rgba(255, 253, 248, 0.13);
+
+  --fl-text: #e9e7e2;
+  --fl-text-secondary: #c2bfb7;
+  --fl-text-tertiary: #908d85;
+  --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+
+  --fl-border-subtle: rgba(255, 253, 248, 0.07);
+  --fl-border: rgba(255, 253, 248, 0.12);
+  --fl-border-strong: rgba(255, 253, 248, 0.20);
+
+  --fl-accent: #8aa9ff;
+
+  --fl-tint-gray: #b0aca5;   --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-tint-green: #6fc193;  --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-blue: #7aa0e8;   --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-pink: #e08fbd;   --fl-tint-pink-bg: rgba(195,78,139,0.20);
+  --fl-tint-red: #e08580;    --fl-tint-red-bg: rgba(200,76,71,0.20);
+
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+/* 1순위: 시스템 설정 자동 반영 (명시적 라이트 지정이 없을 때) */
+@media (prefers-color-scheme: dark) {
+  html:not([data-nl-theme="light"]) .folio { color-scheme: dark; }
+}
+
+/* ============================================================================
+   레이아웃
+   ============================================================================ */
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--fl-bg);
+  color: var(--fl-text);
+  font-family: var(--fl-font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  transition: background var(--fl-dur-normal), color var(--fl-dur-normal);
+}
+::selection { background: var(--fl-tint-blue-bg); color: var(--fl-text); }
+
+.nl-page { max-width: 740px; margin: 0 auto; padding: 64px 28px 120px; }
+
+/* ---- 헤더 (그라데이션 없는 노션 페이지) ---- */
+.nl-icon { font-size: 58px; line-height: 1; }
+.nl-eyebrow {
+  margin-top: 18px; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; color: var(--fl-text-tertiary);
+  display: flex; align-items: center; gap: 8px;
+}
+.nl-eyebrow__chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--fl-tint-blue-bg); color: var(--fl-tint-blue);
+  font-size: 11px; font-weight: 600;
+}
+.nl-title {
+  font-size: 42px; font-weight: 800; line-height: 1.12;
+  letter-spacing: -0.025em; margin: 14px 0 0; word-break: keep-all;
+}
+.nl-title b { color: var(--fl-accent); font-weight: 800; }
+.nl-lead {
+  font-size: 17px; line-height: 1.65; color: var(--fl-text-secondary);
+  margin: 14px 0 0; max-width: 58ch; word-break: keep-all;
+}
+
+/* ---- 메타 행 ---- */
+.nl-meta {
+  margin-top: 22px; display: flex; flex-wrap: wrap; gap: 6px 18px;
+  font-size: 12.5px; color: var(--fl-text-tertiary);
+  padding-bottom: 22px; border-bottom: 1px solid var(--fl-border-subtle);
+}
+.nl-meta span b { color: var(--fl-text-secondary); font-weight: 600; }
+
+/* ---- 인사 콜아웃 (플랫 노션 callout) ---- */
+.nl-greet {
+  display: flex; gap: 12px; align-items: flex-start;
+  margin-top: 22px; padding: 14px 16px;
+  background: var(--fl-surface-2); border: 1px solid var(--fl-border-subtle);
+  border-radius: var(--fl-radius-md);
+  font-size: 14px; line-height: 1.65; color: var(--fl-text-secondary);
+}
+.nl-greet__icon { font-size: 18px; flex-shrink: 0; line-height: 1.5; }
+.nl-greet b { color: var(--fl-text); font-weight: 700; }
+
+/* ---- 탭 바 (doc-lenses 스타일, 노션 플랫) ---- */
+.nl-tabs {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 30px; padding: 12px 0;
+  background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle);
+}
+.nl-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  color: var(--fl-text-secondary);
+  background: var(--fl-surface); border: 1px solid var(--fl-border);
+  border-radius: var(--fl-radius-md); padding: 7px 13px;
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast);
+}
+.nl-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-tab[aria-selected="true"] {
+  background: var(--fl-text); color: var(--fl-bg);
+  border-color: var(--fl-text); font-weight: 600;
+}
+.nl-tab__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--tc, var(--fl-text-tertiary)); flex-shrink: 0;
+}
+.nl-tab[aria-selected="true"] .nl-tab__dot { background: var(--fl-bg); opacity: 0.85; }
+
+/* ---- 패널 ---- */
+@keyframes nl-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.nl-panel { animation: nl-fade 0.32s var(--fl-ease-out); padding-top: 28px; }
+
+/* 주제별 색 (톤 변수 매핑) */
+.nl-tint-blue   { --tc: var(--fl-tint-blue);   --tcb: var(--fl-tint-blue-bg); }
+.nl-tint-purple { --tc: var(--fl-tint-purple); --tcb: var(--fl-tint-purple-bg); }
+.nl-tint-green  { --tc: var(--fl-tint-green);  --tcb: var(--fl-tint-green-bg); }
+.nl-tint-orange { --tc: var(--fl-tint-orange); --tcb: var(--fl-tint-orange-bg); }
+.nl-tint-pink   { --tc: var(--fl-tint-pink);   --tcb: var(--fl-tint-pink-bg); }
+
+.nl-panel__head { display: flex; align-items: center; gap: 10px; }
+.nl-panel__icon { font-size: 22px; line-height: 1; }
+.nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+.nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* ---- 핵심 하이라이트 (주제당 1개) ---- */
+.nl-hl {
+  margin-top: 18px; padding: 22px 24px;
+  background: var(--tcb); border: 1px solid var(--tc);
+  border-radius: var(--fl-radius-lg);
+}
+.nl-hl__kicker {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--tc); margin-bottom: 12px;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--fl-bg); border: 1px solid var(--tc);
+}
+.nl-hl__title { font-size: 23px; font-weight: 800; line-height: 1.3; letter-spacing: -0.015em; margin: 0; word-break: keep-all; color: var(--fl-text); }
+.nl-hl__summary { margin: 12px 0 0; font-size: 15px; line-height: 1.7; color: var(--fl-text-secondary); }
+
+/* ---- 더 읽을거리 ---- */
+.nl-more__label {
+  margin: 30px 0 14px; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; color: var(--fl-text-tertiary);
+  display: flex; align-items: center; gap: 8px;
+}
+.nl-more__label::after { content: ""; flex: 1; height: 1px; background: var(--fl-border-subtle); }
+
+.nl-grid { display: grid; gap: 12px; }
+.nl-card {
+  background: var(--fl-surface); border: 1px solid var(--fl-border-subtle);
+  border-radius: var(--fl-radius-lg); padding: 16px 18px;
+  transition: border-color var(--fl-dur-fast), box-shadow var(--fl-dur-fast);
+}
+.nl-card:hover { border-color: var(--fl-border); box-shadow: var(--fl-shadow-sm); }
+.nl-card__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--fl-text-tertiary); }
+.nl-card__dot { width: 3px; height: 3px; border-radius: 50%; background: var(--fl-text-quaternary); }
+.nl-card__title { font-size: 16.5px; font-weight: 700; line-height: 1.4; letter-spacing: -0.008em; margin: 9px 0 0; word-break: keep-all; }
+.nl-card__summary { margin: 8px 0 0; color: var(--fl-text-secondary); font-size: 13.5px; line-height: 1.65; }
+
+/* 태그 */
+.nl-tag {
+  display: inline-flex; align-items: center;
+  padding: 1px 9px; height: 21px; border-radius: var(--fl-radius-sm);
+  background: var(--tcb, var(--fl-tint-gray-bg)); color: var(--tc, var(--fl-tint-gray));
+  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+
+/* "나를 위한 한 줄" — 개인화 시그니처 (플랫, 좌측 컬러 보더) */
+.nl-foryou {
+  margin-top: 13px; display: flex; gap: 10px;
+  padding: 10px 13px; background: var(--fl-surface-2);
+  border-left: 3px solid var(--tc, var(--fl-accent));
+  border-radius: 0 var(--fl-radius) var(--fl-radius) 0;
+  font-size: 13px; line-height: 1.6;
+}
+.nl-foryou__label { flex-shrink: 0; font-weight: 700; color: var(--tc, var(--fl-accent)); font-size: 11px; letter-spacing: 0.03em; padding-top: 1px; }
+.nl-foryou__text { color: var(--fl-text); }
+.nl-foryou--lg { margin-top: 16px; background: var(--fl-bg); }
+
+/* ---- 푸터 ---- */
+.nl-footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 13px; line-height: 1.7; }
+.nl-footer__brand { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.nl-footer__logo { width: 30px; height: 30px; border-radius: 8px; background: var(--fl-accent); display: flex; align-items: center; justify-content: center; color: var(--fl-bg); font-weight: 800; font-size: 14px; }
+.nl-footer__name { color: var(--fl-text); font-weight: 700; font-size: 14px; }
+.nl-footer__sub { font-size: 11.5px; }
+.nl-footer__next { margin-top: 14px; padding: 13px 16px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); }
+.nl-footer__disc { margin-top: 14px; font-size: 11.5px; color: var(--fl-text-quaternary); }
+
+/* ---- 테마 토글 (단일 라인 아이콘) ---- */
+.nl-theme {
+  position: fixed; top: 14px; right: 14px; z-index: 50;
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--fl-surface); border: 1px solid var(--fl-border);
+  border-radius: var(--fl-radius-md); box-shadow: var(--fl-shadow-sm);
+  color: var(--fl-text-secondary); cursor: pointer;
+  transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast);
+}
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-panel { animation: none; }
+  body { transition: none; }
+}
+
+/* ---- 모바일 / 외부 접속 최적화 ---- */
+@media (max-width: 640px) {
+  .nl-page { padding: 40px 16px 96px; }
+  .nl-icon { font-size: 48px; }
+  .nl-title { font-size: 28px; }
+  .nl-lead { font-size: 15.5px; }
+  .nl-hl { padding: 18px 18px; }
+  .nl-hl__title { font-size: 19px; }
+  .nl-hl__summary { font-size: 14px; }
+  .nl-card { padding: 15px 16px; }
+
+  /* 탭: 줄바꿈 대신 화면 끝까지 닿는 가로 스크롤 스트립 */
+  .nl-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-left: -16px; margin-right: -16px;
+    padding: 11px 16px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nl-tabs::-webkit-scrollbar { display: none; }
+  .nl-tab { scroll-snap-align: start; flex: 0 0 auto; padding: 9px 14px; }
+
+  /* 터치 타깃 확대 */
+  .nl-theme { width: 40px; height: 40px; }
+}
+
+/* 모바일에서 가로 스크롤로 잘린 본문 방지 */
+.nl-card__title, .nl-hl__title, .nl-title { overflow-wrap: anywhere; }
+</style>
+</head>
+
+<body class="folio">
+
+<!-- 테마 토글 — 기본은 시스템 설정 따름, 클릭 시 라이트/다크 고정 -->
+<button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+  <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+  <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
+<main class="nl-page">
+  <div id="header"></div>
+  <nav class="nl-tabs" id="tabs" role="tablist" aria-label="관심사 주제"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="footer"></div>
+</main>
+
+<script>
+/* ============================================================================
+   뉴스레터 데이터 — 이 객체만 교체하면 매주 새 호가 발행됩니다.
+   각 주제(topic) = 탭 하나. highlight = 그 주제의 핵심 1건. articles = 더 읽을거리.
+   tint: blue | purple | green | orange | pink
+   ============================================================================ */
+const NEWSLETTER = {
+  meta: {
+    icon: "🗞️",
+    edition: "Vol.07",
+    cadence: "주간",
+    date: "2026년 6월 18일 (목)",
+    curator: "러닝 에이전트 (Claude Cowork)",
+    reader: "메이커준",
+    title: ["메이커준의 ", "AI 위클리"],   // 두 번째 조각이 액센트 컬러
+    lead: "관심사를 탭으로 나눠 읽는 개인화 뉴스레터. 주제마다 이번 주 ‘딱 하나의 핵심’만 크게, 나머지는 가볍게.",
+    greeting: "안녕하세요 준님. 이번 주는 켜두신 4개 관심사에서 신호가 가장 강했던 것만 골랐어요. 각 탭의 맨 위 큰 카드가 <b>그 주제의 핵심 한 건</b>입니다. 우테코 코칭·바이브코딩 워크숍에 바로 쓸 만한 ‘나를 위한 한 줄’을 모든 항목에 붙였습니다."
+  },
+
+  topics: [
+    {
+      id: "dev", label: "개발자가 꼭 아는 AI", icon: "🤖", tint: "blue",
+      desc: "코드를 쓰는 도구에서, 일을 맡기는 동료로.",
+      highlight: {
+        kicker: "이 주제의 핵심",
+        title: "‘에이전트가 PR을 끝까지 끌고 간다’ — 백그라운드 코딩 에이전트의 실전 전환",
+        summary: "이슈를 받아 브랜치를 따고, 테스트를 돌리고, 리뷰 코멘트에 스스로 응답하는 장기 실행 에이전트가 데모를 넘어 팀 워크플로우로 들어왔습니다. 관건은 ‘모델이 똑똑한가’가 아니라 ‘에이전트가 멈추지 않게 어떤 하네스를 짜느냐’로 옮겨갔어요.",
+        foryou: "준님의 ‘하네스 엔지니어링’ 강의 골격과 정확히 맞물립니다. 삼성SDS 워크숍 ‘일을 끝까지 끌고 가게 만들기’ 세션의 실전 사례로 인용해보세요."
+      },
+      articles: [
+        { tag: "컨텍스트", source: "기술 블로그", time: "5일 전",
+          title: "1M 토큰 컨텍스트, ‘넣을 수 있다’와 ‘써야 한다’는 다르다",
+          summary: "무작정 다 넣기보다 요약·압축·재인덱싱으로 관련 정보 밀도를 유지하는 ‘컨텍스트 엔지니어링’이 더 중요해졌다는 분석.",
+          foryou: "레벨2 미션의 i+1 스캐폴딩과 같은 원리 — ‘필요한 입력만 준다’." },
+        { tag: "평가", source: "분석", time: "1주 전",
+          title: "eval이 ‘있으면 좋은 것’에서 ‘필수 인프라’로",
+          summary: "루브릭 기반 반복개선 루프가 표준화되는 흐름. 결과물 품질을 숫자로 보지 않으면 개선이 막힌다는 공감대.",
+          foryou: "이미 쓰시는 autoresearch 반복개선 스킬을 ‘평가 인프라’로 포지셔닝하면 설득력이 큽니다." }
+      ]
+    },
+
+    {
+      id: "design", label: "AI로 디자인 잘하기", icon: "🎨", tint: "purple",
+      desc: "취향을 어떻게 AI에게 위임할 것인가.",
+      highlight: {
+        kicker: "이 주제의 핵심",
+        title: "디자인 시스템을 컨텍스트로 주면, 에이전트가 톤을 ‘지켜서’ 그린다",
+        summary: "하드코딩된 값 대신 토큰·컴포넌트를 컨텍스트로 넘기면 결과물의 일관성이 급상승합니다. ‘디자인 시스템 = 에이전트에게 주는 스타일 가이드’라는 관점이 핵심이에요.",
+        foryou: "바로 지금 이 뉴스레터가 그 증거 — Folio 디자인 시스템을 물려주니 이 페이지가 노션 톤을 지켜서 나왔죠. 공유 자리의 클라이맥스로 쓰세요."
+      },
+      articles: [
+        { tag: "디자인-투-코드", source: "도구", time: "4일 전",
+          title: "스크린샷·피그마를 코드로 — 정확도의 분기점은 ‘토큰 제공 여부’",
+          summary: "디자인을 코드로 옮길 때, 색·간격을 임의로 추정하지 않게 토큰을 함께 주면 재현율이 크게 오른다는 비교.",
+          foryou: "FE팀 AX 업무에 ‘토큰 먼저 주기’ 체크리스트 한 줄을 더해보세요." },
+        { tag: "트렌드", source: "디자인 노트", time: "이번 주",
+          title: "‘AI스러운 보라 그라데이션’ 피로 → 절제·플랫 디자인의 귀환",
+          summary: "과한 그라데이션·네온이 ‘AI 슬롭’으로 인식되며, 솔리드 컬러와 명확한 위계가 다시 신뢰의 신호가 되는 중.",
+          foryou: "이번 호에서 그라데이션을 걷어낸 이유와 정확히 같은 맥락. 디자인 결정의 근거로 인용 가능." }
+      ]
+    },
+
+    {
+      id: "teach", label: "AI로 가르치기", icon: "🎓", tint: "green",
+      desc: "가르치는 사람에게 가장 흥미로운 실험실.",
+      highlight: {
+        kicker: "이 주제의 핵심",
+        title: "‘설명해주는 AI’보다 ‘질문하게 만드는 AI’가 더 오래 남는다",
+        summary: "정답을 바로 주는 튜터보다, 학습자가 직접 5~10줄을 채우게 유도하는 방식이 전이(transfer)와 retention에서 앞선다는 관찰. 스캐폴딩의 ‘비워두기’가 핵심입니다.",
+        foryou: "김창준식 ‘야생학습·피드백 루프’ 관점과 통합. 우테코 페어프로그래밍 미션의 ‘빈칸 설계’ 논거로 바로 쓰입니다."
+      },
+      articles: [
+        { tag: "개인화 학습", source: "리서치", time: "1주 전",
+          title: "개인화 학습 에이전트, 효과는 ‘맞춤’이 아니라 ‘맥락 연결’에서 나온다",
+          summary: "콘텐츠를 잘게 쪼개 추천하는 것보다, 학습자의 기존 경험·목표에 새 정보를 연결해줄 때 학습 효과가 커진다는 결과.",
+          foryou: "이 뉴스레터의 ‘나를 위한 한 줄’이 바로 그 ‘맥락 연결’ 레이어예요." },
+        { tag: "사례", source: "현장 후기", time: "2주 전",
+          title: "바이브코딩 교육, ‘완성’이 아니라 ‘끝까지 끌고 가는 경험’을 가르친다",
+          summary: "처음부터 완벽한 코드를 노리기보다, 에이전트와 함께 막힌 지점을 뚫는 과정을 체득하게 하는 커리큘럼 설계가 효과적.",
+          foryou: "삼성SDS 8시간 워크숍의 핵심 학습 목표와 한 문장으로 연결됩니다." }
+      ]
+    },
+
+    {
+      id: "build", label: "에이전트 만들기", icon: "🛠️", tint: "orange",
+      desc: "직접 하네스를 짜는 사람들을 위한 신호.",
+      highlight: {
+        kicker: "이 주제의 핵심",
+        title: "서브에이전트 ‘분업 → 적대적 검증 → 합의’ 패턴이 표준이 되어간다",
+        summary: "하나의 거대한 프롬프트 대신 탐색·구현·리뷰를 맡는 작은 에이전트로 쪼개고, 결과를 적대적으로 검증한 뒤 합의하는 3단 구조가 허위 결과를 걸러내는 핵심으로 부상했습니다.",
+        foryou: "준님이 운영 중인 강의 4각 정합성 하네스(공식문서·스크립트·MDX·노트)와 같은 사고방식. 도식 한 장이면 강의 교보재."
+      },
+      articles: [
+        { tag: "MCP", source: "생태계", time: "3일 전",
+          title: "MCP 커넥터 생태계 확장 — 한 에이전트가 디자인·지라·슬랙을 가로지른다",
+          summary: "도구를 표준 인터페이스로 연결하면서, 에이전트가 여러 시스템을 넘나들며 한 번에 작업을 끝내는 사례가 늘고 있음.",
+          foryou: "지라 관리 하네스(planner/writer/linker)를 MCP 관점으로 다시 보면 확장 지점이 보입니다." },
+        { tag: "설계", source: "에세이", time: "1주 전",
+          title: "하네스란, 멈출 곳마다 ‘멈추지 않게’ 다리를 놓는 일",
+          summary: "좋은 에이전트 설계는 더 강한 모델이 아니라, 실패·중단 지점을 미리 메우는 검증 게이트와 복구 루프에서 나온다는 관점.",
+          foryou: "‘하네스 = 다리 놓기’ 비유, 워크숍 오프닝 한 줄로 그대로 쓰기 좋아요." }
+      ]
+    }
+  ]
+};
+
+/* ============================================================================
+   렌더링
+   ============================================================================ */
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const html = (s) => s; // 데이터 안의 <b> 허용 (신뢰된 자체 콘텐츠)
+  const m = NEWSLETTER.meta;
+  const topics = NEWSLETTER.topics;
+
+  // --- 헤더 ---
+  document.getElementById("header").innerHTML = `
+    <div class="nl-icon">${esc(m.icon)}</div>
+    <div class="nl-eyebrow">
+      <span class="nl-eyebrow__chip">🗓️ ${esc(m.date)}</span>
+      <span>${esc(m.edition)} · ${esc(m.cadence)}</span>
+    </div>
+    <h1 class="nl-title">${esc(m.title[0])}<b>${esc(m.title[1])}</b></h1>
+    <p class="nl-lead">${esc(m.lead)}</p>
+    <div class="nl-meta">
+      <span>🤖 큐레이터 <b>${esc(m.curator)}</b></span>
+      <span>🎯 관심사 <b>${topics.length}</b>개</span>
+    </div>
+    <div class="nl-greet">
+      <span class="nl-greet__icon">👋</span>
+      <div>${m.greeting}</div>
+    </div>`;
+
+  // --- 탭 ---
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = topics.map((t, i) => `
+    <button class="nl-tab nl-tint-${esc(t.tint)}" role="tab" id="tab-${esc(t.id)}"
+            data-i="${i}" aria-selected="${i === 0}" aria-controls="panel">
+      <span class="nl-tab__dot"></span>${esc(t.icon)} ${esc(t.label)}
+    </button>`).join("");
+
+  // --- 패널 ---
+  const panelEl = document.getElementById("panel");
+  function articleCard(a) {
+    return `
+      <article class="nl-card">
+        <div class="nl-card__meta">
+          <span class="nl-tag">${esc(a.tag)}</span>
+          <span class="nl-card__dot"></span><span>${esc(a.source)}</span>
+          <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
+        </div>
+        <h4 class="nl-card__title">${esc(a.title)}</h4>
+        <p class="nl-card__summary">${esc(a.summary)}</p>
+        <div class="nl-foryou">
+          <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>
+          <span class="nl-foryou__text">${html(a.foryou)}</span>
+        </div>
+      </article>`;
+  }
+  function render(i) {
+    const t = topics[i];
+    panelEl.className = "nl-panel nl-tint-" + t.tint;
+    panelEl.setAttribute("aria-labelledby", "tab-" + t.id);
+    panelEl.innerHTML = `
+      <div class="nl-panel__head">
+        <span class="nl-panel__icon">${esc(t.icon)}</span>
+        <h3 class="nl-panel__title">${esc(t.label)}</h3>
+      </div>
+      <p class="nl-panel__desc">${esc(t.desc)}</p>
+
+      <section class="nl-hl">
+        <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>
+        <h2 class="nl-hl__title">${esc(t.highlight.title)}</h2>
+        <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
+        <div class="nl-foryou nl-foryou--lg">
+          <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>
+          <span class="nl-foryou__text">${html(t.highlight.foryou)}</span>
+        </div>
+      </section>
+
+      <div class="nl-more__label">더 읽을거리</div>
+      <div class="nl-grid">${t.articles.map(articleCard).join("")}</div>`;
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".nl-tab");
+    if (!btn) return;
+    const i = +btn.dataset.i;
+    tabsEl.querySelectorAll(".nl-tab").forEach((b) => b.setAttribute("aria-selected", String(+b.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // --- 푸터 ---
+  document.getElementById("footer").innerHTML = `
+    <footer class="nl-footer">
+      <div class="nl-footer__brand">
+        <div class="nl-footer__logo">준</div>
+        <div>
+          <div class="nl-footer__name">${esc(m.title[0])}${esc(m.title[1])}</div>
+          <div class="nl-footer__sub">러닝 에이전트가 ${esc(m.cadence)} 큐레이션 · Folio 디자인 시스템 기반</div>
+        </div>
+      </div>
+      <p>관심사를 바꾸고 싶다면 에이전트에게 한 줄이면 됩니다 — “이번 주는 OO 주제도 탭으로 넣어줘.”</p>
+      <div class="nl-footer__next">📮 <b>다음 호 예고 (Vol.08)</b> — “에이전트 평가(eval)를 직접 짜보기”, 레벨3 교육 설계용 AI 페어 코칭 사례.</div>
+      <p class="nl-footer__disc">※ 기사 내용은 사내 30분 공유용 <b>데모 샘플</b>입니다. 실제 발행 시 에이전트가 수집한 출처·링크로 교체하세요. · 디자인: Folio (claude.ai/design) · 단일 HTML, 외부 의존성 없음(폰트 CDN 제외).</p>
+    </footer>`;
+})();
+
+/* ============================================================================
+   테마 — 시스템 자동 반영(기본) + 명시적 라이트/다크 오버라이드
+   ============================================================================ */
+(function () {
+  const root = document.documentElement;
+  const body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+
+  function saved() { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } }
+  function systemDark() { return mq ? mq.matches : false; }
+  function resolvedDark() {
+    const s = saved();
+    if (s === "dark") return true;
+    if (s === "light") return false;
+    return systemDark(); // 기본: 시스템 설정 따르기
+  }
+  function apply() { body.classList.toggle("fl-dark", resolvedDark()); }
+
+  btn.addEventListener("click", () => {
+    const next = resolvedDark() ? "light" : "dark";
+    try { localStorage.setItem("nl-theme", next); } catch (e) {}
+    root.dataset.nlTheme = next;
+    apply();
+  });
+  // 오버라이드가 없으면 시스템 설정 변경을 실시간 반영
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+
+</body>
+</html>
