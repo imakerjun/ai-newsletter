@@ -10,30 +10,20 @@
 ```yaml
 owner: 메이커준
 cadence: 매일 아침 08:00 (Asia/Seoul)
-interests:                      # 관심사 = 탭. 추가/삭제 자유. 3~5개 권장.
-  - id: dev
-    label: 개발자가 꼭 아는 AI
-    icon: 🤖
+interests:                      # 관심사 = 탭. 추가/삭제 자유. 2~5개 권장.
+  - id: news
+    label: AI 최신 소식
+    icon: 📰
     tint: blue
-    focus: 에이전트형 코딩, 모델 릴리스, 개발 생산성, 컨텍스트 엔지니어링
-  - id: design
-    label: AI로 디자인 잘하기
-    icon: 🎨
-    tint: purple
-    focus: design-to-code, 디자인 시스템을 컨텍스트로 주기, AI 디자인 도구
-  - id: teach
-    label: AI로 가르치기
-    icon: 🎓
+    focus: 새 모델·기능, AI 제품 동향, 일상·업무에 들어온 AI (전문 용어는 풀어서)
+  - id: everyone
+    label: 비개발자가 꼭 아는 AI
+    icon: 🧭
     tint: green
-    focus: 개인화 학습, AI 튜터, 바이브코딩 교육 사례
-  - id: build
-    label: 에이전트 만들기
-    icon: 🛠️
-    tint: orange
-    focus: 서브에이전트/하네스 패턴, MCP, 에이전트 평가(eval)
-persona_context: |             # '나를 위한 한 줄'을 쓸 때 참고할 내 맥락
-  우아한형제들 FE팀, 우아한테크코스 코치, 하네스/에이전트 엔지니어링과
-  바이브코딩 워크숍을 운영. 교육·코칭에 바로 쓸 수 있는 각도로 연결할 것.
+    focus: 코드 없이 쓰는 업무 활용(문서·요약·번역), AI 리터러시, 환각·정보보안 주의점
+persona_context: |             # '나를 위한 한 줄'을 쓸 때 참고할 독자 맥락
+  회사의 비개발 직군을 포함한 전사 임직원 누구나. 전문 용어는 풀어 쓰고,
+  "이게 내 업무에 어떻게 쓰이는가"를 한 문장으로 연결할 것. 과장·홍보톤 금지.
 slack_webhook_env: SLACK_WEBHOOK_URL   # 발송용 Incoming Webhook (환경변수)
 tint_options: [blue, purple, green, orange, pink]
 ```
