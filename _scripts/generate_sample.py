@@ -119,18 +119,18 @@ EVERY_ART = [
      "중요도가 높을수록 교차 확인을 늘리세요. 가벼운 초안은 그대로, 공식 문서는 꼼꼼히."),
 ]
 
-def mk_topic(tid, label, icon, tint, desc, hl_pool, art_pool, i):
+def mk_topic(tid, label, icon, tint, desc, hl_pool, art_pool, i, pub_today, pub_prev):
     hl = hl_pool[i % len(hl_pool)]
     a1 = art_pool[i % len(art_pool)]
     a2 = art_pool[(i + 3) % len(art_pool)]
-    def art(a, t):
-        return {"tag": a[0], "source": SRC[a[1]][0], "url": SRC[a[1]][1], "time": t,
+    def art(a, t, pub):
+        return {"tag": a[0], "source": SRC[a[1]][0], "url": SRC[a[1]][1], "time": t, "published": pub,
                 "title": a[2], "summary": a[3], "detail": a[4],
                 "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."}
     return {"id": tid, "label": label, "icon": icon, "tint": tint, "desc": desc,
-            "highlight": {"kicker": "오늘의 핵심", "title": hl[0], "summary": hl[1],
-                          "detail": hl[4], "source": SRC[hl[2]][0], "url": SRC[hl[2]][1], "foryou": hl[3]},
-            "articles": [art(a1, "오늘"), art(a2, "어제")]}
+            "highlight": {"kicker": "오늘의 핵심", "title": hl[0], "summary": hl[1], "detail": hl[4],
+                          "source": SRC[hl[2]][0], "url": SRC[hl[2]][1], "published": pub_today, "foryou": hl[3]},
+            "articles": [art(a1, "오늘", pub_today), art(a2, "어제", pub_prev)]}
 
 WD = ["월", "화", "수", "목", "금", "토", "일"]
 start = datetime.date(2026, 5, 19)
@@ -152,10 +152,11 @@ for idx, dt in enumerate(dates):
     wd = WD[dt.weekday()]
     date_ko = f"{dt.year}년 {dt.month}월 {dt.day}일 ({wd})"
     label = f"Vol.{vol:02d}"
+    prev = (dt - datetime.timedelta(days=1)).isoformat()
     news = mk_topic("news", "AI 최신 소식", "📰", "blue",
-                    "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_HL, NEWS_ART, idx)
+                    "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_HL, NEWS_ART, idx, iso, prev)
     every = mk_topic("everyone", "비개발자를 위한 AI 소식", "🧭", "green",
-                     "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_HL, EVERY_ART, idx)
+                     "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_HL, EVERY_ART, idx, iso, prev)
     nl = {
         "meta": {
             "icon": "🗞️", "edition": label, "cadence": "일간",

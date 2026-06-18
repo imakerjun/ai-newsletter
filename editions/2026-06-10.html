@@ -449,6 +449,7 @@ const NEWSLETTER = {
         "detail": "오래 도는 작업일수록 ‘무엇을 어떤 기준으로 끝낼지’를 미리 정해주는 게 중요합니다. 그래야 엉뚱한 방향으로 길게 가지 않습니다.",
         "source": "Anthropic 뉴스",
         "url": "https://www.anthropic.com/news",
+        "published": "2026-06-10",
         "foryou": "급한 일 말고 ‘오래 걸려도 되는 정리·조사’부터 맡겨보면 진가를 느낄 수 있어요."
       },
       "articles": [
@@ -457,6 +458,7 @@ const NEWSLETTER = {
           "source": "OpenAI 블로그",
           "url": "https://openai.com/news/",
           "time": "오늘",
+          "published": "2026-06-10",
           "title": "이미지 생성·편집 품질이 실무에 쓸 수준으로",
           "summary": "간단한 설명만으로 발표 자료용 이미지를 만들거나 기존 이미지를 손보는 품질이 빠르게 올라왔습니다. 디자이너가 아니어도 초안 시각자료를 직접 만드는 사례가 늘고 있어요.",
           "detail": "최종 결과물보다 ‘아이디어 시안’을 빠르게 여러 개 뽑는 용도로 쓰면 부담이 적습니다.",
@@ -467,6 +469,7 @@ const NEWSLETTER = {
           "source": "MIT Technology Review",
           "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
           "time": "어제",
+          "published": "2026-06-09",
           "title": "‘프롬프트’보다 ‘맥락 제공’이 결과를 가른다",
           "summary": "무엇을 원하는지뿐 아니라 ‘왜 필요한지, 누가 볼지’ 같은 맥락을 함께 주면 결과 품질이 눈에 띄게 오릅니다. 잘 쓰는 사람과 아닌 사람의 차이가 여기서 갈린다는 분석이 많아졌어요.",
           "detail": "요청 앞에 ‘이건 임원 보고용이야’ 같은 한 줄만 붙여도 톤과 깊이가 달라집니다.",
@@ -487,6 +490,7 @@ const NEWSLETTER = {
         "detail": "한 번에 모든 걸 자동화하려다 지치는 경우가 많습니다. 한 가지가 안정적으로 돌면 그다음을 늘리는 식이 오래갑니다.",
         "source": "The Verge — AI",
         "url": "https://www.theverge.com/ai-artificial-intelligence",
+        "published": "2026-06-10",
         "foryou": "‘매주 똑같이 하는 일’ 목록을 적어보세요. 거기에 자동화할 거리가 다 있습니다."
       },
       "articles": [
@@ -495,6 +499,7 @@ const NEWSLETTER = {
           "source": "MIT Technology Review",
           "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
           "time": "오늘",
+          "published": "2026-06-10",
           "title": "비개발 직군의 AI 활용 사례 모음",
           "summary": "기획은 시장 자료 비교, 마케팅은 카피 초안과 A/B 문구, CS는 답변 초안과 분류처럼 직군마다 바로 쓰는 패턴이 자리잡고 있습니다. 남의 사례를 그대로 따라 해보는 게 빠릅니다.",
           "detail": "내 직무와 비슷한 사례 하나를 골라 이번 주에 그대로 재현해보세요.",
@@ -505,6 +510,7 @@ const NEWSLETTER = {
           "source": "Claude 활용 가이드",
           "url": "https://platform.claude.com/docs/ko/",
           "time": "어제",
+          "published": "2026-06-09",
           "title": "AI를 믿되 확인하기 — 출처와 민감정보",
           "summary": "AI 답이 그럴듯해도 중요한 사실은 출처로 교차 확인하고, 민감정보는 입력하지 않는 두 습관이면 대부분 안전합니다. 특히 숫자·법규·인용은 반드시 원문을 봐야 합니다.",
           "detail": "‘근거 링크도 같이 줘’라고 요청하면 검증이 훨씬 쉬워집니다.",
@@ -566,6 +572,7 @@ const NEWSLETTER = {
             ? `<a class="nl-src" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}<span class="nl-src__ext">↗</span></a>`
             : `<span>${esc(a.source)}</span>`}
           <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
+          ${a.published ? `<span class="nl-card__dot"></span><span>🗓 발행 ${esc(a.published)}</span>` : ""}
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
         <p class="nl-card__summary">${esc(a.summary)}</p>
@@ -593,7 +600,7 @@ const NEWSLETTER = {
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
         ${detailBlock(t.highlight.detail)}
         ${t.highlight.url
-          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
+          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a>${t.highlight.published ? ` · 🗓 발행 ${esc(t.highlight.published)}` : ""}</div>`
           : ""}
         <div class="nl-foryou nl-foryou--lg">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>

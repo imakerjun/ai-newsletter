@@ -449,6 +449,7 @@ const NEWSLETTER = {
         "detail": "특히 회의 화이트보드 사진, 영수증, 제품 라벨처럼 ‘찍어서 묻는’ 활용이 실무에서 바로 통합니다. 다만 흐릿하거나 민감정보가 담긴 이미지는 주의가 필요합니다.",
         "source": "Anthropic 뉴스",
         "url": "https://www.anthropic.com/news",
+        "published": "2026-05-29",
         "foryou": "스크린샷 한 장 붙여넣고 ‘이거 표로 정리해줘’ 한마디면 됩니다. 가장 쉽게 체감하는 변화예요."
       },
       "articles": [
@@ -457,6 +458,7 @@ const NEWSLETTER = {
           "source": "The Verge — AI",
           "url": "https://www.theverge.com/ai-artificial-intelligence",
           "time": "오늘",
+          "published": "2026-05-29",
           "title": "노트·메신저에 ‘요약’ 기능이 기본 탑재되는 추세",
           "summary": "긴 대화 스레드나 문서를 한 줄로 줄여주는 요약 기능이 별도 도구가 아니라 기본 기능으로 들어오고 있습니다. 정보를 따라잡는 부담을 줄여준다는 점에서 호응이 큽니다.",
           "detail": "안 읽은 메신저 스레드를 ‘핵심만 요약’으로 따라잡는 것만으로도 하루가 가벼워집니다.",
@@ -467,6 +469,7 @@ const NEWSLETTER = {
           "source": "MIT Technology Review",
           "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
           "time": "어제",
+          "published": "2026-05-28",
           "title": "AI 시대의 정보보안 — 무엇을 입력하면 안 되나",
           "summary": "편리함만큼 ‘무엇을 넣어도 되는가’가 중요해졌습니다. 고객 정보·미공개 자료·계정 정보는 외부 AI에 입력하지 않는 게 기본 원칙이에요. 회사별 정책을 확인하는 것이 첫걸음입니다.",
           "detail": "‘이 내용이 외부로 나가도 괜찮은가?’를 한 번 자문하는 습관이 사고를 막습니다.",
@@ -487,6 +490,7 @@ const NEWSLETTER = {
         "detail": "‘이 답의 근거가 뭐야? 출처 알려줘’라고 되묻는 습관이 환각을 거르는 가장 쉬운 방법입니다. 출처를 못 대면 의심하세요.",
         "source": "Claude 활용 가이드",
         "url": "https://platform.claude.com/docs/ko/",
+        "published": "2026-05-29",
         "foryou": "이름·연락처·계정·기밀은 넣지 않기. 사내 정보보안 정책을 한 번 확인해두면 안심입니다."
       },
       "articles": [
@@ -495,6 +499,7 @@ const NEWSLETTER = {
           "source": "The Verge — AI",
           "url": "https://www.theverge.com/ai-artificial-intelligence",
           "time": "오늘",
+          "published": "2026-05-29",
           "title": "처음 쓰는 사람을 위한 AI 사용 5단계",
           "summary": "거창하게 시작하기보다 작은 일 하나를 매일 맡겨보는 게 가장 빠른 입문법입니다. 요약→초안→번역→정리→자동화 순으로 한 단계씩 넓혀가면 부담이 없어요.",
           "detail": "첫 주는 ‘긴 글 요약’ 한 가지만 매일 써보는 걸로 충분합니다.",
@@ -505,6 +510,7 @@ const NEWSLETTER = {
           "source": "Anthropic 뉴스",
           "url": "https://www.anthropic.com/news",
           "time": "어제",
+          "published": "2026-05-28",
           "title": "AI가 만든 결과, 어디까지 믿을까",
           "summary": "AI는 자신감 있게 틀리기도 합니다. 그래서 ‘무엇을 검증해야 하는가’를 아는 것이 활용 실력의 일부예요. 핵심 사실·수치는 사람이 최종 확인한다는 원칙을 세워두면 됩니다.",
           "detail": "중요도가 높을수록 교차 확인을 늘리세요. 가벼운 초안은 그대로, 공식 문서는 꼼꼼히.",
@@ -566,6 +572,7 @@ const NEWSLETTER = {
             ? `<a class="nl-src" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}<span class="nl-src__ext">↗</span></a>`
             : `<span>${esc(a.source)}</span>`}
           <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
+          ${a.published ? `<span class="nl-card__dot"></span><span>🗓 발행 ${esc(a.published)}</span>` : ""}
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
         <p class="nl-card__summary">${esc(a.summary)}</p>
@@ -593,7 +600,7 @@ const NEWSLETTER = {
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
         ${detailBlock(t.highlight.detail)}
         ${t.highlight.url
-          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
+          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a>${t.highlight.published ? ` · 🗓 발행 ${esc(t.highlight.published)}` : ""}</div>`
           : ""}
         <div class="nl-foryou nl-foryou--lg">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>

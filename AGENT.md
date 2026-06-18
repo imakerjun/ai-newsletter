@@ -92,10 +92,12 @@ tint_options: [blue, purple, green, orange, pink]
 ## 2. 콘텐츠 규칙
 
 - 사실 검증: 출처가 모호하면 단정하지 말고 "~로 보인다/논의되는 중" 톤으로.
-- **출처 링크 필수**: highlight와 각 article 모두 `source`(매체명) + `url`(원문 링크)을 채운다.
-  - 데이터 형태: `highlight: { kicker, title, summary, detail?, source, url, foryou }`,
-    `articles: [{ tag, source, url, time, title, summary, detail?, foryou }]`
-  - `url`은 **실제 원문 주소**여야 한다. 확인하지 못한 링크는 지어내지 말고 그 항목을 빼라(허위 링크 금지).
+- **출처 링크 + 발행일 필수**: highlight와 각 article 모두 `source`(매체명) + `url`(원문 링크) + `published`(출처 발행일)을 채운다.
+  - 데이터 형태: `highlight: { kicker, title, summary, detail?, source, url, published, foryou }`,
+    `articles: [{ tag, source, url, time, published, title, summary, detail?, foryou }]`
+  - `published`는 **원문이 실제로 발행된 날짜**(`YYYY-MM-DD`). 카드에 ‘🗓 발행 …’으로 표기되어 신선도를 보여준다.
+    `time`(오늘/어제/N시간 전)은 발행 시점 기준 상대 시각, `published`는 절대 날짜 — 둘 다 채운다.
+  - `url`·`published`는 **실제 값**이어야 한다. 확인하지 못하면 지어내지 말고 그 항목을 빼라(허위 링크·허위 날짜 금지).
 - **한국어로 정리**: 영어 출처라도 `title`·`summary`·`detail`·`foryou`는 한국어로 번역·요약한다.
   원제가 중요하면 제목 끝에 괄호로 병기한다(예: "… (원제: …)"). 핵심 용어는 풀어 쓰되 필요 시 영어 병기.
 - **요약은 ‘무슨 소식인지’ 파악되게**: 한 줄 요약 금지. 출처 페이지의 내용을 적절한 분량으로 요약한다 —

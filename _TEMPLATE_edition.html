@@ -566,6 +566,7 @@ const NEWSLETTER = {
             ? `<a class="nl-src" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}<span class="nl-src__ext">↗</span></a>`
             : `<span>${esc(a.source)}</span>`}
           <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
+          ${a.published ? `<span class="nl-card__dot"></span><span>🗓 발행 ${esc(a.published)}</span>` : ""}
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
         <p class="nl-card__summary">${esc(a.summary)}</p>
@@ -593,7 +594,7 @@ const NEWSLETTER = {
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
         ${detailBlock(t.highlight.detail)}
         ${t.highlight.url
-          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
+          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a>${t.highlight.published ? ` · 🗓 발행 ${esc(t.highlight.published)}` : ""}</div>`
           : ""}
         <div class="nl-foryou nl-foryou--lg">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>

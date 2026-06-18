@@ -433,7 +433,7 @@ const NEWSLETTER = {
       "AI 뉴스레터"
     ],
     "lead": "발행일 기준 지난 24시간의 AI 소식을 관심사 탭으로 나눠 전합니다. 주제마다 ‘딱 하나의 핵심’을 크게, 카드만 봐도 무슨 소식인지 파악되도록 요약했어요.",
-    "greeting": "안녕하세요! 지난 24시간의 AI 소식 중, 업계 주요 뉴스와 비개발자가 바로 써볼 만한 것 두 갈래로 골랐어요. 각 탭 맨 위의 큰 카드가 <b>그날의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다."
+    "greeting": "안녕하세요! 오늘은 애플이 여러 AI를 골라 쓰는 새 Siri를 공개했고(아이폰에 Claude도!), Claude Code는 결과를 ‘아티팩트’ 웹페이지로 공유하는 기능을 선보였어요. 각 탭 맨 위의 큰 카드가 <b>오늘의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다."
   },
   "topics": [
     {
@@ -444,33 +444,36 @@ const NEWSLETTER = {
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "멀티모달이 ‘기본’이 됐다 — 글·이미지·음성을 한 화면에서",
-        "summary": "예전에는 텍스트는 챗봇, 이미지는 별도 도구로 나눠 써야 했지만, 이제 한 대화 안에서 사진을 보여주며 말로 묻고 표·요약으로 답을 받는 사용이 자연스러워졌습니다. 캡처한 화면, 손으로 쓴 메모, 도표까지 이해하는 수준이 빠르게 올라가는 중입니다. 입력·출력의 형식 제약이 사라지면서 ‘무엇을 시킬까’만 고민하면 되는 단계로 가고 있어요.",
-        "detail": "특히 회의 화이트보드 사진, 영수증, 제품 라벨처럼 ‘찍어서 묻는’ 활용이 실무에서 바로 통합니다. 다만 흐릿하거나 민감정보가 담긴 이미지는 주의가 필요합니다.",
-        "source": "Anthropic 뉴스",
-        "url": "https://www.anthropic.com/news",
-        "foryou": "스크린샷 한 장 붙여넣고 ‘이거 표로 정리해줘’ 한마디면 됩니다. 가장 쉽게 체감하는 변화예요."
+        "title": "애플, Gemini 기반 새 Siri 공개 — 아이폰에서 Claude·ChatGPT도 고른다",
+        "summary": "애플이 구글 Gemini로 구동되는 새 Siri와 함께, 여러 AI를 골라 쓰는 ‘AI 익스텐션’을 발표했습니다. 이로써 아이폰에서 Claude를 기본 옵션으로 선택할 수 있게 된 것이 처음입니다. 관련 변경은 6월 8일 공개된 iOS 27 베타 1에 담겼어요. 음성 비서 영역에서도 ‘한 회사 모델 독점’이 아니라 ‘골라 쓰는’ 구도로 가는 신호입니다.",
+        "detail": "비서·운영체제처럼 일상 접점이 큰 제품이 멀티-AI로 열리는 건 사용자 선택권 측면에서 의미가 큽니다. 다만 어떤 작업에 어떤 모델이 쓰이는지, 입력한 데이터가 어디로 가는지는 확인할 필요가 있습니다.",
+        "source": "Build Fast with AI",
+        "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+        "published": "2026-06-08",
+        "foryou": "아이폰을 쓴다면 iOS 27 베타에서 어떤 AI를 기본 비서로 둘지 직접 골라보세요."
       },
       "articles": [
         {
-          "tag": "동향",
-          "source": "OpenAI 블로그",
-          "url": "https://openai.com/news/",
+          "tag": "모델",
+          "source": "LLM-Stats",
+          "url": "https://llm-stats.com/ai-news",
           "time": "오늘",
-          "title": "이미지 생성·편집 품질이 실무에 쓸 수준으로",
-          "summary": "간단한 설명만으로 발표 자료용 이미지를 만들거나 기존 이미지를 손보는 품질이 빠르게 올라왔습니다. 디자이너가 아니어도 초안 시각자료를 직접 만드는 사례가 늘고 있어요.",
-          "detail": "최종 결과물보다 ‘아이디어 시안’을 빠르게 여러 개 뽑는 용도로 쓰면 부담이 적습니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "published": "2026-06-17",
+          "title": "구글 Gemini 3.5 Pro·앤트로픽 Claude Sonnet 4.8, 이달 내 출시 예상",
+          "summary": "이달 안에 구글 Gemini 3.5 Pro와 앤트로픽 Claude Sonnet 4.8이 잇따라 공개될 것으로 전망됩니다. xAI Grok 5, 앤트로픽 Claude Mythos 1까지 주요 모델 소식이 같은 시기에 몰리는 분위기예요.",
+          "detail": "비슷한 시기에 모델이 쏟아지면 ‘무엇을 쓰느냐’보다 ‘무엇을 어디에 쓰느냐’가 더 중요해집니다. 작업별로 모델을 갈아 끼우는 감각이 필요해집니다.",
+          "foryou": "내가 자주 하는 작업 1~2개에 어떤 모델이 맞는지 비교해볼 좋은 시점입니다."
         },
         {
-          "tag": "흐름",
-          "source": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
+          "tag": "엔터프라이즈",
+          "source": "CNBC",
+          "url": "https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html",
           "time": "어제",
-          "title": "‘프롬프트’보다 ‘맥락 제공’이 결과를 가른다",
-          "summary": "무엇을 원하는지뿐 아니라 ‘왜 필요한지, 누가 볼지’ 같은 맥락을 함께 주면 결과 품질이 눈에 띄게 오릅니다. 잘 쓰는 사람과 아닌 사람의 차이가 여기서 갈린다는 분석이 많아졌어요.",
-          "detail": "요청 앞에 ‘이건 임원 보고용이야’ 같은 한 줄만 붙여도 톤과 깊이가 달라집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "published": "2026-06-01",
+          "title": "MS 파운드리 모델 카탈로그, 1만 1천 개 돌파",
+          "summary": "마이크로소프트 Foundry 카탈로그가 OpenAI GPT-5.5, 앤트로픽 Claude Opus 4.8·Sonnet·Haiku, 구글 Gemini 등 프런티어 모델을 포함해 1만 1천 개를 넘어섰습니다. 기업이 한곳에서 여러 모델을 골라 쓰는 ‘모델 마켓플레이스’ 경쟁이 본격화되는 모습입니다.",
+          "detail": "모델이 많아질수록 ‘무엇을 고를까’가 일이 됩니다. 그래서 평가 기준을 세워 두고 작업에 맞는 모델을 고르는 역량이 점점 중요해집니다.",
+          "foryou": "여러 모델을 쓸 수 있다면, 같은 작업을 2개 모델에 시켜 비교해보는 습관이 도움이 됩니다."
         }
       ]
     },
@@ -482,33 +485,36 @@ const NEWSLETTER = {
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "매일 5분, 업무 한 조각을 AI로 자동화하기",
-        "summary": "거창한 도입이 아니라 ‘매주 똑같이 반복하는 일’ 하나를 AI에 맡기는 작은 습관이 가장 큰 변화를 만듭니다. 회의록 정리, 주간 보고 초안, 메일 분류 같은 것부터 시작하면 좋아요. 하루 5분씩 한 달이면 ‘AI 없이 어떻게 일했지’ 싶어집니다. 중요한 건 완벽한 자동화가 아니라 꾸준한 작은 위임입니다.",
-        "detail": "한 번에 모든 걸 자동화하려다 지치는 경우가 많습니다. 한 가지가 안정적으로 돌면 그다음을 늘리는 식이 오래갑니다.",
-        "source": "The Verge — AI",
-        "url": "https://www.theverge.com/ai-artificial-intelligence",
-        "foryou": "‘매주 똑같이 하는 일’ 목록을 적어보세요. 거기에 자동화할 거리가 다 있습니다."
+        "title": "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 만들어 팀과 공유",
+        "summary": "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 코드나 분석 결과를 별도 변환 없이 보기 좋은 페이지로 내보낼 수 있다는 뜻이에요. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
+        "detail": "사실 지금 보고 있는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 사람이 보기 좋은 형태로 내보내는’ 흐름이 비개발자 활용의 핵심이 되고 있어요.",
+        "source": "AI Weekly",
+        "url": "https://aiweekly.co/ai-news-today/anthropic-news",
+        "published": "2026-06-16",
+        "foryou": "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요 — 이 뉴스레터가 바로 그 예시입니다."
       },
       "articles": [
         {
-          "tag": "사례",
-          "source": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
+          "tag": "기능 업데이트",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
           "time": "오늘",
-          "title": "비개발 직군의 AI 활용 사례 모음",
-          "summary": "기획은 시장 자료 비교, 마케팅은 카피 초안과 A/B 문구, CS는 답변 초안과 분류처럼 직군마다 바로 쓰는 패턴이 자리잡고 있습니다. 남의 사례를 그대로 따라 해보는 게 빠릅니다.",
-          "detail": "내 직무와 비슷한 사례 하나를 골라 이번 주에 그대로 재현해보세요.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "published": "2026-06-08",
+          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 상담 기능 강화",
+          "summary": "OpenAI가 ChatGPT의 건강 관련 응답 능력을 GPT-5.5 Instant로 끌어올렸습니다. 빠른 응답형 모델로 일상적 질문에 더 적절히 답하도록 개선됐어요. 다만 의료 판단은 전문가 확인이 필요하다는 점은 그대로입니다.",
+          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치는 습관이 중요합니다.",
+          "foryou": "민감한 주제일수록 AI 답은 출발점으로만 쓰고 꼭 사람이 확인하세요."
         },
         {
-          "tag": "꼭 알아두기",
-          "source": "Claude 활용 가이드",
-          "url": "https://platform.claude.com/docs/ko/",
+          "tag": "시도해보기",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
           "time": "어제",
-          "title": "AI를 믿되 확인하기 — 출처와 민감정보",
-          "summary": "AI 답이 그럴듯해도 중요한 사실은 출처로 교차 확인하고, 민감정보는 입력하지 않는 두 습관이면 대부분 안전합니다. 특히 숫자·법규·인용은 반드시 원문을 봐야 합니다.",
-          "detail": "‘근거 링크도 같이 줘’라고 요청하면 검증이 훨씬 쉬워집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "published": "2026-06-08",
+          "title": "아이폰 Siri에 Claude·ChatGPT가 붙는다 — 골라 쓰는 비서",
+          "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈이에요.",
+          "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 가장 진입장벽이 낮습니다.",
+          "foryou": "베타가 부담되면, 지금 쓰는 AI 앱 하나를 음성으로 불러 쓰는 것부터 익혀보세요."
         }
       ]
     }
@@ -566,6 +572,7 @@ const NEWSLETTER = {
             ? `<a class="nl-src" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}<span class="nl-src__ext">↗</span></a>`
             : `<span>${esc(a.source)}</span>`}
           <span class="nl-card__dot"></span><span>${esc(a.time)}</span>
+          ${a.published ? `<span class="nl-card__dot"></span><span>🗓 발행 ${esc(a.published)}</span>` : ""}
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
         <p class="nl-card__summary">${esc(a.summary)}</p>
@@ -593,7 +600,7 @@ const NEWSLETTER = {
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
         ${detailBlock(t.highlight.detail)}
         ${t.highlight.url
-          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
+          ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a>${t.highlight.published ? ` · 🗓 발행 ${esc(t.highlight.published)}` : ""}</div>`
           : ""}
         <div class="nl-foryou nl-foryou--lg">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>
