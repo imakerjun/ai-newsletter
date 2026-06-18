@@ -128,9 +128,9 @@ def mk_topic(tid, label, icon, tint, desc, hl_pool, art_pool, i):
                 "title": a[2], "summary": a[3], "detail": a[4],
                 "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."}
     return {"id": tid, "label": label, "icon": icon, "tint": tint, "desc": desc,
-            "highlight": {"kicker": "이 주제의 핵심", "title": hl[0], "summary": hl[1],
+            "highlight": {"kicker": "오늘의 핵심", "title": hl[0], "summary": hl[1],
                           "detail": hl[4], "source": SRC[hl[2]][0], "url": SRC[hl[2]][1], "foryou": hl[3]},
-            "articles": [art(a1, "이번 주"), art(a2, "최근")]}
+            "articles": [art(a1, "오늘"), art(a2, "어제")]}
 
 WD = ["월", "화", "수", "목", "금", "토", "일"]
 start = datetime.date(2026, 5, 19)
@@ -153,16 +153,16 @@ for idx, dt in enumerate(dates):
     date_ko = f"{dt.year}년 {dt.month}월 {dt.day}일 ({wd})"
     label = f"Vol.{vol:02d}"
     news = mk_topic("news", "AI 최신 소식", "📰", "blue",
-                    "이번 호, 알아두면 대화에 끼는 AI 흐름.", NEWS_HL, NEWS_ART, idx)
-    every = mk_topic("everyone", "비개발자가 꼭 아는 AI", "🧭", "green",
-                     "코드를 몰라도, 업무에 바로 쓰는 AI.", EVERY_HL, EVERY_ART, idx)
+                    "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_HL, NEWS_ART, idx)
+    every = mk_topic("everyone", "비개발자를 위한 AI 소식", "🧭", "green",
+                     "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_HL, EVERY_ART, idx)
     nl = {
         "meta": {
             "icon": "🗞️", "edition": label, "cadence": "일간",
             "date": date_ko, "curator": "러닝 에이전트 (Claude Cowork)", "reader": "메이커준",
-            "title": ["메이커준의 ", "AI 위클리"],
-            "lead": "관심사를 탭으로 나눠 읽는 개인화 뉴스레터. 주제마다 이번 호 ‘딱 하나의 핵심’을 크게, 카드만 봐도 무슨 소식인지 파악되도록 요약했어요.",
-            "greeting": "안녕하세요! 오늘 호는 누구나 알아두면 좋은 AI 흐름과, 코드를 몰라도 업무에 바로 쓰는 활용법 두 가지로 골랐어요. 각 탭 맨 위의 큰 카드가 <b>그 주제의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다.",
+            "title": ["데일리 ", "AI 뉴스레터"],
+            "lead": "발행일 기준 지난 24시간의 AI 소식을 관심사 탭으로 나눠 전합니다. 주제마다 ‘딱 하나의 핵심’을 크게, 카드만 봐도 무슨 소식인지 파악되도록 요약했어요.",
+            "greeting": "안녕하세요! 지난 24시간의 AI 소식 중, 업계 주요 뉴스와 비개발자가 바로 써볼 만한 것 두 갈래로 골랐어요. 각 탭 맨 위의 큰 카드가 <b>그날의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다.",
         },
         "topics": [news, every],
     }
@@ -171,13 +171,13 @@ for idx, dt in enumerate(dates):
     (editions_dir / f"{iso}.html").write_text(html, encoding="utf-8")
     archive.append({"date": iso, "weekday": wd, "label": label,
                     "title": f"{news['highlight']['title']} · {every['highlight']['title']}"[:60],
-                    "topics": ["AI 최신 소식", "비개발자가 꼭 아는 AI"], "href": f"editions/{iso}.html"})
+                    "topics": ["AI 최신 소식", "비개발자를 위한 AI 소식"], "href": f"editions/{iso}.html"})
 
 archive.reverse()
 ARCHIVE = {
     "meta": {
-        "icon": "🗞️", "title": ["메이커준의 ", "AI 위클리"],
-        "lead": "러닝 에이전트가 내 관심사에 맞춰 매일 발행하는 개인화 AI 뉴스레터. 지난 호를 여기에 모아둡니다.",
+        "icon": "🗞️", "title": ["데일리 ", "AI 뉴스레터"],
+        "lead": "러닝 에이전트가 내 관심사에 맞춰 매일(영업일) 발행하는 개인화 AI 뉴스레터. 지난 24시간의 주요 소식을 골라 담고, 지난 호를 여기에 모아둡니다.",
         "owner": "메이커준", "cadence": "매일(영업일)",
     },
     "editions": archive,
