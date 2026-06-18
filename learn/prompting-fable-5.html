@@ -117,6 +117,18 @@ body.fl-dark .nl-ico-moon { display: block; }
 .lens-prose .etymo b { font-size: 15px; }
 .lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 전문 번역 — 프롬프트(한국어 번역 + 접이식 영어 원문) */
+.lens-prose .tp { margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--fl-tint-blue); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; }
+.lens-prose .tp > p { margin: 0; color: var(--fl-text); }
+.lens-prose details { margin: 8px 0 0; }
+.lens-prose summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--fl-text-tertiary); padding: 4px 0; list-style: none; }
+.lens-prose summary::-webkit-details-marker { display: none; }
+.lens-prose summary::before { content: "▸ "; }
+.lens-prose details[open] summary::before { content: "▾ "; }
+.lens-prose pre { margin: 8px 0 0; padding: 12px 14px; background: var(--fl-surface-3); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius); overflow-x: auto; font-family: var(--fl-font-mono); font-size: 12px; line-height: 1.6; color: var(--fl-text); white-space: pre-wrap; word-break: break-word; }
+.lens-prose .src-note { display: flex; gap: 10px; padding: 12px 14px; background: var(--fl-tint-blue-bg); border-radius: var(--fl-radius-md); margin: 0 0 18px; font-size: 13px; line-height: 1.6; }
+.lens-prose .src-note a { color: var(--fl-text-link); font-weight: 600; }
+
 /* quiz */
 .quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
 .quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
@@ -271,21 +283,134 @@ const LENS_DOC = {
       ]
     },
     {
-      id: "source", icon: "📄", label: "원문", kind: "prose",
-      hint: "이 페이지는 학습용 <b>요약·각색본</b>입니다. 정확한 내용은 반드시 원문을 확인하세요.",
+      id: "source", icon: "📄", label: "전문(번역)", kind: "prose",
+      hint: "원문 <b>전체를 한국어로</b> 옮긴 렌즈입니다. 영어 프롬프트 예시는 한국어 번역과 함께 복사용 영어 원문도 제공합니다.",
       body: `
-        <h3>출처</h3>
-        <p><strong>Claude Fable 5 프롬프트 작성</strong> — Anthropic 공식문서(한국어).<br/>
-        <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/prompting-claude-fable-5" target="_blank" rel="noopener">platform.claude.com → prompting-claude-fable-5 ↗</a></p>
-        <h3>원문에서 가져온 핵심 지시 예시</h3>
-        <div class="callout"><span class="callout__i">📌</span><p><strong>행동의 근거:</strong> “When you have enough information to act, act. … If you are weighing a choice, give a recommendation, not an exhaustive survey.”</p></div>
-        <div class="callout"><span class="callout__i">📌</span><p><strong>진행 보고 근거화:</strong> “Before reporting progress, audit each claim against a tool result from this session. Only report work you can point to evidence for.”</p></div>
-        <div class="callout"><span class="callout__i">📌</span><p><strong>자율 파이프라인:</strong> “You are operating autonomously. … For reversible actions that follow from the original request, proceed without asking.”</p></div>
+        <div class="src-note"><span>📄</span><div>출처: <strong>Claude Fable 5 프롬프트 작성</strong> — Anthropic 공식문서.
+        정확한 내용·갱신은 <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/prompting-claude-fable-5" target="_blank" rel="noopener">원문 ↗</a>을 확인하세요. 아래는 학습용 한국어 번역본입니다.</div></div>
+
+        <p>이 가이드는 Claude Fable 5 및 Claude Mythos 5에 특화된 프롬프트 작성·스캐폴딩 패턴을 다룹니다. Claude Fable 5는 이전 모델에서는 너무 복잡하거나, 장기 실행이 필요하거나, 모호했던 문제를 처리하며, 사람이 완료하는 데 몇 시간·며칠·몇 주가 걸리는 엔드투엔드 작업에 특히 효과적입니다. 최상의 결과를 얻는 팀은 가장 어려운 미해결 문제에 적용합니다. 더 단순한 작업으로만 시험하면 모델의 역량을 과소평가하기 쉽습니다.</p>
+        <div class="callout"><span class="callout__i">⚠️</span><p>Claude Fable 5는 공격적 사이버 보안·생명과학 콘텐츠, 요약된 thinking 추출을 대상으로 안전 분류기를 실행합니다. 무해한 작업도 트리거될 수 있으며, 거부 시 <code>stop_reason: "refusal"</code>이 반환될 수 있어 Claude Opus 4.8로의 폴백 구성이 권장됩니다.</p></div>
+
+        <h3>역량 향상 (vs Claude Opus 4.8)</h3>
+        <ul>
+          <li><strong>장기 자율성</strong> — 길고 복잡한 작업 전반에서 강한 지시 유지력으로 며칠에 걸친 목표 지향적 실행을 완료합니다.</li>
+          <li><strong>첫 시도 정확성</strong> — 이전에는 며칠 반복이 필요했던 시스템을 단일 패스로 구현했다는 보고가 있습니다.</li>
+          <li><strong>비전</strong> — 밀도 높은 기술 이미지·웹앱·스크린샷을 더 정확히, 종종 더 적은 토큰으로 해석합니다.</li>
+          <li><strong>엔터프라이즈 워크플로</strong> — 지시를 따르고 범위를 유지하며 재무 분석·문서·슬라이드에서 전문가 수준 출력을 냅니다.</li>
+          <li><strong>코드 리뷰·디버깅</strong> — 버그 발견 재현율이 눈에 띄게 높습니다(보안 도메인 제외).</li>
+          <li><strong>모호성 탐색 / 위임·협업</strong> — 다중 스레드 요청에서 다음 단계를 잘 정하고, 병렬 서브에이전트를 안정적으로 디스패치·관리합니다.</li>
+        </ul>
+
+        <h3>기본적으로 더 긴 턴</h3>
+        <p>어려운 작업은 높은 <code>effort</code>에서 수 분, 자율 실행은 몇 시간까지 이어질 수 있습니다. 클라이언트 타임아웃·스트리밍·진행 표시기를 조정하고, 블로킹 대신 예약 작업 등으로 비동기 확인하도록 하네스를 재구성하세요. 모호할 때 과도하게 계획하지 않게 하려면:</p>
+        <div class="tp"><p>“행동하기에 충분한 정보가 있으면 행동하라. 대화에서 이미 확립된 사실을 다시 도출하거나, 사용자가 이미 내린 결정을 다시 논쟁하거나, 추구하지 않을 선택지를 사용자 대면 메시지에서 서술하지 마라. 선택을 저울질 중이라면 모든 것을 나열하지 말고 추천을 제시하라. (단, thinking 블록에는 적용되지 않는다.)”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>When you have enough information to act, act. Do not re-derive facts already established
+in the conversation, re-litigate a decision the user has already made, or narrate
+options you will not pursue in user-facing messages. If you are weighing a choice, give
+a recommendation, not an exhaustive survey. This does not apply to thinking blocks.</pre></details></p></div>
+
+        <h3>모든 effort 수준 고려</h3>
+        <p><code>effort</code>는 지능·지연·비용의 트레이드오프를 제어하는 주 수단입니다. 대부분 <code>high</code>를 기본, 가장 중요한 작업엔 <code>xhigh</code>, 일상엔 <code>medium/low</code>를 쓰세요. 낮은 effort도 종종 이전 모델의 <code>xhigh</code>를 능가합니다. 높은 effort에서 요청하지 않은 정리·리팩토링을 막으려면:</p>
+        <div class="tp"><p>“작업에 필요한 것 이상으로 기능을 추가하거나 리팩토링하거나 추상화를 도입하지 마라. 버그 수정에 주변 정리는 필요 없고, 일회성 작업에 헬퍼는 보통 필요 없다. 가상의 미래 요구를 위해 설계하지 말고 잘 동작하는 가장 단순한 것을 하라. 일어날 수 없는 시나리오의 에러 처리·폴백·검증을 넣지 말고, 시스템 경계(사용자 입력·외부 API)에서만 검증하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Don't add features, refactor, or introduce abstractions beyond what the task requires. A
+bug fix doesn't need surrounding cleanup and a one-shot operation usually doesn't need a
+helper. Don't design for hypothetical future requirements: do the simplest thing that
+works well. Avoid premature abstraction and half-finished implementations. Don't add
+error handling, fallbacks, or validation for scenarios that cannot happen. Trust
+internal code and framework guarantees. Only validate at system boundaries (user input,
+external APIs). Don't use feature flags or backwards-compatibility shims when you can
+just change the code.</pre></details></p></div>
+
+        <h3>강력한 지시 사항 준수</h3>
+        <p>지시 준수가 좋아져, 동작을 일일이 열거하는 대신 짧은 원칙 한 줄로 대부분 조정됩니다. 간결성 지시 예:</p>
+        <div class="tp"><p>“결과부터 말하라. 끝낸 뒤 첫 문장은 ‘무슨 일이 있었는지/무엇을 발견했는지’에 답해야 한다(‘TLDR만 줘’의 그것). 근거와 세부는 그 뒤에. 읽기 쉬움과 짧음은 다르며 읽기 쉬움이 더 중요하다. 짧게 하는 법은 포함할 내용을 선별하는 것이지, 조각·약어·화살표 체인·전문용어로 압축하는 게 아니다.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Lead with the outcome. Your first sentence after finishing should answer "what happened"
+or "what did you find": the thing the user would ask for if they said "just give me the
+TLDR." Supporting detail and reasoning come after. Being readable and being concise are
+different things, and readability matters more.</pre></details></p></div>
+        <p>장기 실행의 체크포인트(멈춤) 동작도 한 줄로:</p>
+        <div class="tp"><p>“정말로 사용자가 필요한 경우에만 멈춰라 — 파괴적·되돌릴 수 없는 작업, 실제 범위 변경, 그들만 줄 수 있는 입력. 그럴 땐 약속으로 끝내지 말고 물어본 뒤 턴을 종료하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Pause for the user only when the work genuinely requires them: a destructive or
+irreversible action, a real scope change, or input that only they can provide. If you
+hit one of these, ask and end the turn, rather than ending on a promise.</pre></details></p></div>
+
+        <h3>장기 실행 중 진행 상황 주장의 근거 확보</h3>
+        <p>진행 상황을 실제 도구 결과에 대조해 감사하도록 지시하면, 허위 상태 보고가 거의 사라집니다.</p>
+        <div class="tp"><p>“진행을 보고하기 전에 각 주장을 이번 세션의 도구 결과와 대조해 감사하라. 증거를 가리킬 수 있는 작업만 보고하고, 검증되지 않은 것은 그렇다고 명시하라. 테스트가 실패하면 출력과 함께 말하고, 건너뛴 단계는 그렇다고 말하고, 완료·검증된 것은 군더더기 없이 분명히 말하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Before reporting progress, audit each claim against a tool result from this session.
+Only report work you can point to evidence for; if something is not yet verified, say so
+explicitly. Report outcomes faithfully: if tests fail, say so with the output; if a step
+was skipped, say that; when something is done and verified, state it plainly without
+hedging.</pre></details></p></div>
+
+        <h3>경계 명시</h3>
+        <div class="tp"><p>“사용자가 변경을 요청하는 게 아니라 문제를 설명·질문·생각 정리 중이라면, 산출물은 너의 ‘판단’이다. 발견을 보고하고 멈춰라. 요청 전엔 고치지 마라. 시스템 상태를 바꾸는 명령(재시작·삭제·설정 변경) 전에 증거가 그 행동을 실제로 뒷받침하는지 확인하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>When the user is describing a problem, asking a question, or thinking out loud rather
+than requesting a change, the deliverable is your assessment. Report your findings and
+stop. Don't apply a fix until they ask for one. Before running a command that changes
+system state (restarts, deletes, config edits), check that the evidence actually
+supports that specific action.</pre></details></p></div>
+
+        <h3>병렬 서브에이전트</h3>
+        <div class="tp"><p>“독립적인 하위 작업은 서브에이전트에 위임하고, 그들이 도는 동안 계속 일하라. 서브에이전트가 길을 벗어나거나 맥락이 부족하면 개입하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Delegate independent subtasks to subagents and keep working while they run. Intervene
+if a subagent goes off track or is missing relevant context.</pre></details></p></div>
+
+        <h3>메모리 시스템 구축</h3>
+        <div class="tp"><p>“교훈 하나를 파일 하나에, 맨 위 한 줄 요약과 함께 저장하라. 수정과 확인된 접근을 똑같이, 왜 중요한지까지 기록하라. 저장소·대화 기록이 이미 담은 건 저장하지 말고, 중복 대신 기존 노트를 갱신하고, 틀린 노트는 삭제하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Store one lesson per file with a one-line summary at the top. Record corrections and
+confirmed approaches alike, including why they mattered. Don't save what the repo or
+chat history already records; update an existing note rather than creating a duplicate;
+delete notes that turn out to be wrong.</pre></details></p></div>
+
+        <h3>드물게 발생하는 조기 중단</h3>
+        <p>긴 세션에서 도구 호출 없이 “이제 X를 실행하겠습니다”로 끝내거나, 충분한 정보가 있는데 허락을 구하며 멈출 때가 있습니다. “계속하세요/처음부터 끝까지 진행하세요”면 충분합니다. 자율 파이프라인에는:</p>
+        <div class="tp"><p>“너는 자율적으로 동작 중이다. 사용자는 실시간으로 보지 않으며 중간에 답할 수 없으니 ‘~할까요?’는 작업을 막는다. 원래 요청에서 따라오는 되돌릴 수 있는 작업은 묻지 말고 진행하라. 턴을 끝내기 전 마지막 문단을 점검하라 — 계획·분석·질문·다음 단계·약속(‘~하겠습니다’)이면, 지금 도구 호출로 그 일을 하라. 완료됐거나 사용자만 줄 수 있는 입력에 막혔을 때만 끝내라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>You are operating autonomously. The user is not watching in real time and cannot answer
+questions mid-task, so asking "Want me to…?" or "Shall I…?" will block the work. For
+reversible actions that follow from the original request, proceed without asking.
+Offering follow-ups after the task is done is fine; asking permission after already
+discussing with the user before doing the work is not. Before ending your turn, check
+your last paragraph. If it is a plan, an analysis, a question, a list of next steps, or
+a promise about work you have not done ("I'll…", "let me know when…"), do that work now
+with tool calls. End your turn only when the task is complete or you are blocked on
+input only the user can provide.</pre></details></p></div>
+
+        <h3>드물게 발생하는 컨텍스트 예산 우려</h3>
+        <p>아주 긴 세션에서 새 세션을 제안하거나 작업을 축소할 수 있습니다(하네스가 남은 토큰을 표시할 때 잦음). 가능하면 토큰 카운트를 노출하지 말고, 표시해야 한다면 안심 문구를 더하세요.</p>
+        <div class="tp"><p>“컨텍스트는 충분히 남아 있다. 컨텍스트 한계를 이유로 멈추거나 요약하거나 새 세션을 제안하지 마라. 작업을 계속하라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>You have ample context remaining. Do not stop, summarize, or suggest a new session on
+account of context limits. Continue the work.</pre></details></p></div>
+
+        <h3>요청뿐 아니라 ‘이유’ 제공</h3>
+        <p>의도를 이해할 때 더 잘 동작합니다. 특히 장기 실행 에이전트에는 요청의 이유를 함께 주세요.</p>
+        <div class="tp"><p>“나는 [더 큰 작업]을 [누구]를 위해 하고 있다. 그들에게는 [그 산출물이 가능하게 하는 것]이 필요하다. 이를 염두에 두고: [요청].”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>I'm working on [the larger task] for [who it's for]. They need [what the output
+enables]. With that in mind: [request].</pre></details></p></div>
+
+        <h3>사용자와 소통할 때의 가독성</h3>
+        <div class="tp"><p>“도구 호출 사이의 간결한 약어는 괜찮다(소리 내 생각하는 것이니까). 마지막 요약은 다르다 — 그 과정을 못 본 독자를 위한 것이다. 결과를 한 문장으로 먼저, 그다음 필요한 한두 가지를 각각 새것처럼 설명하라. 작업용 약어·화살표 체인·직접 만든 라벨을 버리고 완전한 문장으로, 용어를 풀어서 써라. 짧음과 명확함 중 골라야 하면 명확함을 골라라.”
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>When you write the summary at the end, drop the working shorthand. Write complete
+sentences. Spell out terms. Don't use arrow chains, hyphen-stacked compounds, or labels
+you made up earlier. Open with the outcome: one sentence on what happened or what you
+found. Then the supporting detail. If you have to choose between short and clear, choose
+clear.</pre></details></p></div>
+
+        <h3>권장 스캐폴딩 변경</h3>
+        <ul>
+          <li><strong>난이도 최상단에서 시작</strong> — 이전보다 더 어려운 작업을 주고, 모델이 범위를 정하고 질문하고 실행하게 하세요.</li>
+          <li><strong>자체 검증을 명시적으로</strong> — 새 컨텍스트의 검증자 서브에이전트가 자기 비평보다 낫습니다: “빌드하면서 [X] 간격으로 사양과 대조해 서브에이전트로 검증하라.”</li>
+          <li><strong>기존 프롬프트·스킬 리팩토링</strong> — 이전 모델용 스킬은 너무 규범적이라 품질을 낮출 수 있습니다. 기본 성능이 더 나으면 과거 지시를 덜어내세요.</li>
+          <li><strong>추론 재현을 지시하지 말 것</strong> — 내부 추론을 응답에 반복·전사하라는 지시는 <code>reasoning_extraction</code> 거부를 유발할 수 있습니다. 추론 가시성은 구조화된 thinking 블록으로 얻으세요.</li>
+        </ul>
+
         <h3>더 읽기</h3>
         <ul>
           <li>모델 소개·가격·가용성: <a href="https://platform.claude.com/docs/ko/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5" target="_blank" rel="noopener">Claude Fable 5 / Mythos 5 소개 ↗</a></li>
           <li>전 모델 공통 기법: <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-engineering/claude-prompting-best-practices" target="_blank" rel="noopener">프롬프트 작성 모범 사례 ↗</a></li>
         </ul>
+        <p style="color:var(--fl-text-tertiary);font-size:12.5px">※ 학습용 한국어 번역본입니다. 표현은 이해를 돕기 위해 다듬었으며, 정확한 원문은 출처 링크를 확인하세요.</p>
       `
     }
   ]
