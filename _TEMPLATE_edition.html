@@ -251,6 +251,25 @@ body {
 .nl-card__title { font-size: 16.5px; font-weight: 700; line-height: 1.4; letter-spacing: -0.008em; margin: 9px 0 0; word-break: keep-all; }
 .nl-card__summary { margin: 8px 0 0; color: var(--fl-text-secondary); font-size: 13.5px; line-height: 1.65; }
 
+/* 자세히 보기 (긴 글 대응 — 기본 접힘) */
+.nl-more-btn {
+  margin-top: 9px; display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none; padding: 2px 0; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: var(--tc, var(--fl-accent));
+}
+.nl-more-btn:hover .nl-more-btn__t { text-decoration: underline; }
+.nl-more-btn__chev { display: inline-block; font-size: 10px; transition: transform var(--fl-dur-fast); }
+.nl-more-btn[aria-expanded="true"] .nl-more-btn__chev { transform: rotate(180deg); }
+.nl-detail {
+  display: none; margin-top: 10px; padding: 12px 14px;
+  background: var(--fl-surface-2); border-radius: var(--fl-radius);
+  font-size: 13.5px; line-height: 1.7; color: var(--fl-text-secondary); word-break: keep-all;
+}
+.nl-detail.open { display: block; animation: nl-fade 0.25s var(--fl-ease-out); }
+.nl-detail p { margin: 0 0 8px; }
+.nl-detail p:last-child { margin: 0; }
+.nl-hl .nl-detail { background: var(--fl-bg); }
+
 /* 태그 */
 .nl-tag {
   display: inline-flex; align-items: center;
@@ -421,6 +440,7 @@ const NEWSLETTER = {
         kicker: "이 주제의 핵심",
         title: "AI가 ‘답해주는 도구’에서 ‘대신 일해주는 동료’로 넘어가는 중",
         summary: "한 번의 질문에 답하던 AI가, 이제 여러 단계를 스스로 밟아 결과물까지 만들어 옵니다. 자료를 찾아 요약하고, 문서를 만들고, 정해진 시간에 알아서 보내주는 ‘에이전트’가 일상 도구로 들어오고 있어요.",
+        detail: "예를 들어 ‘매주 월요일 아침에 지난주 업계 소식을 요약해줘’ 같은 일을, 사람이 매번 시키지 않아도 정해진 시간에 알아서 수행합니다. 핵심은 한 번의 똑똑한 답이 아니라, 여러 단계를 끝까지 마무리하는 ‘지속성’이에요. 이 흐름이 업무 자동화의 기준선을 바꾸고 있습니다.",
         source: "MIT Technology Review", url: "https://www.technologyreview.com/topic/artificial-intelligence/",
         foryou: "거창한 기술이 아니라, 반복되는 내 업무 한 가지를 떠올려 보세요. 그게 바로 가장 먼저 맡겨볼 수 있는 일입니다."
       },
@@ -428,6 +448,7 @@ const NEWSLETTER = {
         { tag: "새 기능", source: "Anthropic 뉴스", url: "https://www.anthropic.com/news", time: "이번 주",
           title: "글·이미지·음성을 한 번에 — 멀티모달이 ‘기본’이 되다",
           summary: "이제 AI에게 캡처 이미지를 보여주며 말로 묻고, 표로 답을 받는 식의 사용이 자연스러워졌습니다. 입력 방식의 벽이 빠르게 사라지는 중이에요.",
+          detail: "예전에는 텍스트는 챗봇, 이미지는 별도 도구로 나눠 써야 했습니다. 이제는 한 대화 안에서 사진을 보여주고 말로 물어본 뒤 표·요약으로 받는 흐름이 자연스러워졌어요. ‘무엇을 시킬까’만 고민하면 되는 단계로 가고 있습니다.",
           foryou: "스크린샷 한 장 붙여넣고 ‘이거 표로 정리해줘’ 한마디면 됩니다. 가장 쉽게 체감하는 변화예요." },
         { tag: "흐름", source: "Google AI 블로그", url: "https://blog.google/technology/ai/", time: "1주 전",
           title: "검색·메신저·문서 — 매일 쓰는 도구 안으로 AI가 들어온다",
@@ -443,6 +464,7 @@ const NEWSLETTER = {
         kicker: "이 주제의 핵심",
         title: "바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 일을 맡길 수 있다",
         summary: "지금 보는 이 페이지도 사람이 일일이 코딩한 게 아니라 ‘이런 뉴스레터를 만들어줘’라는 말 한마디에서 시작됐어요. 자료 조사부터 디자인, 매일 발행까지 AI에게 맡기는 시대입니다.",
+        detail: "이 뉴스레터의 제작 과정이 좋은 예입니다. 디자인 고르기 → 관심사 정하기 → 매일 소식 모으기 → 보기 좋게 정리 → 발행까지, 사람은 ‘무엇을’만 정하고 ‘어떻게’는 에이전트가 처리했어요. 코드 한 줄 직접 쓰지 않아도, 반복되는 일을 맡기는 감각만 익히면 누구나 비슷하게 시작할 수 있습니다.",
         source: "이 템플릿 저장소 (GitHub)", url: "https://github.com/imakerjun/ai-newsletter",
         foryou: "오늘 30분이면 나만의 버전을 따라 만들 수 있어요. 맨 아래 ‘따라하기’ 순서대로만 하면 됩니다."
       },
@@ -497,6 +519,10 @@ const NEWSLETTER = {
 
   // --- 패널 ---
   const panelEl = document.getElementById("panel");
+  // 긴 글은 기본 접힘 — detail이 있으면 '자세히 보기' 토글을 단다.
+  const detailBlock = (d) => d
+    ? `<button class="nl-more-btn" type="button" aria-expanded="false"><span class="nl-more-btn__t">자세히 보기</span><span class="nl-more-btn__chev">▾</span></button><div class="nl-detail">${html(d)}</div>`
+    : "";
   function articleCard(a) {
     return `
       <article class="nl-card">
@@ -510,6 +536,7 @@ const NEWSLETTER = {
         </div>
         <h4 class="nl-card__title">${esc(a.title)}</h4>
         <p class="nl-card__summary">${esc(a.summary)}</p>
+        ${detailBlock(a.detail)}
         <div class="nl-foryou">
           <span class="nl-foryou__label">✨ 나를 위한 한 줄</span>
           <span class="nl-foryou__text">${html(a.foryou)}</span>
@@ -531,6 +558,7 @@ const NEWSLETTER = {
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>
         <h2 class="nl-hl__title">${esc(t.highlight.title)}</h2>
         <p class="nl-hl__summary">${esc(t.highlight.summary)}</p>
+        ${detailBlock(t.highlight.detail)}
         ${t.highlight.url
           ? `<div class="nl-hl__src">🔗 출처: <a href="${esc(t.highlight.url)}" target="_blank" rel="noopener">${esc(t.highlight.source || "원문 보기")} ↗</a></div>`
           : ""}
@@ -551,6 +579,18 @@ const NEWSLETTER = {
     render(i);
   });
   render(0);
+
+  // '자세히 보기' 토글 (패널은 탭마다 다시 그려지므로 위임)
+  panelEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".nl-more-btn");
+    if (!b) return;
+    const open = b.getAttribute("aria-expanded") === "true";
+    b.setAttribute("aria-expanded", String(!open));
+    const d = b.nextElementSibling;
+    if (d && d.classList.contains("nl-detail")) d.classList.toggle("open", !open);
+    const t = b.querySelector(".nl-more-btn__t");
+    if (t) t.textContent = open ? "자세히 보기" : "접기";
+  });
 
   // --- 푸터 ---
   document.getElementById("footer").innerHTML = `

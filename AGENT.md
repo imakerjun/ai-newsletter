@@ -48,6 +48,7 @@ tint_options: [blue, purple, green, orange, pink]
      title: "{한 줄 요약}", topics: [관심사 label들], href: "editions/{DATE}.html" }
    ```
    - 기존 항목은 절대 삭제·수정하지 않는다(아카이브 보존).
+   - 단, **최초 발행 시**에는 템플릿에 들어 있던 **예시 항목(`demo: true`)을 모두 제거**한다(이후 실제 호만 쌓는다).
 6. **커밋 & 푸시**:
    ```bash
    git add -A
@@ -68,9 +69,13 @@ tint_options: [blue, purple, green, orange, pink]
 
 - 사실 검증: 출처가 모호하면 단정하지 말고 "~로 보인다/논의되는 중" 톤으로.
 - **출처 링크 필수**: highlight와 각 article 모두 `source`(매체명) + `url`(원문 링크)을 채운다.
-  - 데이터 형태: `highlight: { ..., source: "매체명", url: "https://..." }`,
-    `articles: [{ tag, source: "매체명", url: "https://...", time, title, summary, foryou }]`
+  - 데이터 형태: `highlight: { kicker, title, summary, detail?, source, url, foryou }`,
+    `articles: [{ tag, source, url, time, title, summary, detail?, foryou }]`
   - `url`은 **실제 원문 주소**여야 한다. 확인하지 못한 링크는 지어내지 말고 그 항목을 빼라(허위 링크 금지).
+- **한국어로 정리**: 영어 출처라도 `title`·`summary`·`detail`·`foryou`는 한국어로 번역·요약한다.
+  원제가 중요하면 제목 끝에 괄호로 병기한다(예: "… (원제: …)"). 핵심 용어는 풀어 쓰되 필요 시 영어 병기.
+- **길이 관리(긴 글 대응)**: `summary`는 2~3문장으로 짧게(스캔용). 더 설명할 게 있으면 선택적 `detail`(접히는
+  ‘자세히 보기’)에 2~4문장으로 담는다. 기사 전문을 그대로 옮기지 말고, 전체 내용은 `url` 원문으로 연결한다.
 - `tint`는 `tint_options` 중에서만 쓴다(디자인 일관성).
 - 분량: highlight 요약 3~4문장, article 요약 2~3문장. 길어지지 않게.
 - 문체: 정중한 평서체("~합니다"), 과장·홍보톤 금지.

@@ -103,36 +103,31 @@ a { color: inherit; text-decoration: none; }
 .hub__label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-text-tertiary); display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .hub__label::after { content: ""; flex: 1; height: 1px; background: var(--fl-border-subtle); }
 
-/* 최신 호 — 강조 카드 */
-.ed-latest {
-  display: block; padding: 22px 24px; border-radius: var(--fl-radius-lg);
-  background: var(--fl-tint-blue-bg); border: 1px solid var(--fl-tint-blue);
-  transition: box-shadow var(--fl-dur-fast), transform var(--fl-dur-fast);
-}
-.ed-latest:hover { box-shadow: var(--fl-shadow-md); transform: translateY(-2px); }
-.ed-latest__badge {
-  display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase; color: var(--fl-tint-blue);
-  padding: 3px 10px; border-radius: 999px; background: var(--fl-bg); border: 1px solid var(--fl-tint-blue); margin-bottom: 12px;
-}
-.ed-latest__date { font-size: 13px; color: var(--fl-text-secondary); }
-.ed-latest__title { font-size: 21px; font-weight: 800; line-height: 1.3; letter-spacing: -0.012em; margin: 8px 0 0; color: var(--fl-text); word-break: keep-all; }
-.ed-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-.ed-tag { display: inline-flex; padding: 1px 9px; height: 21px; align-items: center; border-radius: var(--fl-radius-sm); background: var(--fl-tint-gray-bg); color: var(--fl-tint-gray); font-size: 11.5px; font-weight: 600; }
-.ed-go { margin-top: 14px; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--fl-accent); }
+/* 월별 그룹 헤더 */
+.ed-month { display: flex; align-items: center; gap: 8px; margin: 24px 0 8px; font-size: 12px; font-weight: 700; color: var(--fl-text-tertiary); letter-spacing: 0.03em; }
+.ed-month:first-of-type { margin-top: 6px; }
+.ed-month__count { font-weight: 500; color: var(--fl-text-quaternary); }
+.ed-month::after { content: ""; flex: 1; height: 1px; background: var(--fl-border-subtle); }
 
-/* 지난 호 목록 */
-.ed-list { display: grid; gap: 8px; }
-.ed-row {
-  display: flex; align-items: center; gap: 14px; padding: 13px 16px;
-  border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md);
-  background: var(--fl-surface); transition: border-color var(--fl-dur-fast), background var(--fl-dur-fast);
+/* 호 리스트 — 밀도 높은 한 줄 행 */
+.ed-list { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); overflow: hidden; background: var(--fl-surface); }
+.ed-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+  border-bottom: 1px solid var(--fl-border-subtle);
+  transition: background var(--fl-dur-fast); cursor: pointer;
 }
-.ed-row:hover { border-color: var(--fl-border); background: var(--fl-hover); }
-.ed-row__date { flex-shrink: 0; width: 96px; font-size: 12.5px; color: var(--fl-text-tertiary); font-variant-numeric: tabular-nums; }
-.ed-row__label { flex-shrink: 0; font-size: 11.5px; font-weight: 700; color: var(--fl-tint-blue); }
-.ed-row__title { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--fl-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ed-row__arrow { flex-shrink: 0; color: var(--fl-text-quaternary); }
+.ed-item:last-child { border-bottom: none; }
+.ed-item:hover { background: var(--fl-hover); }
+.ed-item--latest { background: var(--fl-tint-blue-bg); }
+.ed-item--latest:hover { background: var(--fl-tint-blue-bg); }
+.ed-item__date { flex-shrink: 0; width: 72px; font-size: 12.5px; color: var(--fl-text-tertiary); font-variant-numeric: tabular-nums; }
+.ed-item__label { flex-shrink: 0; width: 46px; font-size: 11px; font-weight: 700; color: var(--fl-tint-blue); }
+.ed-item__title { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--fl-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ed-item__tags { flex-shrink: 0; display: flex; gap: 5px; }
+.ed-tag { display: inline-flex; padding: 0 7px; height: 19px; align-items: center; border-radius: var(--fl-radius-sm); background: var(--fl-tint-gray-bg); color: var(--fl-tint-gray); font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+.ed-item__new { flex-shrink: 0; font-size: 10px; font-weight: 700; color: var(--fl-bg); background: var(--fl-tint-blue); padding: 2px 7px; border-radius: 999px; letter-spacing: 0.03em; }
+.ed-item__demo { flex-shrink: 0; font-size: 10px; font-weight: 600; color: var(--fl-text-quaternary); background: var(--fl-surface-3); padding: 2px 6px; border-radius: 999px; }
+.ed-item__arrow { flex-shrink: 0; color: var(--fl-text-quaternary); }
 
 .hub__empty { padding: 18px; border: 1px dashed var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-tertiary); font-size: 13.5px; }
 
@@ -159,7 +154,8 @@ body.fl-dark .nl-ico-moon { display: block; }
   .topnav__brand-t { display: none; }
   .topnav__link { padding: 6px 10px; }
   .hub__title { font-size: 30px; }
-  .ed-row__date { width: 78px; }
+  .ed-item__tags { display: none; }
+  .ed-item__date { width: 58px; }
 }
 @media (prefers-reduced-motion: reduce) { body { transition: none; } }
 </style>
@@ -196,6 +192,7 @@ const ARCHIVE = {
     cadence: "매주(또는 매일)"
   },
   editions: [
+    // ← 새 호는 항상 이 배열 맨 위에 추가됩니다.
     {
       date: "2026-06-18",
       weekday: "목",
@@ -203,8 +200,22 @@ const ARCHIVE = {
       title: "AI가 ‘대신 일해주는’ 시대 — 누구나 알아둘 2가지",
       topics: ["AI 최신 소식", "비개발자가 꼭 아는 AI"],
       href: "editions/2026-06-18.html"
-    }
-    // ← 다음 호는 이 위에 추가됩니다.
+    },
+
+    // ↓ 여기부터는 '리스트가 쌓인 모습'을 보여주기 위한 데모 예시(demo: true)입니다.
+    //   첫 실제 발행 때 모두 제거하세요. 링크는 최신 호로 연결해 두었습니다.
+    { date: "2026-06-11", weekday: "목", label: "Vol.06", demo: true,
+      title: "회의록·메일 초안을 AI에게 — 시간 버는 사람들의 공통점",
+      topics: ["AI 최신 소식", "비개발자가 꼭 아는 AI"], href: "editions/2026-06-18.html" },
+    { date: "2026-06-04", weekday: "목", label: "Vol.05", demo: true,
+      title: "프롬프트보다 ‘맥락’이 결과를 가른다",
+      topics: ["AI 최신 소식"], href: "editions/2026-06-18.html" },
+    { date: "2026-05-28", weekday: "목", label: "Vol.04", demo: true,
+      title: "비개발자를 위한 AI 도구, 이번 달 흐름 정리",
+      topics: ["비개발자가 꼭 아는 AI"], href: "editions/2026-06-18.html" },
+    { date: "2026-05-21", weekday: "목", label: "Vol.03", demo: true,
+      title: "이미지·음성까지 — 멀티모달 AI 입문",
+      topics: ["AI 최신 소식"], href: "editions/2026-06-18.html" }
   ]
 };
 
@@ -212,33 +223,35 @@ const ARCHIVE = {
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const m = ARCHIVE.meta;
   const eds = ARCHIVE.editions.slice();
-  const latest = eds[0];
-  const rest = eds.slice(1);
 
-  const fmt = (d, w) => { const [y, mo, da] = d.split("-"); return `${y}.${mo}.${da}${w ? " (" + w + ")" : ""}`; };
+  const fmtDay = (d, w) => { const [, mo, da] = d.split("-"); return `${mo}.${da}${w ? " (" + w + ")" : ""}`; };
+  const monthLabel = (ym) => { const [y, mo] = ym.split("-"); return `${y}년 ${parseInt(mo, 10)}월`; };
 
-  const latestHTML = latest ? `
-    <a class="ed-latest" href="${esc(latest.href)}">
-      <span class="ed-latest__badge">⭐ 최신 호 · ${esc(latest.label)}</span>
-      <div class="ed-latest__date">🗓️ ${esc(fmt(latest.date, latest.weekday))}</div>
-      <div class="ed-latest__title">${esc(latest.title)}</div>
-      <div class="ed-tags">${latest.topics.map((t) => `<span class="ed-tag">${esc(t)}</span>`).join("")}</div>
-      <div class="ed-go">읽으러 가기 →</div>
-    </a>` : `<div class="hub__empty">아직 발행된 호가 없습니다. 첫 호가 발행되면 여기에 표시됩니다.</div>`;
+  // 월(YYYY-MM)별 그룹 — 순서 보존 (배열은 최신순)
+  const groups = [];
+  eds.forEach((e, idx) => {
+    const ym = e.date.slice(0, 7);
+    let g = groups.find((x) => x.ym === ym);
+    if (!g) { g = { ym, items: [] }; groups.push(g); }
+    g.items.push(Object.assign({ _latest: idx === 0 }, e));
+  });
 
-  const restHTML = rest.length ? `
-    <div class="hub__section">
-      <div class="hub__label">지난 호</div>
-      <div class="ed-list">
-        ${rest.map((e) => `
-          <a class="ed-row" href="${esc(e.href)}">
-            <span class="ed-row__date">${esc(fmt(e.date))}</span>
-            <span class="ed-row__label">${esc(e.label)}</span>
-            <span class="ed-row__title">${esc(e.title)}</span>
-            <span class="ed-row__arrow">→</span>
-          </a>`).join("")}
-      </div>
-    </div>` : "";
+  const listHTML = eds.length
+    ? groups.map((g) => `
+        <div class="ed-month">${esc(monthLabel(g.ym))}<span class="ed-month__count">${g.items.length}호</span></div>
+        <div class="ed-list">
+          ${g.items.map((e) => `
+            <a class="ed-item ${e._latest ? "ed-item--latest" : ""}" href="${esc(e.href)}">
+              <span class="ed-item__date">${esc(fmtDay(e.date, e.weekday))}</span>
+              <span class="ed-item__label">${esc(e.label)}</span>
+              <span class="ed-item__title">${esc(e.title)}</span>
+              <span class="ed-item__tags">${(e.topics || []).slice(0, 2).map((t) => `<span class="ed-tag">${esc(t)}</span>`).join("")}</span>
+              ${e._latest ? `<span class="ed-item__new">최신</span>` : ""}
+              ${e.demo ? `<span class="ed-item__demo">예시</span>` : ""}
+              <span class="ed-item__arrow">→</span>
+            </a>`).join("")}
+        </div>`).join("")
+    : `<div class="hub__empty">아직 발행된 호가 없습니다. 첫 호가 발행되면 여기에 표시됩니다.</div>`;
 
   document.getElementById("hub").innerHTML = `
     <div class="hub__icon">${esc(m.icon)}</div>
@@ -252,10 +265,9 @@ const ARCHIVE = {
     </div>
 
     <div class="hub__section">
-      <div class="hub__label">최신 호</div>
-      ${latestHTML}
+      <div class="hub__label">발행한 호</div>
+      ${listHTML}
     </div>
-    ${restHTML}
 
     <footer class="hub__footer">
       <p>이 페이지는 러닝 에이전트가 매일 갱신합니다 · <b>Folio</b> 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외)</p>
