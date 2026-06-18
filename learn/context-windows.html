@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>깊이 읽기 — 컨텍스트 윈도우 (5가지 렌즈)</title>
+<meta name="description" content="어려운 공식문서를 어원·요약·비유·퀴즈·원문 5가지 렌즈로 다시 읽는 학습 페이지." />
+
+<script>
+  (function () { try { var s = localStorage.getItem("nl-theme"); if (s) document.documentElement.dataset.nlTheme = s; } catch (e) {} })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — 저장소 전체와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13); --fl-border-strong: rgba(15,14,12,0.20);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-success: #2f8a5d; --fl-danger: #c84c47; --fl-danger-bg: #fbe4e4;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12); --fl-border-strong: rgba(255,253,248,0.20);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-success: #6fc193; --fl-danger: #e08580; --fl-danger-bg: rgba(200,76,71,0.20);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--fl-bg); color: var(--fl-text); font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6; transition: background var(--fl-dur-normal), color var(--fl-dur-normal); }
+a { color: inherit; text-decoration: none; }
+
+/* 상단 네비 (저장소 공통) */
+.topnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 9px 20px; background: color-mix(in srgb, var(--fl-bg) 86%, transparent); -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px); border-bottom: 1px solid var(--fl-border-subtle); }
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+.nl-theme { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer; transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+.lens { max-width: 760px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 헤더 */
+.lens__icon { font-size: 52px; line-height: 1; }
+.lens__eyebrow { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-tint-purple); background: var(--fl-tint-purple-bg); padding: 3px 10px; border-radius: 999px; }
+.lens__title { font-size: 34px; font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; margin: 14px 0 0; word-break: keep-all; }
+.lens__oneliner { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 60ch; word-break: keep-all; }
+.lens__source { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 18px; border-bottom: 1px solid var(--fl-border-subtle); }
+.lens__source a { color: var(--fl-text-link); border-bottom: 1px dashed var(--fl-border); padding-bottom: 1px; }
+.lens__source a:hover { border-bottom-color: var(--fl-text-link); }
+
+/* 렌즈 탭 */
+.lens-tabs { position: sticky; top: 44px; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; padding: 12px 0; background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle); }
+.lens-tab { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.lens-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.lens-tab[aria-selected="true"] { background: var(--fl-text); color: var(--fl-bg); border-color: var(--fl-text); font-weight: 600; }
+
+/* 렌즈 본문 */
+@keyframes lens-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lens-panel { animation: lens-fade 0.3s var(--fl-ease-out); padding-top: 26px; }
+.lens-panel__hint { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); font-size: 13px; color: var(--fl-text-secondary); line-height: 1.6; }
+.lens-panel__hint b { color: var(--fl-text); }
+
+/* prose */
+.lens-prose { font-size: 15px; line-height: 1.75; color: var(--fl-text); word-break: keep-all; }
+.lens-prose h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; letter-spacing: -0.01em; }
+.lens-prose h3:first-child { margin-top: 0; }
+.lens-prose p { margin: 0 0 14px; color: var(--fl-text-secondary); }
+.lens-prose strong { color: var(--fl-text); font-weight: 700; }
+.lens-prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--fl-text-secondary); }
+.lens-prose li { margin: 0 0 7px; }
+.lens-prose code { font-family: var(--fl-font-mono); font-size: 0.9em; background: var(--fl-surface-3); padding: 1px 5px; border-radius: 4px; color: var(--fl-text); }
+.lens-prose .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); margin: 0 0 16px; line-height: 1.6; }
+.lens-prose .callout__i { font-size: 18px; flex-shrink: 0; }
+.lens-prose .callout p { margin: 0; color: var(--fl-text); }
+.lens-prose .etymo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 12px 14px; border-left: 3px solid var(--fl-tint-purple); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; margin: 0 0 12px; }
+.lens-prose .etymo b { font-size: 15px; }
+.lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* 전문 번역 — 프롬프트(한국어 번역 + 접이식 영어 원문) */
+.lens-prose .tp { margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--fl-tint-blue); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; }
+.lens-prose .tp > p { margin: 0; color: var(--fl-text); }
+.lens-prose details { margin: 8px 0 0; }
+.lens-prose summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--fl-text-tertiary); padding: 4px 0; list-style: none; }
+.lens-prose summary::-webkit-details-marker { display: none; }
+.lens-prose summary::before { content: "▸ "; }
+.lens-prose details[open] summary::before { content: "▾ "; }
+.lens-prose pre { margin: 8px 0 0; padding: 12px 14px; background: var(--fl-surface-3); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius); overflow-x: auto; font-family: var(--fl-font-mono); font-size: 12px; line-height: 1.6; color: var(--fl-text); white-space: pre-wrap; word-break: break-word; }
+.lens-prose .src-note { display: flex; gap: 10px; padding: 12px 14px; background: var(--fl-tint-blue-bg); border-radius: var(--fl-radius-md); margin: 0 0 18px; font-size: 13px; line-height: 1.6; }
+.lens-prose .src-note a { color: var(--fl-text-link); font-weight: 600; }
+
+/* quiz */
+.quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
+.quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
+.quiz-q span { color: var(--fl-tint-purple); margin-right: 6px; }
+.quiz-opts { display: grid; gap: 8px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 9px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.5; color: var(--fl-text); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 10px 13px; cursor: pointer; transition: background var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.quiz-opt:hover:not(:disabled) { background: var(--fl-hover); }
+.quiz-opt__mark { flex-shrink: 0; font-weight: 700; color: var(--fl-text-tertiary); }
+.quiz-opt--correct { background: var(--fl-tint-green-bg); border-color: var(--fl-success); }
+.quiz-opt--correct .quiz-opt__mark { color: var(--fl-success); }
+.quiz-opt--wrong { background: var(--fl-danger-bg); border-color: var(--fl-danger); }
+.quiz-opt--wrong .quiz-opt__mark { color: var(--fl-danger); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 12px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius); font-size: 13.5px; line-height: 1.65; color: var(--fl-text-secondary); }
+.quiz-explain.open { display: block; }
+.quiz-explain b { color: var(--fl-text); }
+
+.lens__footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.lens__footer b { color: var(--fl-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; } body { transition: none; } }
+@media (max-width: 640px) {
+  .lens { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .lens__title { font-size: 26px; }
+  .lens-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 22px -16px 0; padding: 11px 16px; scrollbar-width: none; }
+  .lens-tabs::-webkit-scrollbar { display: none; }
+  .lens-tab { flex: 0 0 auto; }
+}
+</style>
+</head>
+
+<body class="folio">
+
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html"><span class="topnav__logo">준</span><span class="topnav__brand-t">메이커준의 AI 학습 허브</span></a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📰 뉴스레터</a>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 깊이 읽기</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main class="lens">
+  <div id="head"></div>
+  <nav class="lens-tabs" id="tabs" role="tablist" aria-label="읽기 렌즈"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="foot"></div>
+</main>
+
+<script>
+/* ============================================================================
+   렌즈 문서 데이터 — 어려운 원문 1개를 5가지 렌즈로 재구성.
+   이 객체만 교체하면 새 학습 문서가 됩니다. (kind: prose | quiz)
+   ============================================================================ */
+const LENS_DOC = {
+  meta: {
+    icon: "🪟",
+    title: "컨텍스트 윈도우(Context Window)",
+    oneliner: "모델이 한 번에 ‘볼 수 있는’ 작업 메모리. 무엇을 담느냐가 얼마나 담느냐만큼 중요합니다.",
+    sourceTitle: "Anthropic 공식문서",
+    sourceUrl: "https://platform.claude.com/docs/ko/build-with-claude/context-windows",
+    fetched: "2026-05-27 기준",
+    tags: ["컨텍스트", "토큰", "공식문서"]
+  },
+  lenses: [
+    {
+      id: "etymology", icon: "🔤", label: "어원", kind: "prose",
+      hint: "낯선 용어가 <b>어디서 왔는지</b>부터 풀면 개념이 친숙해집니다. (학습용 해석)",
+      body: `
+        <h3>‘context’ — 라틴어 <code>contexere</code>(함께 엮다)에서</h3>
+        <div class="etymo"><b>context</b><span>← 라틴어 <code>contexere</code> ‘함께 엮다’ ← <code>con-</code>(함께) + <code>texere</code>(짜다·엮다)</span></div>
+        <p><strong>context</strong>의 어근 <code>texere</code>는 ‘직물을 짜다’라는 뜻입니다. 영어 <strong>text</strong>(텍스트)와 <strong>textile</strong>(직물)이 같은 뿌리예요. 즉 컨텍스트란 ‘앞뒤 말을 함께 엮어 놓은 천’ 같은 것 — 한 단어를 둘러싼 모든 말의 짜임입니다. 모델에게 컨텍스트 윈도우는 그 짜임 전체를 한 번에 펼쳐 보는 ‘창(window)’이죠.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>‘함께 엮다’라는 어원을 떠올리면, 왜 <strong>무엇을 담느냐가 중요한지</strong> 이해됩니다. 천에 아무 실이나 많이 엮으면 무늬가 흐려지듯, 컨텍스트도 관련 없는 내용이 많아지면 모델의 정확도가 떨어집니다.</p></div>
+        <h3>곁들이면 좋은 용어 어원</h3>
+        <div class="etymo"><b>token</b><span>← 고대 영어 <code>tācen</code> ‘표시·신호’. 글을 잘게 나눈 ‘조각·표식’ 단위로, 컨텍스트의 크기를 재는 자.</span></div>
+        <div class="etymo"><b>window</b><span>← 고대 노르드어 <code>vindauga</code> ‘바람(vindr)의 눈(auga)’. 전체 중 일부만 들여다보는 ‘열린 틈’을 뜻합니다.</span></div>
+        <div class="etymo"><b>context rot</b><span><code>rot</code>은 ‘썩다·부패’. 컨텍스트가 길어질수록 정확도·재현율이 ‘서서히 상하는’ 현상을 비유한 신조어입니다.</span></div>
+        <p style="color:var(--fl-text-tertiary);font-size:13px">※ 어원 해석은 이해를 돕기 위한 학습용 연결이며, 실제 작명 의도와 다를 수 있습니다.</p>
+      `
+    },
+    {
+      id: "tldr", icon: "⚡", label: "한입요약", kind: "prose",
+      hint: "30초 안에 핵심만. 자세한 근거는 다른 렌즈와 <b>원문</b>에서.",
+      body: `
+        <h3>핵심 6줄</h3>
+        <ul>
+          <li><strong>컨텍스트 윈도우 = 모델의 작업 메모리.</strong> 모델이 응답을 만들 때 참조하는 모든 텍스트(응답 자체 포함)입니다. 학습 데이터와는 다릅니다.</li>
+          <li><strong>크기보다 ‘선별’이 중요.</strong> 토큰이 늘수록 정확도·재현율이 떨어지는 <code>context rot</code>(컨텍스트 부패)이 생깁니다. 무엇을 담느냐가 얼마나 담느냐만큼 중요합니다.</li>
+          <li><strong>대화는 턴마다 선형으로 쌓입니다.</strong> 각 사용자·어시스턴트 메시지가 누적되고 이전 턴은 그대로 보존됩니다. 1M 토큰까지가 최대 용량입니다.</li>
+          <li><strong>확장 사고 블록은 자동으로 빠집니다.</strong> 다음 턴 입력에서 이전 사고 토큰은 제거되어 실제 대화용 토큰을 아낍니다. 단, 도구 사용 주기 중에는 반드시 함께 돌려보내야 합니다.</li>
+          <li><strong>1M 토큰은 일부 모델만.</strong> Opus 4.8·Sonnet 4.6 등은 1M, 다른 모델은 200k. 한 요청에 이미지·PDF는 최대 600페이지(200k 모델은 100페이지).</li>
+          <li><strong>관리 전략이 있습니다.</strong> 한계에 자주 닿으면 서버 측 <strong>압축</strong>이 1순위, 더 세밀하면 <strong>컨텍스트 편집</strong>. 4.5 이상은 초과 시 <code>model_context_window_exceeded</code>로 멈춥니다.</li>
+        </ul>
+      `
+    },
+    {
+      id: "easy", icon: "🧒", label: "비유로 쉽게", kind: "prose",
+      hint: "어려운 말을 <b>일상 비유</b>로 바꿔 봅니다. 정확함보다 ‘감 잡기’가 목표예요.",
+      body: `
+        <h3>컨텍스트 윈도우 = 책상 위에 한 번에 펼칠 수 있는 서류</h3>
+        <p>책상이 넓을수록 더 많은 서류를 한눈에 보며 일할 수 있습니다. 컨텍스트 윈도우가 바로 그 <strong>책상의 크기</strong>예요. 책장에 꽂힌 책 전부(모델이 학습한 지식)와는 다릅니다. 책상 위에 ‘지금 펼쳐 놓은’ 종이만 참고할 수 있죠.</p>
+        <h3>context rot = 책상 위가 너무 어질러진 상태</h3>
+        <p>책상이 크다고 서류를 잔뜩 쌓으면, 정작 필요한 한 장을 찾기 어려워집니다. 모델도 마찬가지로 관련 없는 내용이 많으면 핵심을 놓쳐요. 그래서 <strong>‘많이’보다 ‘잘 골라’ 올려놓는 것</strong>이 중요합니다.</p>
+        <h3>턴마다 쌓이는 대화 = 회의록이 한 장씩 늘어나는 것</h3>
+        <p>대화가 오갈 때마다 새 종이가 책상 위에 한 장씩 더해집니다. 이전 종이는 치우지 않고 그대로 남죠. 그래서 회의가 길어지면 결국 책상 끝(1M 토큰)에 닿습니다.</p>
+        <h3>확장 사고 블록 자동 제거 = 계산용 메모지를 버리는 것</h3>
+        <p>골똘히 생각하며 끄적인 <strong>계산용 메모지</strong>는 답을 낸 뒤엔 버려도 됩니다. 다음 일에선 결과만 있으면 되니까요. 모델의 사고 과정도 다음 턴에선 자동으로 치워져 책상 공간을 아낍니다.</p>
+        <h3>컨텍스트 인식 = 책상에 남은 빈자리를 아는 것</h3>
+        <p>‘앞으로 종이 몇 장 더 놓을 수 있는지’를 알면 일을 배분하기 쉽습니다. 공식문서 표현으로는 <strong>‘시계 없이 요리 경연에 나가는 것’</strong>과 ‘시계를 보며 시간을 배분하는 것’의 차이예요.</p>
+        <div class="callout"><span class="callout__i">🧭</span><p>한 문장 요약: <strong>“넓은 책상에 아무거나 쌓지 말고, 지금 필요한 서류만 잘 골라 펼쳐 놓는다.”</strong></p></div>
+      `
+    },
+    {
+      id: "quiz", icon: "🧪", label: "퀴즈", kind: "quiz",
+      hint: "보기를 눌러 바로 확인하세요. 자가 점검용입니다.",
+      quiz: [
+        {
+          q: "컨텍스트 윈도우를 가장 잘 설명한 것은?",
+          options: ["모델이 학습한 전체 데이터 코퍼스", "모델이 응답 생성 시 참조하는 모든 텍스트(응답 포함) — 작업 메모리", "모델이 한 번에 출력할 수 있는 최대 토큰 수만 가리킨다"],
+          answer: 1,
+          explain: "컨텍스트 윈도우는 모델이 응답을 만들 때 참조하는 모든 텍스트로, 응답 자체도 포함합니다. 학습한 대규모 데이터 코퍼스와는 다른, 모델의 ‘작업 메모리’입니다."
+        },
+        {
+          q: "‘context rot(컨텍스트 부패)’이란?",
+          options: ["오래된 대화가 서버에서 자동 삭제되는 것", "토큰 수가 늘수록 정확도·재현율이 저하되는 현상", "사고 블록이 손상되어 서명 검증에 실패하는 것"],
+          answer: 1,
+          explain: "토큰 수가 증가함에 따라 정확도와 재현율이 저하되는 현상을 context rot이라 합니다. 그래서 컨텍스트에 ‘무엇을’ 담느냐가 ‘얼마나’ 담느냐만큼 중요합니다."
+        },
+        {
+          q: "확장 사고를 멀티턴으로 쓸 때 이전 ‘사고 블록’은?",
+          options: ["다음 턴 입력 토큰으로 그대로 전달되어 계속 쌓인다", "API가 컨텍스트 윈도우 계산에서 자동으로 제거한다", "사용자가 매번 직접 지워야 한다"],
+          answer: 1,
+          explain: "이전 사고 블록은 API가 컨텍스트 계산에서 자동 제거하여 실제 대화 콘텐츠용 토큰을 보존합니다. 사고 토큰은 생성 시점에 한 번만 출력 토큰으로 청구됩니다."
+        },
+        {
+          q: "도구 사용 주기 중 사고 블록을 다룰 때 ‘반드시’ 지켜야 할 것은?",
+          options: ["사고 블록을 즉시 삭제해야 한다", "도구 결과와 함께 수정되지 않은 전체 사고 블록을 반환해야 한다", "사고 블록을 요약해서 짧게 줄여야 한다"],
+          answer: 1,
+          explain: "도구 결과를 돌려줄 때는 그 도구 요청과 함께 온 전체 사고 블록(서명 포함)을 수정 없이 반환해야 합니다. 시스템이 암호화 서명으로 진위를 확인하므로, 수정하면 API가 오류를 반환합니다."
+        },
+        {
+          q: "1M 토큰 컨텍스트 윈도우에 대한 설명으로 옳은 것은?",
+          options: ["모든 Claude 모델이 1M을 지원한다", "Opus 4.8·Sonnet 4.6 등 일부 모델이 1M, 다른 모델은 200k를 제공한다", "1M은 출력 토큰 한계를 뜻한다"],
+          answer: 1,
+          explain: "Opus 4.8·Sonnet 4.6, Fable 5·Mythos 5 등은 1M 토큰을, Sonnet 4.5 등 다른 모델은 200k를 제공합니다. Fable 5·Mythos 5는 단일 요청에서 최대 128k 출력 토큰을 생성할 수 있습니다."
+        }
+      ]
+    },
+    {
+      id: "source", icon: "📄", label: "전문(번역)", kind: "prose",
+      hint: "원문 <b>전체를 한국어로</b> 옮긴 렌즈입니다. 영어 예시는 한국어 설명과 함께 복사용 원문도 제공합니다.",
+      body: `
+        <div class="src-note"><span>📄</span><div>출처: <strong>컨텍스트 윈도우</strong> — Anthropic 공식문서.
+        정확한 내용·갱신은 <a href="https://platform.claude.com/docs/ko/build-with-claude/context-windows" target="_blank" rel="noopener">원문 ↗</a>을 확인하세요. 아래는 학습용 한국어 번역본입니다.</div></div>
+
+        <p>대화가 길어지면 결국 컨텍스트 윈도우 한계에 도달하게 됩니다. 이 가이드는 컨텍스트 윈도우가 어떻게 작동하는지 설명하고 이를 효과적으로 관리하기 위한 전략을 소개합니다. 장기 실행 대화와 에이전트 워크플로의 경우 <strong>서버 측 압축</strong>이 컨텍스트 관리를 위한 주요 전략이며, 보다 전문적인 요구가 있다면 <strong>컨텍스트 편집</strong>이 도구 결과 지우기·사고 블록 지우기 같은 추가 전략을 제공합니다.</p>
+        <div class="callout"><span class="callout__i">🔒</span><p>이 기능은 Zero Data Retention(ZDR) 적용 대상입니다. 조직에 ZDR 계약이 있는 경우, 이 기능으로 전송된 데이터는 API 응답이 반환된 후 저장되지 않습니다.</p></div>
+
+        <h3>컨텍스트 윈도우 이해하기</h3>
+        <p>‘컨텍스트 윈도우(context window)’는 언어 모델이 응답을 생성할 때 참조할 수 있는 모든 텍스트를 의미하며, 여기에는 응답 자체도 포함됩니다. 이는 모델이 학습한 대규모 데이터 코퍼스와는 다르며, 대신 모델의 ‘작업 메모리’를 나타냅니다. 더 큰 컨텍스트 윈도우는 더 복잡하고 긴 프롬프트를 처리하게 해 주지만, 컨텍스트가 많다고 자동으로 더 나은 것은 아닙니다. 토큰 수가 증가함에 따라 정확도와 재현율이 저하되는데, 이를 <code>context rot</code>(컨텍스트 부패)이라고 합니다. 따라서 컨텍스트에 무엇이 포함되는지를 선별하는 것이 사용 가능한 공간의 크기만큼이나 중요합니다.</p>
+        <p>Claude는 MRCR, GraphWalks 같은 긴 컨텍스트 검색 벤치마크에서 최첨단 결과를 달성하지만, 이러한 성과는 얼마나 많은 내용이 들어가는지가 아니라 컨텍스트에 무엇이 포함되는지에 달려 있습니다.</p>
+
+        <h3>표준 컨텍스트 윈도우 동작</h3>
+        <p>API 요청에서 컨텍스트 윈도우는 다음과 같이 동작합니다. (claude.ai 같은 채팅 인터페이스에서는 롤링 방식의 ‘선입선출’ 시스템으로 설정될 수도 있습니다.)</p>
+        <ul>
+          <li><strong>점진적 토큰 누적:</strong> 대화가 턴을 거치며 진행됨에 따라 각 사용자 메시지와 어시스턴트 응답이 컨텍스트 윈도우 내에 누적됩니다. 이전 턴은 완전히 보존됩니다.</li>
+          <li><strong>선형 증가 패턴:</strong> 컨텍스트 사용량은 각 턴마다 선형적으로 증가합니다.</li>
+          <li><strong>컨텍스트 윈도우 용량:</strong> 사용 가능한 전체 컨텍스트 윈도우(최대 1M 토큰)는 대화 기록을 저장하고 새 출력을 생성하기 위한 최대 용량을 나타냅니다.</li>
+          <li><strong>입력-출력 흐름:</strong> 각 턴은 ‘입력 단계’(이전의 모든 대화 기록과 현재 사용자 메시지)와 ‘출력 단계’(향후 입력의 일부가 되는 텍스트 응답 생성)로 구성됩니다.</li>
+        </ul>
+
+        <h3>확장 사고와 컨텍스트 윈도우</h3>
+        <p>확장 사고를 사용할 때, 사고에 쓰인 토큰을 포함한 모든 입력·출력 토큰이 컨텍스트 윈도우 한계에 포함되며, 멀티턴 상황에서는 미묘한 차이가 있습니다. 사고 예산 토큰은 <code>max_tokens</code> 매개변수의 하위 집합이며, 출력 토큰으로 청구되고 속도 제한에 포함됩니다. 적응형 사고를 쓰면 Claude가 사고 할당량을 동적으로 결정하므로 실제 사고 토큰 사용량은 요청마다 다를 수 있습니다.</p>
+        <p>그러나 이전 사고 블록은 Claude API에 의해 컨텍스트 윈도우 계산에서 자동으로 제거되며, 후속 턴에서 모델이 ‘보는’ 대화 기록의 일부가 아니므로 실제 대화 콘텐츠를 위한 토큰 용량이 보존됩니다.</p>
+        <ul>
+          <li><strong>확장 사고 제거:</strong> 확장 사고 블록은 각 턴의 출력 단계에서 생성되지만, 후속 턴의 입력 토큰으로 전달되지 않습니다. 직접 제거할 필요는 없으며, 사고 블록을 다시 전달하면 API가 자동으로 처리합니다.</li>
+          <li>이전 턴의 사고 블록을 대화 기록의 일부로 다시 전달하면 API가 자동으로 제외합니다.</li>
+          <li>확장 사고 토큰은 생성 시점에 한 번만 출력 토큰으로 청구됩니다.</li>
+          <li>유효 컨텍스트 윈도우 계산은 <code>context_window = (input_tokens - previous_thinking_tokens) + current_turn_tokens</code> 입니다.</li>
+        </ul>
+        <p>이 아키텍처는 토큰 효율적이며, 사고 블록이 상당히 길어질 수 있기 때문에 토큰 낭비 없이 광범위한 추론을 가능하게 합니다.</p>
+
+        <h3>확장 사고 및 도구 사용과 컨텍스트 윈도우</h3>
+        <p>확장 사고와 도구 사용을 결합할 때 토큰은 다음 세 단계로 관리됩니다.</p>
+        <ul>
+          <li><strong>1턴(첫 턴):</strong> 입력은 도구 구성과 사용자 메시지, 출력은 확장 사고 + 텍스트 응답 + 도구 사용 요청입니다. 모든 입력·출력이 컨텍스트 윈도우에 포함되고, 모든 출력이 출력 토큰으로 청구됩니다.</li>
+          <li><strong>2턴(도구 결과 처리):</strong> 입력은 첫 턴의 모든 블록과 <code>tool_result</code>입니다. 확장 사고 블록은 해당 도구 결과와 함께 <strong>반드시</strong> 반환되어야 하며, 이는 사고 블록을 반드시 반환해야 하는 유일한 경우입니다. 도구 결과가 전달된 후 Claude는 (인터리브 사고가 꺼져 있다면) 다음 <code>user</code> 메시지까지 추가 사고 없이 텍스트로만 응답합니다.</li>
+          <li><strong>3턴(새 사용자 턴):</strong> 이전 턴의 모든 입력·출력이 전달되지만 사고 블록은 예외입니다. 전체 도구 사용 주기가 끝났으므로 이제 사고 블록을 제거할 수 있습니다(다시 전달하면 API가 자동 제거, 직접 제거도 가능). 새 <code>user</code> 턴은 도구 사용 주기 밖이므로 Claude는 새 확장 사고 블록을 생성하며 거기서부터 이어갑니다. 이전 사고 토큰은 컨텍스트 계산에서 자동 제거됩니다.</li>
+        </ul>
+        <ul>
+          <li>도구 결과를 게시할 때, 그 특정 도구 요청과 함께 제공된 수정되지 않은 전체 사고 블록(서명 포함)이 포함되어야 합니다.</li>
+          <li>도구 사용과 함께 확장 사고를 쓸 때 유효 컨텍스트 계산은 <code>context_window = input_tokens + current_turn_tokens</code> 입니다.</li>
+          <li>시스템은 암호화 서명으로 사고 블록의 진위를 확인합니다. 도구 사용 중 사고 블록을 보존하지 않으면 추론 연속성이 깨질 수 있어, 사고 블록을 수정하면 API가 오류를 반환합니다.</li>
+        </ul>
+        <p>참고로 Claude 4 모델은 인터리브 사고를 지원하여, 도구 호출 사이에 사고하고 도구 결과를 받은 뒤 더 정교한 추론을 할 수 있습니다. 또한 Claude의 도구 선택은 대용량 입력 문서에서도 유지되도록 설계되어, 대화에 100K 이상의 비도구 컨텍스트 토큰이 있어도 올바른 도구를 고르거나 적절히 사용을 자제합니다.</p>
+
+        <h3>1M 토큰 컨텍스트 윈도우 제공 모델</h3>
+        <p>Claude Opus 4.8, Claude Mythos Preview, Claude Opus 4.7, Claude Opus 4.6, Claude Sonnet 4.6은 Claude API·Amazon Bedrock·Vertex AI에서 1M 토큰 컨텍스트 윈도우를 제공합니다. Microsoft Foundry에서 Opus 4.8은 200k 토큰입니다. Sonnet 4.5 및 Sonnet 4(지원 중단)를 포함한 다른 모델은 200k 토큰을 제공합니다.</p>
+        <p>Claude Fable 5 및 Claude Mythos 5(<code>claude-fable-5</code>, <code>claude-mythos-5</code>)는 Claude API에서 1M 토큰을 제공하며, 1M이 기본값이고 단일 요청으로 최대 128k 출력 토큰(<code>max_tokens</code>)을 생성할 수 있습니다. 단일 요청에는 최대 600개의 이미지 또는 PDF 페이지(200k 모델은 100개)를 포함할 수 있습니다. 많은 이미지나 대용량 문서를 보낼 때는 토큰 한계보다 먼저 요청 크기 제한에 도달할 수 있습니다.</p>
+
+        <h3>컨텍스트 인식 (Sonnet 4.6 / Sonnet 4.5 / Haiku 4.5)</h3>
+        <p>이 모델들은 <strong>컨텍스트 인식</strong> 기능을 제공해 대화 전반에 걸쳐 남은 컨텍스트 윈도우(즉 ‘토큰 예산’)를 추적할 수 있습니다. 남은 공간을 이해함으로써 작업을 더 효과적으로 실행·관리하며, 남은 토큰 수를 추측하는 대신 정확히 사용해 작업 끝까지 지속하도록 학습되었습니다. 모델에게 컨텍스트 인식이 없다는 것은 ‘시계 없이 요리 경연 대회에 참가하는 것’과 같습니다.</p>
+        <p>작동 방식: 대화 시작 시 Claude는 전체 컨텍스트 윈도우 정보를 받습니다.</p>
+        <div class="tp"><p>예산을 1M 토큰으로 설정합니다(더 작은 모델은 200k).
+        <details><summary>예시 원문 — 복사용</summary><pre>&lt;budget:token_budget&gt;1000000&lt;/budget:token_budget&gt;</pre></details></p></div>
+        <p>각 도구 호출 후 Claude는 남은 용량에 대한 업데이트를 받습니다.</p>
+        <div class="tp"><p>토큰 사용량: 35000/1000000; 965000 남음.
+        <details><summary>예시 원문 — 복사용</summary><pre>&lt;system_warning&gt;Token usage: 35000/1000000; 965000 remaining&lt;/system_warning&gt;</pre></details></p></div>
+        <p>이미지 토큰도 이 예산에 포함됩니다. 컨텍스트 인식은 특히 지속적 집중이 필요한 장기 실행 에이전트 세션, 상태 전환이 중요한 다중 컨텍스트 윈도우 워크플로, 신중한 토큰 관리가 필요한 복잡한 작업에서 유용합니다. 여러 세션에 걸쳐 실행되는 에이전트라면 새 세션 시작 시 컨텍스트 복구가 빠르도록 상태 아티팩트를 설계하세요.</p>
+
+        <h3>압축을 통한 컨텍스트 관리</h3>
+        <p>대화가 정기적으로 컨텍스트 한계에 근접한다면 <strong>서버 측 압축</strong>이 권장 방식입니다. 압축은 대화의 이전 부분을 자동 요약해, 최소한의 통합 작업으로 한계를 넘어서는 장기 대화를 가능하게 합니다. Fable 5, Mythos 5, Opus 4.8, Mythos Preview, Opus 4.7, Opus 4.6, Sonnet 4.6에서 베타로 제공됩니다. 더 전문적인 요구가 있다면 <strong>컨텍스트 편집</strong>이 ‘도구 결과 지우기’(오래된 도구 결과 제거)와 ‘사고 블록 지우기’(확장 사고 블록 관리) 전략을 제공합니다.</p>
+
+        <h3>컨텍스트 윈도우 오버플로 동작</h3>
+        <p>Claude 4.5 모델 이상에서는 입력 토큰과 <code>max_tokens</code>의 합이 컨텍스트 윈도우 크기를 초과해도 API가 요청을 수락합니다. 이후 생성이 한계에 닿으면 <code>stop_reason: "model_context_window_exceeded"</code>로 중지됩니다. 이전 모델은 대신 유효성 검사 오류를 반환합니다. <code>model-context-window-exceeded-2025-08-26</code> 베타 헤더로 이 동작을 선택할 수 있습니다. 한계 내에 머무르려면 메시지를 보내기 전에 토큰 계산 API로 사용량을 추정하세요. 모델별 컨텍스트 윈도우 크기는 모델 비교 표를 참조하세요.</p>
+
+        <h3>다음 단계</h3>
+        <ul>
+          <li><strong>압축</strong> — 장기 실행 대화에서 컨텍스트를 관리하기 위한 권장 전략.</li>
+          <li><strong>컨텍스트 편집</strong> — 도구 결과 지우기·사고 블록 지우기 같은 세밀한 전략.</li>
+          <li><strong>모델 비교 표</strong> — 모델별 컨텍스트 윈도우 크기 및 입력/출력 토큰 가격.</li>
+          <li><strong>확장 사고 개요</strong> — 확장 사고의 작동 방식과 도구 사용·프롬프트 캐싱 등과의 결합.</li>
+        </ul>
+        <p style="color:var(--fl-text-tertiary);font-size:12.5px">※ 학습용 한국어 번역본입니다. 표현은 이해를 돕기 위해 다듬었으며, 정확한 원문은 출처 링크를 확인하세요.</p>
+      `
+    }
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const d = LENS_DOC, m = d.meta, lenses = d.lenses;
+
+  // 헤더
+  document.getElementById("head").innerHTML = `
+    <div class="lens__icon">${esc(m.icon)}</div>
+    <span class="lens__eyebrow">📚 깊이 읽기 · 5가지 렌즈</span>
+    <h1 class="lens__title">${esc(m.title)}</h1>
+    <p class="lens__oneliner">${esc(m.oneliner)}</p>
+    <div class="lens__source">
+      <span>📄 출처 <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceTitle)} ↗</a></span>
+      <span>🗓️ ${esc(m.fetched)}</span>
+      <span>🏷️ ${m.tags.map(esc).join(" · ")}</span>
+    </div>`;
+
+  // 탭
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = lenses.map((l, i) => `
+    <button class="lens-tab" role="tab" data-i="${i}" aria-selected="${i === 0}">${esc(l.icon)} ${esc(l.label)}</button>`).join("");
+
+  const panelEl = document.getElementById("panel");
+  function renderQuiz(items) {
+    return items.map((it, qi) => `
+      <div class="quiz-item">
+        <p class="quiz-q"><span>Q${qi + 1}.</span>${esc(it.q)}</p>
+        <div class="quiz-opts" data-answer="${it.answer}">
+          ${it.options.map((o, oi) => `
+            <button class="quiz-opt" type="button" data-oi="${oi}">
+              <span class="quiz-opt__mark">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span>
+            </button>`).join("")}
+        </div>
+        <div class="quiz-explain"><b>해설.</b> ${esc(it.explain)}</div>
+      </div>`).join("");
+  }
+  function render(i) {
+    const l = lenses[i];
+    panelEl.innerHTML = `
+      ${l.hint ? `<div class="lens-panel__hint"><span>${esc(l.icon)}</span><span>${l.hint}</span></div>` : ""}
+      ${l.kind === "quiz" ? renderQuiz(l.quiz) : `<div class="lens-prose">${l.body}</div>`}`;
+    panelEl.className = "lens-panel";
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".lens-tab");
+    if (!b) return;
+    const i = +b.dataset.i;
+    tabsEl.querySelectorAll(".lens-tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // 퀴즈 채점 (위임)
+  panelEl.addEventListener("click", (e) => {
+    const opt = e.target.closest(".quiz-opt");
+    if (!opt) return;
+    const opts = opt.closest(".quiz-opts");
+    if (opt.disabled) return;
+    const answer = +opts.dataset.answer;
+    const chosen = +opt.dataset.oi;
+    opts.querySelectorAll(".quiz-opt").forEach((b) => {
+      b.disabled = true;
+      const oi = +b.dataset.oi;
+      if (oi === answer) b.classList.add("quiz-opt--correct");
+      if (oi === chosen && chosen !== answer) b.classList.add("quiz-opt--wrong");
+    });
+    const ex = opts.parentElement.querySelector(".quiz-explain");
+    if (ex) ex.classList.add("open");
+  });
+
+  // 푸터
+  document.getElementById("foot").innerHTML = `
+    <footer class="lens__footer">
+      <p>📚 <b>깊이 읽기</b> — 어려운 문서를 5가지 렌즈로 다시 읽는 학습 페이지. 원문을 대체하지 않으며, 정확한 내용은 출처를 확인하세요.</p>
+      <p>Folio 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외) · 학습 템플릿: doc-lenses 각색</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : (mq ? mq.matches : false); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => { const n = dark() ? "light" : "dark"; try { localStorage.setItem("nl-theme", n); } catch (e) {} root.dataset.nlTheme = n; apply(); });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

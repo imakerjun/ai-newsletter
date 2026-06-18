@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>깊이 읽기 — 비전(Vision) 이미지 이해 (5가지 렌즈)</title>
+<meta name="description" content="어려운 공식문서를 어원·요약·비유·퀴즈·원문 5가지 렌즈로 다시 읽는 학습 페이지." />
+
+<script>
+  (function () { try { var s = localStorage.getItem("nl-theme"); if (s) document.documentElement.dataset.nlTheme = s; } catch (e) {} })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — 저장소 전체와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13); --fl-border-strong: rgba(15,14,12,0.20);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-success: #2f8a5d; --fl-danger: #c84c47; --fl-danger-bg: #fbe4e4;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12); --fl-border-strong: rgba(255,253,248,0.20);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-success: #6fc193; --fl-danger: #e08580; --fl-danger-bg: rgba(200,76,71,0.20);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--fl-bg); color: var(--fl-text); font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6; transition: background var(--fl-dur-normal), color var(--fl-dur-normal); }
+a { color: inherit; text-decoration: none; }
+
+/* 상단 네비 (저장소 공통) */
+.topnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 9px 20px; background: color-mix(in srgb, var(--fl-bg) 86%, transparent); -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px); border-bottom: 1px solid var(--fl-border-subtle); }
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+.nl-theme { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer; transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+.lens { max-width: 760px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 헤더 */
+.lens__icon { font-size: 52px; line-height: 1; }
+.lens__eyebrow { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-tint-purple); background: var(--fl-tint-purple-bg); padding: 3px 10px; border-radius: 999px; }
+.lens__title { font-size: 34px; font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; margin: 14px 0 0; word-break: keep-all; }
+.lens__oneliner { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 60ch; word-break: keep-all; }
+.lens__source { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 18px; border-bottom: 1px solid var(--fl-border-subtle); }
+.lens__source a { color: var(--fl-text-link); border-bottom: 1px dashed var(--fl-border); padding-bottom: 1px; }
+.lens__source a:hover { border-bottom-color: var(--fl-text-link); }
+
+/* 렌즈 탭 */
+.lens-tabs { position: sticky; top: 44px; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; padding: 12px 0; background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle); }
+.lens-tab { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.lens-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.lens-tab[aria-selected="true"] { background: var(--fl-text); color: var(--fl-bg); border-color: var(--fl-text); font-weight: 600; }
+
+/* 렌즈 본문 */
+@keyframes lens-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lens-panel { animation: lens-fade 0.3s var(--fl-ease-out); padding-top: 26px; }
+.lens-panel__hint { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); font-size: 13px; color: var(--fl-text-secondary); line-height: 1.6; }
+.lens-panel__hint b { color: var(--fl-text); }
+
+/* prose */
+.lens-prose { font-size: 15px; line-height: 1.75; color: var(--fl-text); word-break: keep-all; }
+.lens-prose h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; letter-spacing: -0.01em; }
+.lens-prose h3:first-child { margin-top: 0; }
+.lens-prose p { margin: 0 0 14px; color: var(--fl-text-secondary); }
+.lens-prose strong { color: var(--fl-text); font-weight: 700; }
+.lens-prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--fl-text-secondary); }
+.lens-prose li { margin: 0 0 7px; }
+.lens-prose code { font-family: var(--fl-font-mono); font-size: 0.9em; background: var(--fl-surface-3); padding: 1px 5px; border-radius: 4px; color: var(--fl-text); }
+.lens-prose .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); margin: 0 0 16px; line-height: 1.6; }
+.lens-prose .callout__i { font-size: 18px; flex-shrink: 0; }
+.lens-prose .callout p { margin: 0; color: var(--fl-text); }
+.lens-prose .etymo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 12px 14px; border-left: 3px solid var(--fl-tint-purple); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; margin: 0 0 12px; }
+.lens-prose .etymo b { font-size: 15px; }
+.lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* 전문 번역 — 프롬프트(한국어 번역 + 접이식 영어 원문) */
+.lens-prose .tp { margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--fl-tint-blue); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; }
+.lens-prose .tp > p { margin: 0; color: var(--fl-text); }
+.lens-prose details { margin: 8px 0 0; }
+.lens-prose summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--fl-text-tertiary); padding: 4px 0; list-style: none; }
+.lens-prose summary::-webkit-details-marker { display: none; }
+.lens-prose summary::before { content: "▸ "; }
+.lens-prose details[open] summary::before { content: "▾ "; }
+.lens-prose pre { margin: 8px 0 0; padding: 12px 14px; background: var(--fl-surface-3); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius); overflow-x: auto; font-family: var(--fl-font-mono); font-size: 12px; line-height: 1.6; color: var(--fl-text); white-space: pre-wrap; word-break: break-word; }
+.lens-prose .src-note { display: flex; gap: 10px; padding: 12px 14px; background: var(--fl-tint-blue-bg); border-radius: var(--fl-radius-md); margin: 0 0 18px; font-size: 13px; line-height: 1.6; }
+.lens-prose .src-note a { color: var(--fl-text-link); font-weight: 600; }
+
+/* quiz */
+.quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
+.quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
+.quiz-q span { color: var(--fl-tint-purple); margin-right: 6px; }
+.quiz-opts { display: grid; gap: 8px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 9px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.5; color: var(--fl-text); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 10px 13px; cursor: pointer; transition: background var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.quiz-opt:hover:not(:disabled) { background: var(--fl-hover); }
+.quiz-opt__mark { flex-shrink: 0; font-weight: 700; color: var(--fl-text-tertiary); }
+.quiz-opt--correct { background: var(--fl-tint-green-bg); border-color: var(--fl-success); }
+.quiz-opt--correct .quiz-opt__mark { color: var(--fl-success); }
+.quiz-opt--wrong { background: var(--fl-danger-bg); border-color: var(--fl-danger); }
+.quiz-opt--wrong .quiz-opt__mark { color: var(--fl-danger); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 12px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius); font-size: 13.5px; line-height: 1.65; color: var(--fl-text-secondary); }
+.quiz-explain.open { display: block; }
+.quiz-explain b { color: var(--fl-text); }
+
+.lens__footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.lens__footer b { color: var(--fl-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; } body { transition: none; } }
+@media (max-width: 640px) {
+  .lens { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .lens__title { font-size: 26px; }
+  .lens-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 22px -16px 0; padding: 11px 16px; scrollbar-width: none; }
+  .lens-tabs::-webkit-scrollbar { display: none; }
+  .lens-tab { flex: 0 0 auto; }
+}
+</style>
+</head>
+
+<body class="folio">
+
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html"><span class="topnav__logo">준</span><span class="topnav__brand-t">메이커준의 AI 학습 허브</span></a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📰 뉴스레터</a>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 깊이 읽기</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main class="lens">
+  <div id="head"></div>
+  <nav class="lens-tabs" id="tabs" role="tablist" aria-label="읽기 렌즈"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="foot"></div>
+</main>
+
+<script>
+/* ============================================================================
+   렌즈 문서 데이터 — 어려운 원문 1개를 5가지 렌즈로 재구성.
+   이 객체만 교체하면 새 학습 문서가 됩니다. (kind: prose | quiz)
+   ============================================================================ */
+const LENS_DOC = {
+  meta: {
+    icon: "👁️",
+    title: "비전(Vision) — 이미지 이해",
+    oneliner: "Claude에 이미지를 넣고 이해시키는 법, 해상도·토큰·제한을 5가지 렌즈로 다시 읽습니다.",
+    sourceTitle: "Anthropic 공식문서",
+    sourceUrl: "https://platform.claude.com/docs/ko/build-with-claude/vision",
+    fetched: "2026-06-03 기준",
+    tags: ["비전", "이미지", "공식문서"]
+  },
+  lenses: [
+    {
+      id: "etymology", icon: "🔤", label: "어원", kind: "prose",
+      hint: "낯선 용어가 <b>어디서 왔는지</b>부터 풀면 개념이 친숙해집니다. (학습용 해석)",
+      body: `
+        <h3>‘vision’ — 라틴어 <code>visio</code>(봄)에서</h3>
+        <div class="etymo"><b>vision</b><span>← 라틴어 <code>visio</code> ‘봄·시각’ ← <code>videre</code> ‘보다’</span></div>
+        <p>영어 <strong>vision</strong>은 ‘보는 능력’을 뜻합니다. 어근 <code>videre</code>는 ‘보다’예요(‘비디오 video’와 같은 뿌리). 그래서 AI에서 vision은 모델이 텍스트뿐 아니라 <strong>이미지를 ‘보고’ 이해하는 능력</strong>을 가리킵니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>‘본다’는 건 단순히 픽셀을 받는 게 아니라 <strong>의미를 읽어내는</strong> 일입니다. 사진 속 개미가 무엇인지, 차트가 무엇을 말하는지 파악하는 것이 vision의 핵심이에요.</p></div>
+        <h3>곁들이면 좋은 용어 어원</h3>
+        <div class="etymo"><b>multimodal</b><span>← 라틴어 <code>multi</code>(여럿)+<code>modus</code>(방식) → 텍스트·이미지 등 ‘여러 입력 방식’을 함께 다룸</span></div>
+        <div class="etymo"><b>token</b><span>‘표·증표’를 뜻하는 옛 영어 <code>tācen</code>에서 → 모델이 세는 처리 단위. 이미지에서는 28×28 픽셀 블록 하나가 ‘visual token’.</span></div>
+        <div class="etymo"><b>base64</b><span>64개 문자(A–Z·a–z·0–9·+·/)만으로 이진 데이터를 글자로 바꾸는 인코딩 → 이미지 바이트를 텍스트 요청에 실어 보내는 방식.</span></div>
+        <div class="etymo"><b>bounding box</b><span>‘경계 상자’ — 이미지 속 영역을 둘러싸는 직사각형. <code>[x1, y1, x2, y2]</code> 네 좌표로 위치를 표시합니다.</span></div>
+        <p style="color:var(--fl-text-tertiary);font-size:13px">※ 어원 해석은 이해를 돕기 위한 학습용 연결이며, 공식 작명 의도와 다를 수 있습니다.</p>
+      `
+    },
+    {
+      id: "tldr", icon: "⚡", label: "한입요약", kind: "prose",
+      hint: "30초 안에 핵심만. 자세한 근거는 다른 렌즈와 <b>원문</b>에서.",
+      body: `
+        <h3>핵심 7줄</h3>
+        <ul>
+          <li><strong>넣는 방법은 3가지.</strong> base64로 인코딩한 이미지, 호스팅된 URL 참조, 또는 Files API로 한 번 올리고 <code>file_id</code>로 재사용 — 셋 중 골라 <code>image</code> 콘텐츠 블록에 담습니다.</li>
+          <li><strong>지원 형식은 4종.</strong> JPEG·PNG·GIF·WebP만 지원하며, 애니메이션은 첫 프레임만 쓰입니다.</li>
+          <li><strong>토큰은 패치로 센다.</strong> 이미지는 28×28 픽셀 블록(visual token) 단위로 처리되어 <code>⌈너비/28⌉ × ⌈높이/28⌉</code> 토큰을 소비합니다.</li>
+          <li><strong>해상도엔 상한이 있다.</strong> 너무 큰 이미지는 자동 축소됩니다 — Opus 4.7 이후·Fable 5는 긴 변 최대 2576px / 4784토큰, 그 외 모델은 1568px / 1568토큰.</li>
+          <li><strong>장수·용량 제한.</strong> API는 요청당 최대 600장(200k 컨텍스트 모델은 100장), claude.ai는 메시지당 20장. 이미지당 10MB(Bedrock·Vertex는 5MB), 요청 전체는 32MB.</li>
+          <li><strong>좌표는 픽셀로 요청.</strong> 바운딩 박스는 정규화(0~1000)보다 <strong>절대 픽셀 좌표</strong>를 요청해야 잘 작동하며, Claude가 축소해서 본 이미지 기준입니다.</li>
+          <li><strong>한계를 기억하자.</strong> 사람 신원 식별 거부, 개수 세기·공간 추론은 근사치, AI 생성 여부 판별 불가, 복잡한 의료 진단 스캔 부적합. 중요한 작업은 사람이 검증하세요.</li>
+        </ul>
+      `
+    },
+    {
+      id: "easy", icon: "🧒", label: "비유로 쉽게", kind: "prose",
+      hint: "어려운 말을 <b>일상 비유</b>로 바꿔 봅니다. 정확함보다 ‘감 잡기’가 목표예요.",
+      body: `
+        <h3>이미지 넣기 = 친구에게 사진 보여주기</h3>
+        <p>친구에게 사진을 보여주는 방법은 셋이에요 — 사진을 <strong>직접 메신저로 전송</strong>(base64), <strong>사진이 올라간 웹주소를 알려주기</strong>(URL), 아니면 <strong>공유 앨범에 한 번 올려두고 “그 사진 봐”라고 가리키기</strong>(Files API). 같은 사진을 여러 번 보낼 땐 마지막 방법이 가장 가볍습니다.</p>
+        <h3>visual token = 사진을 모눈종이에 올리기</h3>
+        <p>Claude는 사진을 통째로 보는 게 아니라 <strong>28×28 칸짜리 모눈종이</strong>에 얹어 칸 단위로 봅니다. 칸이 많을수록(큰 사진일수록) 봐야 할 게 많아 비용이 늘어요. 그래서 너무 큰 사진은 자동으로 줄여서 봅니다.</p>
+        <h3>해상도 상한 = 책상에 맞춰 지도 접기</h3>
+        <p>벽 한 면을 덮는 큰 지도를 책상에 펴려면 접어야 하죠. 모델 책상(해상도 상한)을 넘는 이미지는 비율을 지키며 접혀(축소돼) 올라갑니다. 4K 사진을 보내도 추가 디테일은 버려지니, 미리 적당히 줄여 보내는 게 빠르고 쌉니다.</p>
+        <h3>바운딩 박스 = “여기, 이 네모 안”</h3>
+        <p>“표가 어디 있어?”라고 물으면 Claude는 <strong>네 귀퉁이 좌표로 네모를 그려</strong> 알려줍니다. 단, ‘0~1000 비율’ 같은 말 대신 <strong>실제 픽셀 위치</strong>로 답하라고 해야 잘 맞아요. 그리고 그 좌표는 Claude가 ‘줄여서 본’ 이미지 기준이라는 점을 잊지 마세요.</p>
+        <h3>한계 = 만능 눈은 아니다</h3>
+        <p>사람 이름 맞히기는 거부하고, 작은 물건 개수 세기는 어림짐작이며, ‘이거 AI가 만든 사진이야?’엔 틀릴 수 있어요. 정밀 진단이 필요한 일은 <strong>사람이 다시 확인</strong>해야 합니다.</p>
+        <div class="callout"><span class="callout__i">🧭</span><p>한 문장 요약: <strong>“사진을 세 가지 방법으로 건네고, 모눈종이 칸만큼 비용이 들며, 책상에 맞게 접혀 들어가고, 위치는 픽셀로 물어보되, 중요한 건 사람이 다시 본다.”</strong></p></div>
+      `
+    },
+    {
+      id: "quiz", icon: "🧪", label: "퀴즈", kind: "quiz",
+      hint: "보기를 눌러 바로 확인하세요. 자가 점검용입니다.",
+      quiz: [
+        {
+          q: "Claude가 현재 지원하는 이미지 형식이 아닌 것은?",
+          options: ["JPEG·PNG", "GIF·WebP", "SVG·BMP"],
+          answer: 2,
+          explain: "지원 형식은 JPEG, PNG, GIF, WebP 네 가지입니다. SVG·BMP는 지원되지 않으며, GIF 등 애니메이션은 첫 프레임만 사용됩니다."
+        },
+        {
+          q: "Claude가 이미지 토큰을 세는 단위는?",
+          options: ["픽셀 하나하나", "28×28 픽셀 블록(visual token)", "이미지 한 장당 고정 1토큰"],
+          answer: 1,
+          explain: "이미지는 28×28 픽셀 블록(visual token) 단위로 처리되며, 토큰 수는 ⌈너비/28⌉ × ⌈높이/28⌉ 로 계산됩니다."
+        },
+        {
+          q: "바운딩 박스 좌표를 요청할 때 권장되는 방식은?",
+          options: ["0~1000 사이의 정규화된 좌표로 달라고 한다", "절대 픽셀 좌표 [x1, y1, x2, y2] 형식으로 달라고 한다", "좌표 형식은 지정하지 않고 알아서 하게 둔다"],
+          answer: 1,
+          explain: "Claude는 절대 픽셀 좌표에서 가장 잘 작동합니다. 정규화 좌표(0~1000)는 성능이 떨어지므로, 픽셀로 받고 필요하면 자체 코드에서 정규화하세요."
+        },
+        {
+          q: "하나의 API 요청에 넣을 수 있는 최대 이미지 수는? (Messages API 기준)",
+          options: ["메시지당 20장", "요청당 600장(200k 컨텍스트 모델은 100장)", "무제한"],
+          answer: 1,
+          explain: "Messages API는 요청당 최대 600장(200k 컨텍스트 윈도우 모델은 100장)입니다. claude.ai는 메시지당 20장입니다. 단, 32MB 요청 크기 제한에 먼저 걸릴 수 있습니다."
+        },
+        {
+          q: "다음 중 Claude 비전의 한계로 문서가 명시한 것이 아닌 것은?",
+          options: ["사람의 이름을 식별하는 데 사용할 수 없고 거부한다", "이미지가 AI 생성인지 확실히 판별해 준다", "복잡한 진단 스캔(CT·MRI) 해석용으로 설계되지 않았다"],
+          answer: 1,
+          explain: "Claude는 이미지가 AI로 생성됐는지 알지 못하며 질문받으면 틀릴 수 있어, 가짜·합성 이미지 탐지에 의존하면 안 됩니다. 사람 신원 식별 거부와 의료 스캔 부적합은 실제 명시된 한계입니다."
+        }
+      ]
+    },
+    {
+      id: "source", icon: "📄", label: "전문(번역)", kind: "prose",
+      hint: "원문 <b>전체를 한국어로</b> 옮긴 렌즈입니다. 영어 코드·프롬프트 예시는 한국어 설명과 함께 복사용 영어 원문도 제공합니다.",
+      body: `
+        <div class="src-note"><span>📄</span><div>출처: <strong>비전(Vision)</strong> — Anthropic 공식문서.
+        정확한 내용·갱신은 <a href="https://platform.claude.com/docs/ko/build-with-claude/vision" target="_blank" rel="noopener">원문 ↗</a>을 확인하세요. 아래는 학습용 한국어 번역본입니다.</div></div>
+
+        <p>Claude의 비전 기능을 통해 이미지를 이해하고 분석할 수 있으며, 이는 멀티모달 상호작용의 가능성을 열어줍니다. 이 가이드는 Claude에서 이미지를 사용하는 방법과 모범 사례, 코드 예제, 유의할 제한 사항을 다룹니다.</p>
+
+        <h3>비전 사용 방법</h3>
+        <ul>
+          <li><strong>claude.ai</strong> — 파일을 업로드하듯 이미지를 올리거나 채팅 창에 드래그 앤 드롭합니다.</li>
+          <li><strong>Console Workbench</strong> — 모든 User 메시지 블록 오른쪽 상단에 이미지 추가 버튼이 나타납니다.</li>
+          <li><strong>API 요청</strong> — 이 가이드의 예제를 참조합니다.</li>
+        </ul>
+        <p>단일 요청에 여러 이미지를 포함할 수 있으며, Claude는 응답을 작성할 때 이들을 함께 분석합니다. 이미지를 비교·대조할 때 유용합니다.</p>
+
+        <h3>업로드 전 확인 사항 — 일반 제한</h3>
+        <p>메시지 또는 요청당 최대 이미지 수:</p>
+        <ul>
+          <li>claude.ai에서는 메시지당 20개.</li>
+          <li>200k 토큰 컨텍스트 윈도우 모델의 경우 API에서 요청당 100개.</li>
+          <li>그 외 모든 모델의 경우 API에서 요청당 600개.</li>
+        </ul>
+        <p>이미지당 최대 크기는 8000×8000 px입니다. 한 API 요청에 20개를 초과하는 이미지를 제출하면 이 제한은 2000×2000 px로 줄어듭니다.</p>
+        <p>이미지당 최대 파일 크기: Claude API 직접 사용 시 10MB(base64 인코딩), Amazon Bedrock·Vertex AI에서는 5MB, claude.ai에서는 10MB.</p>
+        <div class="callout"><span class="callout__i">⚠️</span><p>API는 요청당 최대 600개를 지원하지만 <strong>요청 크기 제한</strong>(표준 엔드포인트 32MB, 일부 파트너 플랫폼은 더 낮음)에 먼저 도달할 수 있습니다. 이미지가 많으면 Files API로 업로드하고 <code>file_id</code>로 참조해 페이로드를 작게 유지하세요. 큰 이미지가 많으면 600장에 도달하기 전 실패할 수 있으니 업로드 전 다운샘플링하세요.</p></div>
+
+        <h3>이미지 크기 평가</h3>
+        <p>Claude는 픽셀이 아니라 패치 단위로 이미지를 봅니다. 각 패치는 28×28 픽셀 블록이며 이를 ‘visual token’(비주얼 토큰)이라 합니다. 따라서 이미지는 <code>⌈width / 28⌉ × ⌈height / 28⌉</code> 비주얼 토큰을 소비합니다.</p>
+        <p>이미지가 너무 크면 Claude가 크기를 조정합니다. 최대 기본 이미지 해상도:</p>
+        <ul>
+          <li>Claude Fable 5·Claude Mythos 5: 4784 토큰, 긴 변 기준 최대 2576 픽셀.</li>
+          <li>Claude Opus 4.8: 4784 토큰, 긴 변 기준 최대 2576 픽셀.</li>
+          <li>Claude Opus 4.7: 4784 토큰, 긴 변 기준 최대 2576 픽셀.</li>
+          <li>기타 모델: 1568 토큰, 긴 변 기준 최대 1568 픽셀.</li>
+        </ul>
+        <p>입력 이미지가 기본 해상도보다 크면 먼저 종횡비를 유지하며 가능한 최대 크기로 조정됩니다. 조정 여부와 관계없이 모든 이미지는 하단·오른쪽 가장자리에 28 픽셀의 배수가 되도록 패딩됩니다. 지연 시간을 줄이고 좌표 워크플로를 단순화하려면 업로드 전 크기를 조정하는 것이 좋습니다.</p>
+
+        <h3>이미지 비용 계산</h3>
+        <p>요청에 포함한 각 이미지는 토큰 사용량에 포함됩니다. 대략적 비용은 이미지의 비주얼 토큰 수에 사용 모델의 토큰당 가격을 곱해 구합니다. 다음은 Claude Sonnet 4.6의 입력 100만 토큰당 $3 기준 예시입니다:</p>
+        <ul>
+          <li>200×200 px(0.04MP) → 64 토큰, 이미지당 ~$0.00019, 1천 장당 ~$0.19</li>
+          <li>1000×1000 px(1MP) → 1296 토큰, ~$0.0039, ~$3.89</li>
+          <li>1092×1092 px(1.19MP) → 1521 토큰, ~$0.0046, ~$4.56</li>
+          <li>1920×1080 px(2.07MP) → 1560 토큰, ~$0.0047, ~$4.68</li>
+          <li>2000×1500 px(3MP) → 1564 토큰, ~$0.0047, ~$4.69</li>
+          <li>3840×2160 px(8.29MP) → 1560 토큰, ~$0.0047, ~$4.68</li>
+        </ul>
+        <p>마지막 세 이미지는 기본 해상도를 초과하므로 처리 전 축소됩니다(각각 1456×819, 1270×952, 1456×819 px). 4K 이미지는 1920×1080과 같은 크기로 축소되어 비용이 더 들지 않고 추가 해상도는 버려집니다.</p>
+
+        <h3>고해상도 이미지 지원</h3>
+        <p>Claude Opus 4.7은 고해상도 이미지를 지원하는 최초의 Claude 모델이며, Opus 4.8·Fable 5·Mythos 5 및 이후 모델도 지원합니다. 최대 해상도는 긴 변 기준 2576 픽셀로 이전 1568px에서 늘었습니다. 컴퓨터 사용, 스크린샷 이해, 문서 분석 같은 비전 중심 작업에 유용합니다. 베타 헤더나 옵트인 없이 자동 적용됩니다.</p>
+        <p>고해상도 이미지는 이전보다 약 3배 많은 토큰을 쓸 수 있습니다(이미지당 4784 대 1568). 추가 정밀도가 필요 없으면 전송 전 다운샘플링하세요. 다음은 Opus 4.7·4.8의 입력 100만 토큰당 $5 기준 예시입니다:</p>
+        <ul>
+          <li>200×200 px → 64 토큰, ~$0.00032, ~$0.32</li>
+          <li>1000×1000 px → 1296 토큰, ~$0.0065, ~$6.48</li>
+          <li>1092×1092 px → 1521 토큰, ~$0.0076, ~$7.61</li>
+          <li>1920×1080 px → 2691 토큰, ~$0.013, ~$13.46</li>
+          <li>2000×1500 px → 3888 토큰, ~$0.019, ~$19.44</li>
+          <li>3840×2160 px → 4784 토큰, ~$0.024, ~$23.92</li>
+        </ul>
+        <p>마지막 4K 이미지만 더 높은 제한을 초과해 2576×1449 px로 축소됩니다. 고해상도 지원은 한계를 높일 뿐 제거하지는 않으며, 긴 변 2576px 또는 4784 토큰을 넘으면 여전히 축소됩니다.</p>
+
+        <h3>이미지 품질 확인</h3>
+        <ul>
+          <li><strong>이미지 형식</strong>: 지원 형식(JPEG·PNG·GIF·WebP)을 사용합니다. 애니메이션은 첫 프레임만 사용됩니다.</li>
+          <li><strong>선명도</strong>: 너무 흐릿하거나 픽셀화되지 않은 선명한 이미지를 씁니다.</li>
+          <li><strong>텍스트</strong>: 중요한 텍스트는 읽기 쉽고 너무 작지 않게 하고, 텍스트를 키우려고 핵심 시각 맥락을 잘라내지 마세요.</li>
+          <li><strong>크기 조정</strong>: 너무 크면 축소될 수 있어 텍스트가 읽기 어려워질 수 있으니 미리 크기 조정·자르기를 고려합니다.</li>
+          <li><strong>압축</strong>: JPEG·WebP 손실 압축은 요청 크기를 줄여 지연을 낮추지만, 과도하면 텍스트 가독성을 해치는 아티팩트가 생깁니다. 실제 전송 이미지를 검사하세요.</li>
+        </ul>
+
+        <h3>좌표 및 바운딩 박스 작업</h3>
+        <p>Claude는 표·양식 필드·차트 요소·UI 구성요소 등 이미지 영역을 찾아 바운딩 박스를 반환할 수 있습니다.</p>
+        <div class="tp"><p><strong>Claude는 절대 픽셀 좌표에서 가장 잘 작동합니다.</strong> 프롬프트에서 명시적으로 요청하세요. 예: “각 표의 바운딩 박스를 픽셀 좌표로 [x1, y1, x2, y2] 형식으로 반환하세요.” 정규화 좌표(0~1000)를 요청하면 성능이 떨어집니다. 항상 픽셀 좌표로 받고 필요하면 자체 코드에서 정규화하세요.
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>Return the bounding box for each table in pixel coordinates as [x1, y1, x2, y2].</pre></details></p></div>
+        <p>좌표는 표준 규칙을 따릅니다: 원점 (0,0)은 왼쪽 상단, x는 오른쪽으로, y는 아래로 증가합니다. Claude가 반환하는 좌표는 <strong>Claude가 모델 기본 해상도에 맞게 축소한 후의 이미지</strong> 기준 픽셀 위치입니다. 직접 쓰려면 업로드 전 이미지를 미리 크기 조정하거나, 반환 좌표를 재조정하세요. 공간 추론에는 한계가 있으니 대규모 처리 전 결과를 시각적으로 점검하세요. PDF 업로드는 서버 측에서 통제 불가한 크기로 래스터화되므로 좌표를 페이지에 안정적으로 매핑할 수 없습니다 — 직접 이미지로 래스터화하고 미리 크기 조정 방식을 쓰세요.</p>
+
+        <h3>Claude가 이미지를 조정·패딩하는 방법</h3>
+        <p>Claude는 두 제한을 모두 충족하는, 종횡비를 유지하는 최대 크기를 찾습니다:</p>
+        <ul>
+          <li><strong>가장자리 제한</strong>: 어느 변도 최대 가장자리 길이를 넘지 않음(대부분 1568px, Opus 4.7 이후 2576px).</li>
+          <li><strong>비주얼 토큰 제한</strong>: <code>⌈width / 28⌉ × ⌈height / 28⌉</code>이 토큰 예산을 넘지 않음(대부분 1568, Opus 4.7 이후 4784).</li>
+        </ul>
+        <p>사진·스크린샷은 보통 가장자리 제한이 축소를 유발합니다. 세로 문서는 흔히 토큰 제한이 먼저 걸리며 이를 간과하는 것이 좌표 불일치의 가장 흔한 원인입니다. 예: 130 DPI로 스캔한 A4는 1075×1520 px로, 양 변 모두 1568px 미만이지만 39×55=2145 토큰을 써 924×1307로 축소됩니다. 이후 모든 이미지를 하단·오른쪽에서 다음 28 배수까지 패딩합니다(924×1307 → 924×1316). 패딩에는 콘텐츠가 없습니다. <strong>항상 패딩된 크기가 아니라 축소된 크기로 정규화·재조정하세요.</strong></p>
+
+        <h3>업로드 전 이미지 크기 조정 (참조 구현)</h3>
+        <p>가장 신뢰할 수 있는 방법은 업로드 전 직접 크기를 조정하는 것입니다. 그러면 보유 이미지와 Claude가 보는 이미지가 정확히 일치합니다. 아래 구현은 Claude가 조정할 정확한 크기를 계산합니다.</p>
+        <div class="tp"><p>이미지의 비주얼 토큰 수를 구하고(28×28 패치당 1토큰), 가장자리·토큰 제한에 맞는 종횡비 유지 최대 크기를 이진 탐색으로 찾는 함수입니다. 기본값은 일반 모델용이며, Opus 4.7 이후 모델은 <code>max_edge=2576, max_tokens=4784</code>를 씁니다.
+        <details><summary>코드 원문(Python) — 복사용</summary><pre>import math
+
+
+def count_image_tokens(width: int, height: int) -> int:
+    """Visual tokens consumed by an image: one token per 28x28 pixel patch."""
+    return math.ceil(width / 28) * math.ceil(height / 28)
+
+
+def resized_size(
+    width: int,
+    height: int,
+    max_edge: int = 1568,
+    max_tokens: int = 1568,
+) -> tuple[int, int]:
+    """The size Claude resizes an image to before padding.
+
+    Defaults are for most models. For Claude Opus 4.7 and later models, use
+    max_edge=2576 and max_tokens=4784. Returns (width, height). Images that
+    already fit within the limits are returned unchanged.
+    """
+
+    def fits(w: int, h: int) -> bool:
+        return (
+            math.ceil(w / 28) * 28 &lt;= max_edge
+            and math.ceil(h / 28) * 28 &lt;= max_edge
+            and count_image_tokens(w, h) &lt;= max_tokens
+        )
+
+    if fits(width, height):
+        return (width, height)
+    if height &gt; width:
+        resized_h, resized_w = resized_size(height, width, max_edge, max_tokens)
+        return (resized_w, resized_h)
+
+    aspect_ratio = width / height
+    lo, hi = 1, width  # lo always fits; hi never fits
+    while lo + 1 &lt; hi:
+        mid = (lo + hi) // 2
+        if fits(mid, max(round(mid / aspect_ratio), 1)):
+            lo = mid
+        else:
+            hi = mid
+    return (lo, max(round(lo / aspect_ratio), 1))
+
+
+print(resized_size(1075, 1520))  # (924, 1307)</pre></details></p></div>
+        <p>절차: ① <code>resized_size</code>가 반환한 크기로 조정 → ② 직접 패딩하지 말고 API로 전송(패딩은 Claude가 처리) → ③ 프롬프트에서 픽셀 좌표를 명시적으로 요청 → ④ 반환 좌표를 전송한 이미지에 그대로 사용. 정규화가 필요하면 원본이나 패딩 크기가 아니라 <strong>전송한 이미지 크기</strong>로 나눕니다.</p>
+
+        <h3>미리 크기 조정할 수 없을 때 좌표 재조정</h3>
+        <p>업스트림에서 이미지가 오는 등 미리 조정할 수 없으면, <code>resized_size</code>로 Claude가 본 크기를 복구한 뒤 반환 좌표를 정규화 좌표로 매핑하거나 원본으로 되돌립니다. 업로드 이미지의 픽셀 크기를 알아야 하므로 PDF 업로드에는 적용되지 않습니다.</p>
+        <div class="tp"><p>Claude가 반환한 픽셀 좌표를 [0,1] 범위 상대 좌표로 매핑하는 함수입니다. 패딩은 하단·오른쪽에만 적용돼 원점이 이동하지 않으므로 축별 선형 재조정으로 충분합니다.
+        <details><summary>코드 원문(Python) — 복사용</summary><pre>def to_relative_coordinates(
+    x: float,
+    y: float,
+    original_width: int,
+    original_height: int,
+    max_edge: int = 1568,
+    max_tokens: int = 1568,
+) -> tuple[float, float]:
+    """Map a pixel coordinate returned by Claude to relative coordinates in [0, 1].
+
+    Pass the dimensions of the image you uploaded. For Claude Opus 4.7 and
+    later models, use max_edge=2576 and max_tokens=4784.
+    """
+    resized_w, resized_h = resized_size(
+        original_width, original_height, max_edge, max_tokens
+    )
+    return (x / resized_w, y / resized_h)
+
+# To express coords in the original image pixel space, multiply relative
+# coords by the original size: (rel_x * original_width, rel_y * original_height)</pre></details></p></div>
+
+        <h3>프롬프트 예제</h3>
+        <p>텍스트 상호작용에 효과적인 많은 프롬프팅 기법은 이미지 프롬프트에도 적용됩니다. 핵심 모범 사례 구조는 다음과 같습니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>긴 문서를 쿼리 앞에 두면 결과가 좋아지듯, Claude는 <strong>이미지가 텍스트보다 먼저 올 때</strong> 가장 잘 작동합니다. 가능하면 이미지-텍스트 순서를 선호하세요.</p></div>
+        <p>이미지를 제공하는 세 가지 방법: ① <code>image</code> 콘텐츠 블록에 base64 인코딩 이미지로, ② 호스팅된 이미지의 URL 참조로, ③ Files API 사용(한 번 업로드, 여러 번 사용). Amazon Bedrock·Vertex AI에서는 현재 base64 소스만 사용할 수 있습니다.</p>
+
+        <h3>예제 — base64 인코딩 이미지</h3>
+        <div class="tp"><p>이미지 한 장을 base64로 담아 “이 이미지를 설명하세요”를 요청하는 Messages API 호출입니다. <code>source.type</code>을 <code>base64</code>로, <code>media_type</code>과 <code>data</code>(인코딩된 문자열)를 넣습니다.
+        <details><summary>코드 원문(Python) — 복사용</summary><pre>import anthropic
+
+image1_data = "iVBORw0KGgoAAAANS...=="   # base64-encoded image data
+image1_media_type = "image/png"
+
+client = anthropic.Anthropic()
+message = client.messages.create(
+    model="claude-opus-4-8",
+    max_tokens=1024,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": image1_media_type,
+                        "data": image1_data,
+                    },
+                },
+                {"type": "text", "text": "Describe this image."},
+            ],
+        }
+    ],
+)
+print(message)</pre></details></p></div>
+
+        <h3>예제 — URL 기반 이미지</h3>
+        <div class="tp"><p><code>source.type</code>을 <code>url</code>로 두고 이미지 주소만 넣으면 됩니다. base64 인코딩이 필요 없습니다.
+        <details><summary>코드 원문(Python) — 복사용</summary><pre>import anthropic
+
+client = anthropic.Anthropic()
+message = client.messages.create(
+    model="claude-opus-4-8",
+    max_tokens=1024,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "url",
+                        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg",
+                    },
+                },
+                {"type": "text", "text": "Describe this image."},
+            ],
+        }
+    ],
+)
+print(message)</pre></details></p></div>
+
+        <h3>예제 — Files API 이미지</h3>
+        <p>반복 사용하거나 인코딩 오버헤드를 피하려면 Files API를 씁니다. 이미지를 한 번 업로드하고, 이후 메시지에서는 base64를 다시 보내는 대신 반환된 <code>file_id</code>를 참조합니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>멀티턴·에이전트 워크플로에서는 매 요청이 전체 대화 기록을 다시 보냅니다. base64면 이미지 바이트가 매 턴 포함돼 요청이 커지지만, Files API로 <code>file_id</code> 참조하면 누적 이미지 수와 무관하게 페이로드를 작게 유지할 수 있습니다.</p></div>
+        <div class="tp"><p>이미지를 Files API에 업로드해 받은 <code>file_id</code>를 <code>source.type: file</code>로 참조합니다. 베타 헤더 <code>files-api-2025-04-14</code>가 필요합니다.
+        <details><summary>코드 원문(Python) — 복사용</summary><pre>import anthropic
+
+client = anthropic.Anthropic()
+
+# Upload the image file
+with open("image.jpg", "rb") as f:
+    file_upload = client.beta.files.upload(file=("image.jpg", f, "image/jpeg"))
+
+# Use the uploaded file in a message
+message = client.beta.messages.create(
+    model="claude-opus-4-8",
+    max_tokens=1024,
+    betas=["files-api-2025-04-14"],
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {"type": "file", "file_id": file_upload.id},
+                },
+                {"type": "text", "text": "Describe this image."},
+            ],
+        }
+    ],
+)
+print(message.content)</pre></details></p></div>
+
+        <h3>여러 이미지 다루기</h3>
+        <p>여러 이미지가 있으면 각 이미지를 <code>Image 1:</code>, <code>Image 2:</code> 등으로 소개합니다. 이미지 사이나 이미지-프롬프트 사이에 줄바꿈은 필요 없습니다. 시스템 프롬프트로 응답 방식을 지정할 수도 있고(예: “스페인어로만 응답하세요”), 여러 대화 턴에 걸쳐 새 이미지나 후속 질문을 이어갈 수 있어 반복 분석·비교 워크플로가 가능합니다. API에서는 표준 멀티턴 구조의 <code>user</code> 역할 메시지 배열에 새 이미지를 삽입합니다.</p>
+
+        <h3>제한 사항</h3>
+        <ul>
+          <li><strong>사람 식별</strong>: 이미지에서 사람의 이름을 식별하는 데 사용할 수 없으며 거부합니다.</li>
+          <li><strong>정확도</strong>: 저품질·회전된·200픽셀 미만의 매우 작은 이미지에서는 환각·실수가 생길 수 있습니다.</li>
+          <li><strong>공간 추론</strong>: 좌표·위치 출력은 근사치이니 지침을 따르고 의존 전 검증하세요.</li>
+          <li><strong>개수 세기</strong>: 객체 수를 대략 줄 수 있으나, 특히 작은 객체가 많으면 정확하지 않을 수 있습니다.</li>
+          <li><strong>AI 생성 이미지</strong>: AI 생성 여부를 알지 못하며 틀릴 수 있으니 가짜·합성 이미지 탐지에 의존하지 마세요.</li>
+          <li><strong>부적절한 콘텐츠</strong>: 사용 제한 정책 위반 이미지는 처리하지 않습니다.</li>
+          <li><strong>의료</strong>: 일반 의료 이미지는 분석할 수 있으나 CT·MRI 같은 복잡한 진단 스캔 해석용으로 설계되지 않았으며, 전문 의료 조언·진단을 대체할 수 없습니다.</li>
+        </ul>
+        <p>중요한 사용 사례는 항상 신중히 검토·검증하고, 사람의 감독 없이 완벽한 정밀도나 민감한 이미지 분석이 필요한 작업에는 쓰지 마세요.</p>
+
+        <h3>FAQ 요약</h3>
+        <ul>
+          <li><strong>지원 형식</strong>: image/jpeg, image/png, image/gif, image/webp.</li>
+          <li><strong>URL 가능?</strong>: 예 — <code>url</code> 소스 유형을 사용합니다.</li>
+          <li><strong>파일 크기 제한</strong>: Claude API 10MB, Bedrock·Vertex 5MB, claude.ai 10MB. 초과 시 거부·오류. 요청 전체는 32MB.</li>
+          <li><strong>요청당 이미지 수</strong>: Messages API 최대 600개(200k 컨텍스트 모델 100개), claude.ai 턴당 20개.</li>
+          <li><strong>메타데이터</strong>: 읽지 않습니다.</li>
+          <li><strong>업로드 이미지 삭제</strong>: 업로드는 일시적이며 요청 처리 후 자동 삭제됩니다.</li>
+          <li><strong>학습 사용</strong>: Anthropic은 업로드된 이미지를 모델 학습에 사용하지 않습니다.</li>
+          <li><strong>이미지 생성·편집</strong>: 불가 — Claude는 이미지 이해 전용으로 생성·편집·조작은 못 합니다.</li>
+        </ul>
+
+        <p style="color:var(--fl-text-tertiary);font-size:12.5px">※ 학습용 한국어 번역본입니다. 표현은 이해를 돕기 위해 다듬었으며, 정확한 원문은 출처 링크를 확인하세요.</p>
+      `
+    }
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const d = LENS_DOC, m = d.meta, lenses = d.lenses;
+
+  // 헤더
+  document.getElementById("head").innerHTML = `
+    <div class="lens__icon">${esc(m.icon)}</div>
+    <span class="lens__eyebrow">📚 깊이 읽기 · 5가지 렌즈</span>
+    <h1 class="lens__title">${esc(m.title)}</h1>
+    <p class="lens__oneliner">${esc(m.oneliner)}</p>
+    <div class="lens__source">
+      <span>📄 출처 <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceTitle)} ↗</a></span>
+      <span>🗓️ ${esc(m.fetched)}</span>
+      <span>🏷️ ${m.tags.map(esc).join(" · ")}</span>
+    </div>`;
+
+  // 탭
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = lenses.map((l, i) => `
+    <button class="lens-tab" role="tab" data-i="${i}" aria-selected="${i === 0}">${esc(l.icon)} ${esc(l.label)}</button>`).join("");
+
+  const panelEl = document.getElementById("panel");
+  function renderQuiz(items) {
+    return items.map((it, qi) => `
+      <div class="quiz-item">
+        <p class="quiz-q"><span>Q${qi + 1}.</span>${esc(it.q)}</p>
+        <div class="quiz-opts" data-answer="${it.answer}">
+          ${it.options.map((o, oi) => `
+            <button class="quiz-opt" type="button" data-oi="${oi}">
+              <span class="quiz-opt__mark">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span>
+            </button>`).join("")}
+        </div>
+        <div class="quiz-explain"><b>해설.</b> ${esc(it.explain)}</div>
+      </div>`).join("");
+  }
+  function render(i) {
+    const l = lenses[i];
+    panelEl.innerHTML = `
+      ${l.hint ? `<div class="lens-panel__hint"><span>${esc(l.icon)}</span><span>${l.hint}</span></div>` : ""}
+      ${l.kind === "quiz" ? renderQuiz(l.quiz) : `<div class="lens-prose">${l.body}</div>`}`;
+    panelEl.className = "lens-panel";
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".lens-tab");
+    if (!b) return;
+    const i = +b.dataset.i;
+    tabsEl.querySelectorAll(".lens-tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // 퀴즈 채점 (위임)
+  panelEl.addEventListener("click", (e) => {
+    const opt = e.target.closest(".quiz-opt");
+    if (!opt) return;
+    const opts = opt.closest(".quiz-opts");
+    if (opt.disabled) return;
+    const answer = +opts.dataset.answer;
+    const chosen = +opt.dataset.oi;
+    opts.querySelectorAll(".quiz-opt").forEach((b) => {
+      b.disabled = true;
+      const oi = +b.dataset.oi;
+      if (oi === answer) b.classList.add("quiz-opt--correct");
+      if (oi === chosen && chosen !== answer) b.classList.add("quiz-opt--wrong");
+    });
+    const ex = opts.parentElement.querySelector(".quiz-explain");
+    if (ex) ex.classList.add("open");
+  });
+
+  // 푸터
+  document.getElementById("foot").innerHTML = `
+    <footer class="lens__footer">
+      <p>📚 <b>깊이 읽기</b> — 어려운 문서를 5가지 렌즈로 다시 읽는 학습 페이지. 원문을 대체하지 않으며, 정확한 내용은 출처를 확인하세요.</p>
+      <p>Folio 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외) · 학습 템플릿: doc-lenses 각색</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : (mq ? mq.matches : false); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => { const n = dark() ? "light" : "dark"; try { localStorage.setItem("nl-theme", n); } catch (e) {} root.dataset.nlTheme = n; apply(); });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

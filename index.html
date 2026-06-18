@@ -185,38 +185,270 @@ body.fl-dark .nl-ico-moon { display: block; }
    (스케줄 에이전트가 매일 이 배열을 갱신 → 커밋 → 푸시 → Pages 자동 배포)
    ============================================================================ */
 const ARCHIVE = {
-  meta: {
-    icon: "🗞️",
-    title: ["메이커준의 ", "AI 위클리"],
-    lead: "러닝 에이전트가 내 관심사에 맞춰 발행하는 개인화 AI 뉴스레터. 지난 호를 여기에 모아둡니다.",
-    owner: "메이커준",
-    cadence: "매주(또는 매일)"
+  "meta": {
+    "icon": "🗞️",
+    "title": [
+      "메이커준의 ",
+      "AI 위클리"
+    ],
+    "lead": "러닝 에이전트가 내 관심사에 맞춰 매일 발행하는 개인화 AI 뉴스레터. 지난 호를 여기에 모아둡니다.",
+    "owner": "메이커준",
+    "cadence": "매일(영업일)"
   },
-  editions: [
-    // ← 새 호는 항상 이 배열 맨 위에 추가됩니다.
+  "editions": [
     {
-      date: "2026-06-18",
-      weekday: "목",
-      label: "Vol.07",
-      title: "AI가 ‘대신 일해주는’ 시대 — 누구나 알아둘 2가지",
-      topics: ["AI 최신 소식", "비개발자가 꼭 아는 AI"],
-      href: "editions/2026-06-18.html"
+      "date": "2026-06-18",
+      "weekday": "목",
+      "label": "Vol.23",
+      "title": "AI 에이전트끼리 협업하는 시대 · 매일 5분, AI로 업무 한 조각 자동화하기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-18.html"
     },
-
-    // ↓ 여기부터는 '리스트가 쌓인 모습'을 보여주기 위한 데모 예시(demo: true)입니다.
-    //   첫 실제 발행 때 모두 제거하세요. 링크는 최신 호로 연결해 두었습니다.
-    { date: "2026-06-11", weekday: "목", label: "Vol.06", demo: true,
-      title: "회의록·메일 초안을 AI에게 — 시간 버는 사람들의 공통점",
-      topics: ["AI 최신 소식", "비개발자가 꼭 아는 AI"], href: "editions/2026-06-18.html" },
-    { date: "2026-06-04", weekday: "목", label: "Vol.05", demo: true,
-      title: "프롬프트보다 ‘맥락’이 결과를 가른다",
-      topics: ["AI 최신 소식"], href: "editions/2026-06-18.html" },
-    { date: "2026-05-28", weekday: "목", label: "Vol.04", demo: true,
-      title: "비개발자를 위한 AI 도구, 이번 달 흐름 정리",
-      topics: ["비개발자가 꼭 아는 AI"], href: "editions/2026-06-18.html" },
-    { date: "2026-05-21", weekday: "목", label: "Vol.03", demo: true,
-      title: "이미지·음성까지 — 멀티모달 AI 입문",
-      topics: ["AI 최신 소식"], href: "editions/2026-06-18.html" }
+    {
+      "date": "2026-06-17",
+      "weekday": "수",
+      "label": "Vol.22",
+      "title": "검색·메신저·문서, 매일 쓰는 도구 속으로 들어온 AI · ‘질문 잘하는 법’이 곧 AI 활용 실력",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-17.html"
+    },
+    {
+      "date": "2026-06-16",
+      "weekday": "화",
+      "label": "Vol.21",
+      "title": "AI 비용은 내려가고, 성능은 올라간다 · AI를 믿되 확인하기 — 환각과 정보보안 기본기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-16.html"
+    },
+    {
+      "date": "2026-06-15",
+      "weekday": "월",
+      "label": "Vol.20",
+      "title": "더 긴 작업을 한 번에 — 장기 실행 모델의 부상 · 빈 문서가 무섭다면 — 초안은 AI에게, 판단은 나에게",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-15.html"
+    },
+    {
+      "date": "2026-06-12",
+      "weekday": "금",
+      "label": "Vol.19",
+      "title": "멀티모달이 ‘기본’이 되다 — 글·이미지·음성 한 번에 · 바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 ",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-12.html"
+    },
+    {
+      "date": "2026-06-11",
+      "weekday": "목",
+      "label": "Vol.18",
+      "title": "‘에이전트’가 올해 AI의 키워드가 된 이유 · 회의·자료조사·번역 — 비개발 직군의 AI 활용 3대장",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-11.html"
+    },
+    {
+      "date": "2026-06-10",
+      "weekday": "수",
+      "label": "Vol.17",
+      "title": "AI가 ‘답해주는 도구’에서 ‘대신 일해주는 동료’로 · 매일 5분, AI로 업무 한 조각 자동화하기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-10.html"
+    },
+    {
+      "date": "2026-06-09",
+      "weekday": "화",
+      "label": "Vol.16",
+      "title": "‘평가(eval)’가 AI 활용의 필수 인프라로 · ‘질문 잘하는 법’이 곧 AI 활용 실력",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-09.html"
+    },
+    {
+      "date": "2026-06-08",
+      "weekday": "월",
+      "label": "Vol.15",
+      "title": "AI 에이전트끼리 협업하는 시대 · AI를 믿되 확인하기 — 환각과 정보보안 기본기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-08.html"
+    },
+    {
+      "date": "2026-06-05",
+      "weekday": "금",
+      "label": "Vol.14",
+      "title": "검색·메신저·문서, 매일 쓰는 도구 속으로 들어온 AI · 빈 문서가 무섭다면 — 초안은 AI에게, 판단은 ",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-05.html"
+    },
+    {
+      "date": "2026-06-04",
+      "weekday": "목",
+      "label": "Vol.13",
+      "title": "AI 비용은 내려가고, 성능은 올라간다 · 바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 일을 맡길 수 있",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-04.html"
+    },
+    {
+      "date": "2026-06-03",
+      "weekday": "수",
+      "label": "Vol.12",
+      "title": "더 긴 작업을 한 번에 — 장기 실행 모델의 부상 · 회의·자료조사·번역 — 비개발 직군의 AI 활용 3대장",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-03.html"
+    },
+    {
+      "date": "2026-06-02",
+      "weekday": "화",
+      "label": "Vol.11",
+      "title": "멀티모달이 ‘기본’이 되다 — 글·이미지·음성 한 번에 · 매일 5분, AI로 업무 한 조각 자동화하기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-02.html"
+    },
+    {
+      "date": "2026-06-01",
+      "weekday": "월",
+      "label": "Vol.10",
+      "title": "‘에이전트’가 올해 AI의 키워드가 된 이유 · ‘질문 잘하는 법’이 곧 AI 활용 실력",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-06-01.html"
+    },
+    {
+      "date": "2026-05-29",
+      "weekday": "금",
+      "label": "Vol.09",
+      "title": "AI가 ‘답해주는 도구’에서 ‘대신 일해주는 동료’로 · AI를 믿되 확인하기 — 환각과 정보보안 기본기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-29.html"
+    },
+    {
+      "date": "2026-05-28",
+      "weekday": "목",
+      "label": "Vol.08",
+      "title": "‘평가(eval)’가 AI 활용의 필수 인프라로 · 빈 문서가 무섭다면 — 초안은 AI에게, 판단은 나에게",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-28.html"
+    },
+    {
+      "date": "2026-05-27",
+      "weekday": "수",
+      "label": "Vol.07",
+      "title": "AI 에이전트끼리 협업하는 시대 · 바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 일을 맡길 수 있다",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-27.html"
+    },
+    {
+      "date": "2026-05-26",
+      "weekday": "화",
+      "label": "Vol.06",
+      "title": "검색·메신저·문서, 매일 쓰는 도구 속으로 들어온 AI · 회의·자료조사·번역 — 비개발 직군의 AI 활용 ",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-26.html"
+    },
+    {
+      "date": "2026-05-25",
+      "weekday": "월",
+      "label": "Vol.05",
+      "title": "AI 비용은 내려가고, 성능은 올라간다 · 매일 5분, AI로 업무 한 조각 자동화하기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-25.html"
+    },
+    {
+      "date": "2026-05-22",
+      "weekday": "금",
+      "label": "Vol.04",
+      "title": "더 긴 작업을 한 번에 — 장기 실행 모델의 부상 · ‘질문 잘하는 법’이 곧 AI 활용 실력",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-22.html"
+    },
+    {
+      "date": "2026-05-21",
+      "weekday": "목",
+      "label": "Vol.03",
+      "title": "멀티모달이 ‘기본’이 되다 — 글·이미지·음성 한 번에 · AI를 믿되 확인하기 — 환각과 정보보안 기본기",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-21.html"
+    },
+    {
+      "date": "2026-05-20",
+      "weekday": "수",
+      "label": "Vol.02",
+      "title": "‘에이전트’가 올해 AI의 키워드가 된 이유 · 빈 문서가 무섭다면 — 초안은 AI에게, 판단은 나에게",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-20.html"
+    },
+    {
+      "date": "2026-05-19",
+      "weekday": "화",
+      "label": "Vol.01",
+      "title": "AI가 ‘답해주는 도구’에서 ‘대신 일해주는 동료’로 · 바로 ‘이 뉴스레터’처럼 — 비개발자도 AI에게 일",
+      "topics": [
+        "AI 최신 소식",
+        "비개발자가 꼭 아는 AI"
+      ],
+      "href": "editions/2026-05-19.html"
+    }
   ]
 };
 

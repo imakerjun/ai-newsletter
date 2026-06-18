@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>깊이 읽기 — effort (노력 수준 조절) (5가지 렌즈)</title>
+<meta name="description" content="어려운 공식문서를 어원·요약·비유·퀴즈·원문 5가지 렌즈로 다시 읽는 학습 페이지." />
+
+<script>
+  (function () { try { var s = localStorage.getItem("nl-theme"); if (s) document.documentElement.dataset.nlTheme = s; } catch (e) {} })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — 저장소 전체와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13); --fl-border-strong: rgba(15,14,12,0.20);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-success: #2f8a5d; --fl-danger: #c84c47; --fl-danger-bg: #fbe4e4;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12); --fl-border-strong: rgba(255,253,248,0.20);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-success: #6fc193; --fl-danger: #e08580; --fl-danger-bg: rgba(200,76,71,0.20);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--fl-bg); color: var(--fl-text); font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6; transition: background var(--fl-dur-normal), color var(--fl-dur-normal); }
+a { color: inherit; text-decoration: none; }
+
+/* 상단 네비 (저장소 공통) */
+.topnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 9px 20px; background: color-mix(in srgb, var(--fl-bg) 86%, transparent); -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px); border-bottom: 1px solid var(--fl-border-subtle); }
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+.nl-theme { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer; transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+.lens { max-width: 760px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 헤더 */
+.lens__icon { font-size: 52px; line-height: 1; }
+.lens__eyebrow { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-tint-purple); background: var(--fl-tint-purple-bg); padding: 3px 10px; border-radius: 999px; }
+.lens__title { font-size: 34px; font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; margin: 14px 0 0; word-break: keep-all; }
+.lens__oneliner { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 60ch; word-break: keep-all; }
+.lens__source { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 18px; border-bottom: 1px solid var(--fl-border-subtle); }
+.lens__source a { color: var(--fl-text-link); border-bottom: 1px dashed var(--fl-border); padding-bottom: 1px; }
+.lens__source a:hover { border-bottom-color: var(--fl-text-link); }
+
+/* 렌즈 탭 */
+.lens-tabs { position: sticky; top: 44px; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; padding: 12px 0; background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle); }
+.lens-tab { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.lens-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.lens-tab[aria-selected="true"] { background: var(--fl-text); color: var(--fl-bg); border-color: var(--fl-text); font-weight: 600; }
+
+/* 렌즈 본문 */
+@keyframes lens-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lens-panel { animation: lens-fade 0.3s var(--fl-ease-out); padding-top: 26px; }
+.lens-panel__hint { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); font-size: 13px; color: var(--fl-text-secondary); line-height: 1.6; }
+.lens-panel__hint b { color: var(--fl-text); }
+
+/* prose */
+.lens-prose { font-size: 15px; line-height: 1.75; color: var(--fl-text); word-break: keep-all; }
+.lens-prose h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; letter-spacing: -0.01em; }
+.lens-prose h3:first-child { margin-top: 0; }
+.lens-prose p { margin: 0 0 14px; color: var(--fl-text-secondary); }
+.lens-prose strong { color: var(--fl-text); font-weight: 700; }
+.lens-prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--fl-text-secondary); }
+.lens-prose li { margin: 0 0 7px; }
+.lens-prose code { font-family: var(--fl-font-mono); font-size: 0.9em; background: var(--fl-surface-3); padding: 1px 5px; border-radius: 4px; color: var(--fl-text); }
+.lens-prose .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); margin: 0 0 16px; line-height: 1.6; }
+.lens-prose .callout__i { font-size: 18px; flex-shrink: 0; }
+.lens-prose .callout p { margin: 0; color: var(--fl-text); }
+.lens-prose .etymo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 12px 14px; border-left: 3px solid var(--fl-tint-purple); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; margin: 0 0 12px; }
+.lens-prose .etymo b { font-size: 15px; }
+.lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* 전문 번역 — 프롬프트(한국어 번역 + 접이식 영어 원문) */
+.lens-prose .tp { margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--fl-tint-blue); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; }
+.lens-prose .tp > p { margin: 0; color: var(--fl-text); }
+.lens-prose details { margin: 8px 0 0; }
+.lens-prose summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--fl-text-tertiary); padding: 4px 0; list-style: none; }
+.lens-prose summary::-webkit-details-marker { display: none; }
+.lens-prose summary::before { content: "▸ "; }
+.lens-prose details[open] summary::before { content: "▾ "; }
+.lens-prose pre { margin: 8px 0 0; padding: 12px 14px; background: var(--fl-surface-3); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius); overflow-x: auto; font-family: var(--fl-font-mono); font-size: 12px; line-height: 1.6; color: var(--fl-text); white-space: pre-wrap; word-break: break-word; }
+.lens-prose .src-note { display: flex; gap: 10px; padding: 12px 14px; background: var(--fl-tint-blue-bg); border-radius: var(--fl-radius-md); margin: 0 0 18px; font-size: 13px; line-height: 1.6; }
+.lens-prose .src-note a { color: var(--fl-text-link); font-weight: 600; }
+
+/* quiz */
+.quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
+.quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
+.quiz-q span { color: var(--fl-tint-purple); margin-right: 6px; }
+.quiz-opts { display: grid; gap: 8px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 9px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.5; color: var(--fl-text); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 10px 13px; cursor: pointer; transition: background var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.quiz-opt:hover:not(:disabled) { background: var(--fl-hover); }
+.quiz-opt__mark { flex-shrink: 0; font-weight: 700; color: var(--fl-text-tertiary); }
+.quiz-opt--correct { background: var(--fl-tint-green-bg); border-color: var(--fl-success); }
+.quiz-opt--correct .quiz-opt__mark { color: var(--fl-success); }
+.quiz-opt--wrong { background: var(--fl-danger-bg); border-color: var(--fl-danger); }
+.quiz-opt--wrong .quiz-opt__mark { color: var(--fl-danger); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 12px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius); font-size: 13.5px; line-height: 1.65; color: var(--fl-text-secondary); }
+.quiz-explain.open { display: block; }
+.quiz-explain b { color: var(--fl-text); }
+
+.lens__footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.lens__footer b { color: var(--fl-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; } body { transition: none; } }
+@media (max-width: 640px) {
+  .lens { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .lens__title { font-size: 26px; }
+  .lens-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 22px -16px 0; padding: 11px 16px; scrollbar-width: none; }
+  .lens-tabs::-webkit-scrollbar { display: none; }
+  .lens-tab { flex: 0 0 auto; }
+}
+</style>
+</head>
+
+<body class="folio">
+
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html"><span class="topnav__logo">준</span><span class="topnav__brand-t">메이커준의 AI 학습 허브</span></a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📰 뉴스레터</a>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 깊이 읽기</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main class="lens">
+  <div id="head"></div>
+  <nav class="lens-tabs" id="tabs" role="tablist" aria-label="읽기 렌즈"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="foot"></div>
+</main>
+
+<script>
+/* ============================================================================
+   렌즈 문서 데이터 — 어려운 원문 1개를 5가지 렌즈로 재구성.
+   이 객체만 교체하면 새 학습 문서가 됩니다. (kind: prose | quiz)
+   ============================================================================ */
+const LENS_DOC = {
+  meta: {
+    icon: "⚙️",
+    title: "effort — 노력 수준 조절",
+    oneliner: "Claude가 응답에 토큰을 얼마나 적극적으로 쓸지 한 손잡이로 조절합니다. 철저함과 효율의 균형을 5가지 렌즈로 다시 읽습니다.",
+    sourceTitle: "Anthropic 공식문서 (한국어)",
+    sourceUrl: "https://platform.claude.com/docs/ko/build-with-claude/effort",
+    fetched: "2026-06-16 기준",
+    tags: ["effort", "성능·비용", "공식문서"]
+  },
+  lenses: [
+    {
+      id: "etymology", icon: "🔤", label: "어원", kind: "prose",
+      hint: "낯선 용어가 <b>어디서 왔는지</b>부터 풀면 개념이 친숙해집니다. (학습용 해석)",
+      body: `
+        <h3>'effort' — 라틴어 '힘을 밖으로 쏟다'에서</h3>
+        <div class="etymo"><b>effort</b><span>← 고대 프랑스어 <code>esfort</code> ← 라틴어 <code>ex-</code>(밖으로)+<code>fortis</code>(강한·힘) → '힘을 밖으로 쏟다'</span></div>
+        <p>영어 <strong>effort</strong>는 '애씀·수고·들이는 힘'을 뜻합니다. 어근을 풀면 '강함(<code>fortis</code>)을 밖으로(<code>ex-</code>) 내보낸다'예요. 같은 <code>fortis</code> 계열에 <strong>force</strong>(힘), <strong>fort</strong>(요새), <strong>comfort</strong>(함께 힘을 줌 → 위로)가 있습니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>이름이 곧 기능의 힌트입니다. <code>effort</code> 매개변수는 모델이 <strong>한 응답에 얼마나 '힘을 들일지'</strong> — 즉 토큰을 얼마나 적극적으로 쓸지 — 조절하는 손잡이예요. 높이면 더 깊이 파고, 낮추면 힘을 아껴 빠르게 끝냅니다.</p></div>
+        <h3>곁들이면 좋은 용어 어원</h3>
+        <div class="etymo"><b>token</b><span>← 고대 영어 <code>tacen</code> '표시·징표'. 모델이 글을 잘게 쪼갠 처리 단위. effort는 이 토큰을 얼마나 쓸지에 영향을 줍니다.</span></div>
+        <div class="etymo"><b>budget</b><span>← 고대 프랑스어 <code>bougette</code> '작은 가죽 주머니' → 돈주머니 → 예산. <code>budget_tokens</code>는 사고에 쓸 토큰 '주머니'를 못 박는 옛 방식입니다.</span></div>
+        <div class="etymo"><b>adaptive</b><span>← 라틴어 <code>adaptare</code> '맞추다'. '적응형 사고'는 요청마다 사고량을 알아서 맞춥니다. effort는 그 깊이를 조절합니다.</span></div>
+        <p style="color:var(--fl-text-tertiary);font-size:13px">※ 어원 해석은 이해를 돕기 위한 학습용 연결이며, 공식 작명 의도와 다를 수 있습니다.</p>
+      `
+    },
+    {
+      id: "tldr", icon: "⚡", label: "한입요약", kind: "prose",
+      hint: "30초 안에 핵심만. 자세한 근거는 다른 렌즈와 <b>원문</b>에서.",
+      body: `
+        <h3>핵심 7줄</h3>
+        <ul>
+          <li><strong>한 손잡이로 토큰을 조절합니다.</strong> <code>effort</code>는 Claude가 응답에 토큰을 얼마나 적극적으로 쓸지 정해, 철저함과 효율(속도·비용)의 균형을 단일 모델로 맞춥니다.</li>
+          <li><strong>기본값은 <code>high</code>.</strong> <code>high</code>로 설정하는 것은 매개변수를 생략하는 것과 정확히 같습니다. 최고난도엔 <code>max</code>, 장기 작업엔 <code>xhigh</code>, 균형엔 <code>medium</code>, 가장 효율적인 것은 <code>low</code>입니다.</li>
+          <li><strong>모든 토큰에 영향을 줍니다.</strong> 텍스트 응답뿐 아니라 도구 호출·함수 인수·확장 사고까지 — 낮은 effort는 도구 호출도 더 적게 합니다.</li>
+          <li><strong>사고를 켜지 않아도 됩니다.</strong> 확장 사고 없이도 텍스트·도구 호출의 전체 토큰 사용을 그대로 제어합니다.</li>
+          <li><strong>예산이 아니라 신호입니다.</strong> effort는 엄격한 토큰 상한이 아니라 동작 신호입니다. 낮은 수준에서도 충분히 어려운 문제엔 여전히 사고하되 덜 사고합니다.</li>
+          <li><strong>모델마다 권장 시작점이 다릅니다.</strong> Opus 4.7/4.8은 코딩·에이전트에 <code>xhigh</code>로 시작, Sonnet 4.6은 <code>medium</code> 권장, Fable 5는 대부분 <code>high</code>로 시작합니다.</li>
+          <li><strong>명시적으로 설정하고 테스트하세요.</strong> 기본값은 <code>high</code>지만 적정 시작점은 모델·워크로드마다 다릅니다. 배포 전 내 사용 사례로 평가하세요.</li>
+        </ul>
+      `
+    },
+    {
+      id: "easy", icon: "🧒", label: "비유로 쉽게", kind: "prose",
+      hint: "어려운 말을 <b>일상 비유</b>로 바꿔 봅니다. 정확함보다 '감 잡기'가 목표예요.",
+      body: `
+        <h3>effort = 요리 불세기 다이얼</h3>
+        <p>같은 가스레인지(모델)라도 다이얼(effort)을 돌려 불을 조절합니다. 손이 많이 가는 요리엔 <strong>강불(max·xhigh)</strong>로 끝까지 정성을 들이고, 매일 먹는 계란프라이엔 <strong>약불(low)</strong>로 빠르게 부칩니다. 무조건 강불이면 가스(토큰·비용)도 더 쓰고 시간도 더 걸려요.</p>
+        <h3>자동차 기어 같은 단계</h3>
+        <p><code>low → medium → high → xhigh → max</code>는 1단부터 5단 기어처럼 단계가 있습니다. 시내 주행(간단한 분류)엔 낮은 단, 가파른 오르막(어려운 추론)엔 높은 단. 다만 엄격한 속도 제한이 아니라 '이 정도로 힘쓰라'는 <strong>신호</strong>예요.</p>
+        <h3>기본값 high = '말 안 하면 강하게'</h3>
+        <p>다이얼을 안 건드리면(<code>effort</code> 생략) 자동으로 <strong>high</strong>에 맞춰집니다. <code>high</code>라고 적는 것과 아무것도 안 적는 것이 똑같아요. 그러니 아끼고 싶으면 <em>일부러</em> 낮춰야 합니다.</p>
+        <h3>도구 호출까지 영향 = 일하는 스타일 전체</h3>
+        <p>불세기는 메인 요리뿐 아니라 곁들임(도구 호출)에도 적용됩니다. 약불이면 곁들임도 적게, 군말 없이 바로 차립니다. 강불이면 더 많이 시도하고 계획·요약·주석도 풍성해져요.</p>
+        <h3>되는데 너무 오래 걸리면 = 불 낮추기</h3>
+        <p>요리는 잘 됐는데 시간이 너무 걸린다면 다음엔 불을 낮추세요. 일상 작업에서 결과는 나오지만 느리다면 <strong>effort를 한 단계 내리는 것</strong>이 첫 처방입니다.</p>
+        <div class="callout"><span class="callout__i">🧭</span><p>한 문장 요약: <strong>"같은 모델에 다이얼 하나 — 어려운 일엔 강불(높은 effort), 쉬운 일엔 약불(낮은 effort)로 철저함과 속도·비용의 균형을 맞춘다."</strong></p></div>
+      `
+    },
+    {
+      id: "quiz", icon: "🧪", label: "퀴즈", kind: "quiz",
+      hint: "보기를 눌러 바로 확인하세요. 자가 점검용입니다.",
+      quiz: [
+        {
+          q: "effort 매개변수를 아무것도 설정하지 않으면 어떻게 동작하나요?",
+          options: ["가장 효율적인 low로 동작한다", "기본값 high로 동작한다 (high를 설정한 것과 동일)", "매번 무작위로 정해진다"],
+          answer: 1,
+          explain: "API 기본값은 high입니다. effort를 \"high\"로 설정하는 것은 매개변수를 완전히 생략하는 것과 정확히 동일한 동작입니다."
+        },
+        {
+          q: "effort가 영향을 미치는 범위는?",
+          options: ["텍스트 응답에만 영향을 준다", "확장 사고에만 영향을 준다", "텍스트 응답·도구 호출·함수 인수·확장 사고 등 응답의 모든 토큰"],
+          answer: 2,
+          explain: "effort는 응답의 모든 토큰에 영향을 줍니다. 그래서 낮은 effort는 더 적은 도구 호출로 이어지는 등 효율을 세밀하게 제어할 수 있습니다."
+        },
+        {
+          q: "effort에 대한 가장 정확한 설명은?",
+          options: ["넘으면 강제 중단되는 엄격한 토큰 예산이다", "엄격한 예산이 아니라 동작 신호다", "사고를 켜야만 작동하는 옵션이다"],
+          answer: 1,
+          explain: "effort는 엄격한 토큰 예산이 아니라 동작 신호입니다. 낮은 수준에서도 충분히 어려운 문제엔 여전히 사고하되, 높은 수준보다는 덜 사고합니다."
+        },
+        {
+          q: "Claude Opus 4.7/4.8에서 코딩·에이전트 작업의 권장 시작점은?",
+          options: ["low", "medium", "xhigh"],
+          answer: 2,
+          explain: "코딩 및 에이전트 사용 사례에는 xhigh로 시작하길 권장합니다. high보다 토큰 사용량이 상당히 높을 것으로 예상하고, 큰 max_tokens(예: 64k)를 설정하세요."
+        },
+        {
+          q: "일상 작업에서 결과는 잘 나오지만 너무 오래 걸립니다. 먼저 무엇을 시도할까요?",
+          options: ["effort를 낮춘다 (low/medium)", "프롬프트에 '빨리'를 반복해서 적는다", "max_tokens를 0으로 만든다"],
+          answer: 0,
+          explain: "effort가 속도·비용·성능의 주 손잡이입니다. 지연이 거슬리거나 더 상호작용적인 작업 스타일을 원하면 effort를 낮추는 것이 먼저입니다."
+        }
+      ]
+    },
+    {
+      id: "source", icon: "📄", label: "전문(번역)", kind: "prose",
+      hint: "원문 <b>전체를 한국어로</b> 옮긴 렌즈입니다. 영어 코드 예시는 한국어 설명과 함께 복사용 영어 원문도 제공합니다.",
+      body: `
+        <div class="src-note"><span>📄</span><div>출처: <strong>Effort</strong> — Anthropic 공식문서.
+        정확한 내용·갱신은 <a href="https://platform.claude.com/docs/ko/build-with-claude/effort" target="_blank" rel="noopener">원문 ↗</a>을 확인하세요. 아래는 학습용 한국어 번역본입니다.</div></div>
+
+        <p><code>effort</code> 매개변수를 사용하면 Claude가 요청에 응답할 때 토큰을 얼마나 적극적으로 사용할지 제어할 수 있습니다. 이를 통해 단일 모델로 응답의 철저함과 토큰 효율성 간의 균형을 조정합니다. <code>effort</code>는 베타 헤더 없이 지원되는 모든 모델에서 사용할 수 있습니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>이 기능은 Zero Data Retention(ZDR)의 적용 대상입니다. 조직에 ZDR 계약이 체결되어 있으면, 이 기능으로 전송된 데이터는 API 응답이 반환된 후 저장되지 않습니다.</p></div>
+        <p>지원 모델: Claude Fable 5, Claude Mythos 5, Claude Opus 4.8, Claude Mythos Preview, Claude Opus 4.7, Claude Opus 4.6, Claude Sonnet 4.6, Claude Opus 4.5.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>Opus 4.6 및 Sonnet 4.6에서는 effort가 사고 깊이를 제어하는 권장 방법으로 <code>budget_tokens</code>를 대체합니다. 최상의 경험을 위해 effort를 적응형 사고(<code>thinking: {type: "adaptive"}</code>)와 함께 쓰세요. <code>budget_tokens</code>는 여전히 허용되지만 더 이상 권장되지 않으며 향후 제거될 예정입니다.</p></div>
+
+        <h3>effort 작동 방식</h3>
+        <p>기본적으로 Claude는 <code>high</code> effort로 우수한 결과에 필요한 만큼의 토큰을 사용합니다. 절대적으로 가장 높은 성능을 위해 <code>max</code>로 높이거나, 속도·비용을 위해 토큰 사용을 더 보수적으로 낮춰 일부 성능 저하를 감수할 수 있습니다. <code>effort</code>를 <code>"high"</code>로 설정하는 것은 매개변수를 완전히 생략하는 것과 정확히 동일합니다.</p>
+        <p>effort는 응답의 <strong>모든 토큰</strong>에 영향을 미칩니다.</p>
+        <ul>
+          <li>텍스트 응답 및 설명</li>
+          <li>도구 호출 및 함수 인수</li>
+          <li>확장 사고(활성화된 경우)</li>
+        </ul>
+        <p>이 접근의 두 가지 이점: (1) 사용하기 위해 사고를 활성화할 필요가 없습니다. (2) 도구 호출을 포함한 모든 토큰 사용에 영향을 줍니다 — 예를 들어 더 낮은 effort는 더 적은 도구 호출을 의미하므로 효율을 세밀하게 제어할 수 있습니다.</p>
+
+        <h3>Effort 수준</h3>
+        <ul>
+          <li><strong><code>max</code></strong> — 토큰 사용에 제약이 없는 절대적 최대 성능. 가장 깊은 추론과 가장 철저한 분석이 필요한 작업에 사용합니다. (Fable 5, Mythos 5, Opus 4.8, Mythos Preview, Opus 4.7, Opus 4.6, Sonnet 4.6에서 사용 가능)</li>
+          <li><strong><code>xhigh</code></strong> — 장기 작업을 위한 확장 성능. 수백만 토큰 예산의 장시간(30분 이상) 에이전트·코딩 작업에 적합합니다. (Fable 5, Mythos 5, Opus 4.8, Opus 4.7에서 사용 가능)</li>
+          <li><strong><code>high</code></strong> — 높은 성능. 매개변수를 설정하지 않는 것과 동일합니다. 복잡한 추론, 어려운 코딩 문제, 에이전트 작업에 적합합니다.</li>
+          <li><strong><code>medium</code></strong> — 적당한 토큰 절약을 주는 균형 잡힌 접근. 속도·비용·성능의 균형이 필요한 에이전트 작업에 적합합니다.</li>
+          <li><strong><code>low</code></strong> — 가장 효율적. 일부 성능 저하와 함께 상당한 토큰 절약. 서브에이전트처럼 최고 속도·최저 비용이 필요한 더 간단한 작업에 적합합니다.</li>
+        </ul>
+        <div class="callout"><span class="callout__i">💡</span><p>Effort는 엄격한 토큰 예산이 아니라 동작 신호입니다. 더 낮은 수준에서도 Claude는 충분히 어려운 문제엔 여전히 사고하지만, 같은 문제에 대해 더 높은 수준보다는 덜 사고합니다.</p></div>
+
+        <h3>Sonnet 4.6의 권장 effort 수준</h3>
+        <p>Sonnet 4.6은 기본적으로 <code>high</code>를 사용합니다. 예상치 못한 지연을 막으려면 명시적으로 설정하세요. <strong>medium(권장 기본값)</strong>은 대부분의 애플리케이션에서 속도·비용·성능의 최적 균형으로 에이전트 코딩·도구 중심 워크플로·코드 생성에 적합합니다. <strong>low</strong>는 대용량·지연 민감 워크로드(채팅, 비코딩)에, <strong>high</strong>는 품질이 더 중요한 복잡한 작업에, <strong>max</strong>는 제약 없이 절대 최고 성능이 필요한 작업에 씁니다.</p>
+
+        <h3>Claude Opus 4.7 / 4.8의 권장 effort 수준</h3>
+        <p>코딩·에이전트 사용 사례에는 <code>xhigh</code>로 시작하고, 대부분의 지능 민감 워크로드에는 최소 <code>high</code>를 쓰세요. 비용 민감 워크로드는 <code>medium</code>으로 낮추고, 평가에서 <code>xhigh</code>에 측정 가능한 여유가 있을 때만 <code>max</code>로 높이세요. API 기본값은 <code>high</code>이며, 전달한 값이 기본값을 재정의합니다. 수준별 지침:</p>
+        <ul>
+          <li><strong><code>low</code></strong> — 효율적이지만 짧고 범위가 정해진 작업에 적합. 여러 섹션이 있으면 명시적 체크리스트와 함께 쓰세요.</li>
+          <li><strong><code>medium</code></strong> — 비용을 줄이면서 좋은 결과를 원하는 일반 워크플로에 바로 적용할 옵션.</li>
+          <li><strong><code>high</code></strong> — 지능과 토큰 소비의 균형이 필요한 고급 사용 사례. 품질과 효율의 최적점인 경우가 많습니다.</li>
+          <li><strong><code>xhigh</code></strong> — 코딩·에이전트, 반복적 도구 호출·상세 검색 같은 탐색 작업의 권장 시작점. high보다 토큰을 상당히 더 씁니다.</li>
+          <li><strong><code>max</code></strong> — 진정 최첨단 문제에만. 대부분의 워크로드에서 상대적으로 작은 향상에 큰 비용을 더하며, 일부 작업에선 과한 사고로 이어질 수 있습니다.</li>
+        </ul>
+        <p>Opus 4.7/4.8은 특히 <code>low</code>·<code>medium</code>에서 effort를 더 엄격히 준수합니다. 복잡한 문제에 얕은 추론이 보이면 프롬프트로 우회하기보다 effort를 높이세요. 지연 때문에 낮게 유지해야 하면 "이 작업은 다단계 추론이 필요하다. 응답 전에 신중히 생각하라" 같은 지침을 더하세요. <code>xhigh</code>/<code>max</code>로 실행할 때는 큰 <code>max_tokens</code>(64k에서 시작)를 설정하세요.</p>
+
+        <h3>Claude Fable 5의 권장 effort 수준</h3>
+        <p>Effort는 Fable 5에서 지능·지연·비용을 조정하는 주 제어 수단입니다. 대부분의 작업엔 기본 <code>high</code>로 시작하고, 성능에 가장 민감한 워크로드엔 <code>xhigh</code>, 일상엔 <code>medium</code>/<code>low</code>를 쓰세요. Fable 5의 낮은 effort도 종종 이전 모델의 <code>xhigh</code> 성능을 능가합니다. <code>high</code>/<code>xhigh</code>에서는 큰 <code>max_tokens</code>를 설정하세요 — 이는 사고와 응답 텍스트를 합친 총 출력의 엄격한 제한입니다. 동일 권장 사항이 Mythos 5에도 적용됩니다.</p>
+
+        <h3>기본 사용법</h3>
+        <p>요청 본문의 <code>output_config</code> 안에 <code>effort</code>를 넣습니다. 아래는 <code>medium</code>을 사용하는 예시입니다(여러 SDK 중 cURL·Python).</p>
+        <div class="tp"><p>마이크로서비스와 모놀리식 아키텍처의 트레이드오프를 분석하라는 요청에 effort를 medium으로 지정하는 cURL 요청입니다.
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>curl https://api.anthropic.com/v1/messages \\
+    --header "x-api-key: $ANTHROPIC_API_KEY" \\
+    --header "anthropic-version: 2023-06-01" \\
+    --header "content-type: application/json" \\
+    --data '{
+        "model": "claude-opus-4-8",
+        "max_tokens": 4096,
+        "messages": [{
+            "role": "user",
+            "content": "Analyze the trade-offs between microservices and monolithic architectures"
+        }],
+        "output_config": {
+            "effort": "medium"
+        }
+    }'</pre></details></p></div>
+        <div class="tp"><p>같은 요청의 Python SDK 버전입니다. <code>output_config={"effort": "medium"}</code>만 추가하면 됩니다.
+        <details><summary>프롬프트 원문(영어) — 복사용</summary><pre>import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-opus-4-8",
+    max_tokens=4096,
+    messages=[
+        {
+            "role": "user",
+            "content": "Analyze the trade-offs between microservices and monolithic architectures",
+        }
+    ],
+    output_config={"effort": "medium"},
+)
+
+print(response.content[0].text)</pre></details></p></div>
+
+        <h3>effort를 조정해야 하는 경우</h3>
+        <ul>
+          <li><strong>max</strong> — 제약 없이 가장 철저한 추론과 가장 깊은 분석이 필요할 때.</li>
+          <li><strong>xhigh</strong> — 반복적 도구 호출·상세 검색 등 확장된 탐색이 필요한 고급 코딩·복잡한 에이전트 작업.</li>
+          <li><strong>high(기본값)</strong> — 복잡한 추론, 미묘한 분석, 어려운 코딩, 또는 속도·비용보다 품질이 중요한 작업.</li>
+          <li><strong>medium</strong> — high의 전체 토큰 소비 없이 견고한 성능을 원할 때의 균형 옵션.</li>
+          <li><strong>low</strong> — 속도·비용 최적화. 간단한 분류, 빠른 조회, 또는 미미한 품질 향상이 추가 지연·비용을 정당화하지 못하는 대용량 사용 사례.</li>
+        </ul>
+        <div class="callout"><span class="callout__i">💡</span><p>Claude Code의 <strong>ultracode</strong> 모드는 effort 메뉴에 보이지만 추가 API effort 수준이 아닙니다. 이 문서의 값이 API가 허용하는 전체 집합입니다. ultracode는 <code>xhigh</code> 수준과 멀티 에이전트 워크플로 상시 권한을 결합한 것입니다.</p></div>
+
+        <h3>도구 사용과 effort</h3>
+        <p>도구를 쓸 때 effort는 도구 호출에 대한 설명과 도구 호출 자체 모두에 영향을 줍니다. 더 낮은 수준은 여러 작업을 더 적은 도구 호출로 결합하고, 호출 수가 적고, 서두 없이 바로 진행하며, 완료 후 간결한 확인을 하는 경향이 있습니다. 더 높은 수준은 더 많은 호출을 하고, 수행 전 계획을 설명하며, 상세한 변경 요약과 더 포괄적인 코드 주석을 포함할 수 있습니다.</p>
+
+        <h3>확장 사고와 effort</h3>
+        <p>effort는 확장 사고와 함께 작동하며 동작은 모델별로 다릅니다.</p>
+        <ul>
+          <li><strong>Fable 5 / Mythos 5</strong> — 항상 켜진 적응형 사고를 사용합니다(<code>thinking</code> 구성 불필요). <code>thinking: {type: "disabled"}</code>는 거부됩니다. effort가 사고 깊이를 제어합니다.</li>
+          <li><strong>Opus 4.8</strong> — 적응형 사고(<code>thinking: {type: "adaptive"}</code>)를 쓰며 effort가 사고 깊이를 제어합니다. 수동 확장 사고(<code>budget_tokens</code>)는 지원되지 않아 400 오류를 냅니다. <code>high</code>/<code>xhigh</code>/<code>max</code>에선 거의 항상 깊이 사고하고, 낮은 수준에선 간단한 문제에 사고를 건너뛸 수 있습니다. 사고를 켜려면 <code>thinking: {type: "adaptive"}</code>를 설정하세요(미설정 시 사고 없이 실행).</li>
+          <li><strong>Opus 4.7</strong> — 적응형 사고를 쓰며 수동 확장 사고는 더 이상 지원되지 않습니다.</li>
+          <li><strong>Opus 4.6</strong> — 적응형 사고를 권장하며 <code>budget_tokens</code>는 허용되지만 더 이상 권장되지 않습니다.</li>
+          <li><strong>Sonnet 4.6</strong> — 적응형 사고를 쓰며(effort가 깊이 제어), interleaved 모드 수동 사고는 작동하지만 더 이상 권장되지 않습니다.</li>
+          <li><strong>Opus 4.5</strong> — 수동 사고를 쓰며 effort가 사고 토큰 예산과 함께 작동합니다.</li>
+        </ul>
+        <p>effort는 확장 사고 활성화 여부와 무관하게 쓸 수 있으며, 사고 없이도 텍스트 응답·도구 호출의 전체 토큰 사용을 제어합니다.</p>
+
+        <h3>모범 사례</h3>
+        <ul>
+          <li><strong>effort를 명시적으로 설정하세요.</strong> 기본값은 <code>high</code>지만 적정 시작점은 모델·워크로드마다 다릅니다.</li>
+          <li><strong>속도 민감·간단한 작업엔 low.</strong> 지연이 중요하거나 작업이 단순하면 low가 응답 시간·비용을 크게 줄입니다.</li>
+          <li><strong>사용 사례를 테스트하세요.</strong> 영향은 작업 유형마다 다르므로 배포 전 평가하세요.</li>
+          <li><strong>동적 effort를 고려하세요.</strong> 간단한 쿼리는 low, 에이전트 코딩·복잡한 추론은 high가 유리합니다.</li>
+        </ul>
+
+        <p style="color:var(--fl-text-tertiary);font-size:12.5px">※ 학습용 한국어 번역본입니다. 표현은 이해를 돕기 위해 다듬었으며, 정확한 원문은 출처 링크를 확인하세요.</p>
+      `
+    }
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const d = LENS_DOC, m = d.meta, lenses = d.lenses;
+
+  // 헤더
+  document.getElementById("head").innerHTML = `
+    <div class="lens__icon">${esc(m.icon)}</div>
+    <span class="lens__eyebrow">📚 깊이 읽기 · 5가지 렌즈</span>
+    <h1 class="lens__title">${esc(m.title)}</h1>
+    <p class="lens__oneliner">${esc(m.oneliner)}</p>
+    <div class="lens__source">
+      <span>📄 출처 <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceTitle)} ↗</a></span>
+      <span>🗓️ ${esc(m.fetched)}</span>
+      <span>🏷️ ${m.tags.map(esc).join(" · ")}</span>
+    </div>`;
+
+  // 탭
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = lenses.map((l, i) => `
+    <button class="lens-tab" role="tab" data-i="${i}" aria-selected="${i === 0}">${esc(l.icon)} ${esc(l.label)}</button>`).join("");
+
+  const panelEl = document.getElementById("panel");
+  function renderQuiz(items) {
+    return items.map((it, qi) => `
+      <div class="quiz-item">
+        <p class="quiz-q"><span>Q${qi + 1}.</span>${esc(it.q)}</p>
+        <div class="quiz-opts" data-answer="${it.answer}">
+          ${it.options.map((o, oi) => `
+            <button class="quiz-opt" type="button" data-oi="${oi}">
+              <span class="quiz-opt__mark">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span>
+            </button>`).join("")}
+        </div>
+        <div class="quiz-explain"><b>해설.</b> ${esc(it.explain)}</div>
+      </div>`).join("");
+  }
+  function render(i) {
+    const l = lenses[i];
+    panelEl.innerHTML = `
+      ${l.hint ? `<div class="lens-panel__hint"><span>${esc(l.icon)}</span><span>${l.hint}</span></div>` : ""}
+      ${l.kind === "quiz" ? renderQuiz(l.quiz) : `<div class="lens-prose">${l.body}</div>`}`;
+    panelEl.className = "lens-panel";
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".lens-tab");
+    if (!b) return;
+    const i = +b.dataset.i;
+    tabsEl.querySelectorAll(".lens-tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // 퀴즈 채점 (위임)
+  panelEl.addEventListener("click", (e) => {
+    const opt = e.target.closest(".quiz-opt");
+    if (!opt) return;
+    const opts = opt.closest(".quiz-opts");
+    if (opt.disabled) return;
+    const answer = +opts.dataset.answer;
+    const chosen = +opt.dataset.oi;
+    opts.querySelectorAll(".quiz-opt").forEach((b) => {
+      b.disabled = true;
+      const oi = +b.dataset.oi;
+      if (oi === answer) b.classList.add("quiz-opt--correct");
+      if (oi === chosen && chosen !== answer) b.classList.add("quiz-opt--wrong");
+    });
+    const ex = opts.parentElement.querySelector(".quiz-explain");
+    if (ex) ex.classList.add("open");
+  });
+
+  // 푸터
+  document.getElementById("foot").innerHTML = `
+    <footer class="lens__footer">
+      <p>📚 <b>깊이 읽기</b> — 어려운 문서를 5가지 렌즈로 다시 읽는 학습 페이지. 원문을 대체하지 않으며, 정확한 내용은 출처를 확인하세요.</p>
+      <p>Folio 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외) · 학습 템플릿: doc-lenses 각색</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : (mq ? mq.matches : false); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => { const n = dark() ? "light" : "dark"; try { localStorage.setItem("nl-theme", n); } catch (e) {} root.dataset.nlTheme = n; apply(); });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

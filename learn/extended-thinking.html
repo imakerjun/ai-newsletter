@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>깊이 읽기 — Claude Fable 5 프롬프트 작성 (5가지 렌즈)</title>
+<meta name="description" content="어려운 공식문서를 어원·요약·비유·퀴즈·원문 5가지 렌즈로 다시 읽는 학습 페이지." />
+
+<script>
+  (function () { try { var s = localStorage.getItem("nl-theme"); if (s) document.documentElement.dataset.nlTheme = s; } catch (e) {} })();
+</script>
+
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+/* Folio 토큰 서브셋 — 저장소 전체와 동일한 디자인 언어 */
+.folio, .folio * { box-sizing: border-box; }
+.folio {
+  --fl-font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --fl-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fl-font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-md: 8px; --fl-radius-lg: 12px;
+  --fl-ease-out: cubic-bezier(0.16,1,0.3,1); --fl-dur-fast: 120ms; --fl-dur-normal: 180ms;
+
+  --fl-bg: #ffffff; --fl-surface: #ffffff; --fl-surface-2: #f7f6f3; --fl-surface-3: #f1f0ec;
+  --fl-hover: rgba(55,53,47,0.06); --fl-active: rgba(55,53,47,0.12);
+  --fl-text: #37352f; --fl-text-secondary: #525049; --fl-text-tertiary: #787774; --fl-text-quaternary: #9b9a97;
+  --fl-text-link: #2d6fc5;
+  --fl-border-subtle: rgba(15,14,12,0.08); --fl-border: rgba(15,14,12,0.13); --fl-border-strong: rgba(15,14,12,0.20);
+  --fl-accent: #2d6fc5;
+  --fl-tint-gray: #777570; --fl-tint-gray-bg: #f1f0ee;
+  --fl-tint-blue: #2d6dc4; --fl-tint-blue-bg: #ddebf1;
+  --fl-tint-purple: #6f4ec9; --fl-tint-purple-bg: #eae4f2;
+  --fl-tint-green: #2f8a5d; --fl-tint-green-bg: #ddedea;
+  --fl-tint-orange: #c46c1f; --fl-tint-orange-bg: #faebdd;
+  --fl-tint-yellow: #b58b18; --fl-tint-yellow-bg: #fbf3db;
+  --fl-success: #2f8a5d; --fl-danger: #c84c47; --fl-danger-bg: #fbe4e4;
+  --fl-shadow-sm: 0 1px 3px rgba(15,14,12,0.06), 0 1px 2px rgba(15,14,12,0.04);
+  --fl-shadow-md: 0 2px 4px rgba(15,14,12,0.04), 0 6px 16px rgba(15,14,12,0.08);
+  color-scheme: light;
+}
+.fl-dark, .folio.fl-dark {
+  --fl-bg: #191918; --fl-surface: #202020; --fl-surface-2: #1c1c1b; --fl-surface-3: #2a2a28;
+  --fl-hover: rgba(255,253,248,0.055); --fl-active: rgba(255,253,248,0.13);
+  --fl-text: #e9e7e2; --fl-text-secondary: #c2bfb7; --fl-text-tertiary: #908d85; --fl-text-quaternary: #6f6b62;
+  --fl-text-link: #8aa9ff;
+  --fl-border-subtle: rgba(255,253,248,0.07); --fl-border: rgba(255,253,248,0.12); --fl-border-strong: rgba(255,253,248,0.20);
+  --fl-accent: #8aa9ff;
+  --fl-tint-gray: #b0aca5; --fl-tint-gray-bg: rgba(155,152,145,0.16);
+  --fl-tint-blue: #7aa0e8; --fl-tint-blue-bg: rgba(45,109,196,0.22);
+  --fl-tint-purple: #b39bf5; --fl-tint-purple-bg: rgba(111,78,201,0.24);
+  --fl-tint-green: #6fc193; --fl-tint-green-bg: rgba(47,138,93,0.20);
+  --fl-tint-orange: #e3a468; --fl-tint-orange-bg: rgba(224,124,42,0.18);
+  --fl-tint-yellow: #e0c05a; --fl-tint-yellow-bg: rgba(203,145,38,0.18);
+  --fl-success: #6fc193; --fl-danger: #e08580; --fl-danger-bg: rgba(200,76,71,0.20);
+  --fl-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --fl-shadow-md: 0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: var(--fl-bg); color: var(--fl-text); font-family: var(--fl-font-sans); font-size: 14px; line-height: 1.6; transition: background var(--fl-dur-normal), color var(--fl-dur-normal); }
+a { color: inherit; text-decoration: none; }
+
+/* 상단 네비 (저장소 공통) */
+.topnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 9px 20px; background: color-mix(in srgb, var(--fl-bg) 86%, transparent); -webkit-backdrop-filter: saturate(1.5) blur(8px); backdrop-filter: saturate(1.5) blur(8px); border-bottom: 1px solid var(--fl-border-subtle); }
+.topnav__brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--fl-text); }
+.topnav__logo { width: 24px; height: 24px; border-radius: 6px; background: var(--fl-accent); color: var(--fl-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.topnav__spacer { flex: 1; }
+.topnav__link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: var(--fl-radius-md); font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.topnav__link:hover { background: var(--fl-hover); color: var(--fl-text); }
+.topnav__link--active { background: var(--fl-active); color: var(--fl-text); }
+
+.nl-theme { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); color: var(--fl-text-secondary); cursor: pointer; transition: background var(--fl-dur-fast), color var(--fl-dur-fast); }
+.nl-theme:hover { background: var(--fl-hover); color: var(--fl-text); }
+.nl-theme svg { width: 17px; height: 17px; }
+.nl-ico-sun, .nl-ico-moon { display: none; }
+body:not(.fl-dark) .nl-ico-sun { display: block; }
+body.fl-dark .nl-ico-moon { display: block; }
+
+.lens { max-width: 760px; margin: 0 auto; padding: 28px 28px 120px; }
+
+/* 헤더 */
+.lens__icon { font-size: 52px; line-height: 1; }
+.lens__eyebrow { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--fl-tint-purple); background: var(--fl-tint-purple-bg); padding: 3px 10px; border-radius: 999px; }
+.lens__title { font-size: 34px; font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; margin: 14px 0 0; word-break: keep-all; }
+.lens__oneliner { font-size: 16px; line-height: 1.65; color: var(--fl-text-secondary); margin: 12px 0 0; max-width: 60ch; word-break: keep-all; }
+.lens__source { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12.5px; color: var(--fl-text-tertiary); padding-bottom: 18px; border-bottom: 1px solid var(--fl-border-subtle); }
+.lens__source a { color: var(--fl-text-link); border-bottom: 1px dashed var(--fl-border); padding-bottom: 1px; }
+.lens__source a:hover { border-bottom-color: var(--fl-text-link); }
+
+/* 렌즈 탭 */
+.lens-tabs { position: sticky; top: 44px; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; padding: 12px 0; background: var(--fl-bg); border-bottom: 1px solid var(--fl-border-subtle); }
+.lens-tab { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fl-text-secondary); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background var(--fl-dur-fast), color var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.lens-tab:hover { background: var(--fl-hover); color: var(--fl-text); }
+.lens-tab[aria-selected="true"] { background: var(--fl-text); color: var(--fl-bg); border-color: var(--fl-text); font-weight: 600; }
+
+/* 렌즈 본문 */
+@keyframes lens-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lens-panel { animation: lens-fade 0.3s var(--fl-ease-out); padding-top: 26px; }
+.lens-panel__hint { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius-md); font-size: 13px; color: var(--fl-text-secondary); line-height: 1.6; }
+.lens-panel__hint b { color: var(--fl-text); }
+
+/* prose */
+.lens-prose { font-size: 15px; line-height: 1.75; color: var(--fl-text); word-break: keep-all; }
+.lens-prose h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; letter-spacing: -0.01em; }
+.lens-prose h3:first-child { margin-top: 0; }
+.lens-prose p { margin: 0 0 14px; color: var(--fl-text-secondary); }
+.lens-prose strong { color: var(--fl-text); font-weight: 700; }
+.lens-prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--fl-text-secondary); }
+.lens-prose li { margin: 0 0 7px; }
+.lens-prose code { font-family: var(--fl-font-mono); font-size: 0.9em; background: var(--fl-surface-3); padding: 1px 5px; border-radius: 4px; color: var(--fl-text); }
+.lens-prose .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); margin: 0 0 16px; line-height: 1.6; }
+.lens-prose .callout__i { font-size: 18px; flex-shrink: 0; }
+.lens-prose .callout p { margin: 0; color: var(--fl-text); }
+.lens-prose .etymo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 12px 14px; border-left: 3px solid var(--fl-tint-purple); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; margin: 0 0 12px; }
+.lens-prose .etymo b { font-size: 15px; }
+.lens-prose .etymo span { color: var(--fl-text-tertiary); font-size: 13.5px; }
+
+/* 전문 번역 — 프롬프트(한국어 번역 + 접이식 영어 원문) */
+.lens-prose .tp { margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--fl-tint-blue); background: var(--fl-surface-2); border-radius: 0 var(--fl-radius) var(--fl-radius) 0; }
+.lens-prose .tp > p { margin: 0; color: var(--fl-text); }
+.lens-prose details { margin: 8px 0 0; }
+.lens-prose summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--fl-text-tertiary); padding: 4px 0; list-style: none; }
+.lens-prose summary::-webkit-details-marker { display: none; }
+.lens-prose summary::before { content: "▸ "; }
+.lens-prose details[open] summary::before { content: "▾ "; }
+.lens-prose pre { margin: 8px 0 0; padding: 12px 14px; background: var(--fl-surface-3); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius); overflow-x: auto; font-family: var(--fl-font-mono); font-size: 12px; line-height: 1.6; color: var(--fl-text); white-space: pre-wrap; word-break: break-word; }
+.lens-prose .src-note { display: flex; gap: 10px; padding: 12px 14px; background: var(--fl-tint-blue-bg); border-radius: var(--fl-radius-md); margin: 0 0 18px; font-size: 13px; line-height: 1.6; }
+.lens-prose .src-note a { color: var(--fl-text-link); font-weight: 600; }
+
+/* quiz */
+.quiz-item { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); padding: 18px 20px; margin-bottom: 14px; background: var(--fl-surface); }
+.quiz-q { font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.5; }
+.quiz-q span { color: var(--fl-tint-purple); margin-right: 6px; }
+.quiz-opts { display: grid; gap: 8px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 9px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.5; color: var(--fl-text); background: var(--fl-surface); border: 1px solid var(--fl-border); border-radius: var(--fl-radius-md); padding: 10px 13px; cursor: pointer; transition: background var(--fl-dur-fast), border-color var(--fl-dur-fast); }
+.quiz-opt:hover:not(:disabled) { background: var(--fl-hover); }
+.quiz-opt__mark { flex-shrink: 0; font-weight: 700; color: var(--fl-text-tertiary); }
+.quiz-opt--correct { background: var(--fl-tint-green-bg); border-color: var(--fl-success); }
+.quiz-opt--correct .quiz-opt__mark { color: var(--fl-success); }
+.quiz-opt--wrong { background: var(--fl-danger-bg); border-color: var(--fl-danger); }
+.quiz-opt--wrong .quiz-opt__mark { color: var(--fl-danger); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 12px; padding: 11px 14px; background: var(--fl-surface-2); border-radius: var(--fl-radius); font-size: 13.5px; line-height: 1.65; color: var(--fl-text-secondary); }
+.quiz-explain.open { display: block; }
+.quiz-explain b { color: var(--fl-text); }
+
+.lens__footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--fl-border-subtle); color: var(--fl-text-tertiary); font-size: 12.5px; line-height: 1.7; }
+.lens__footer b { color: var(--fl-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; } body { transition: none; } }
+@media (max-width: 640px) {
+  .lens { padding: 20px 16px 96px; }
+  .topnav { padding: 8px 14px; gap: 8px; }
+  .topnav__brand-t { display: none; }
+  .lens__title { font-size: 26px; }
+  .lens-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 22px -16px 0; padding: 11px 16px; scrollbar-width: none; }
+  .lens-tabs::-webkit-scrollbar { display: none; }
+  .lens-tab { flex: 0 0 auto; }
+}
+</style>
+</head>
+
+<body class="folio">
+
+<header class="topnav">
+  <a class="topnav__brand" href="../index.html"><span class="topnav__logo">준</span><span class="topnav__brand-t">메이커준의 AI 학습 허브</span></a>
+  <span class="topnav__spacer"></span>
+  <a class="topnav__link" href="../index.html">📰 뉴스레터</a>
+  <a class="topnav__link topnav__link--active" href="index.html">📚 깊이 읽기</a>
+  <button class="nl-theme" id="themeBtn" type="button" aria-label="라이트/다크 전환" title="라이트/다크 전환">
+    <svg class="nl-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="nl-ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main class="lens">
+  <div id="head"></div>
+  <nav class="lens-tabs" id="tabs" role="tablist" aria-label="읽기 렌즈"></nav>
+  <section id="panel" role="tabpanel"></section>
+  <div id="foot"></div>
+</main>
+
+<script>
+/* ============================================================================
+   렌즈 문서 데이터 — 어려운 원문 1개를 5가지 렌즈로 재구성.
+   이 객체만 교체하면 새 학습 문서가 됩니다. (kind: prose | quiz)
+   ============================================================================ */
+const LENS_DOC = {
+  meta: {
+    icon: "🧠",
+    title: "확장된 사고(Extended Thinking)",
+    oneliner: "Claude가 답하기 전에 단계별로 ‘생각’하게 하는 기능. 사고 예산·요약·스트리밍·도구 사용을 5가지 렌즈로 다시 읽습니다.",
+    sourceTitle: "Anthropic 공식문서",
+    sourceUrl: "https://platform.claude.com/docs/ko/build-with-claude/extended-thinking",
+    fetched: "2026-06-15 기준",
+    tags: ["사고", "추론", "공식문서"]
+  },
+  lenses: [
+    {
+      id: "etymology", icon: "🔤", label: "어원", kind: "prose",
+      hint: "낯선 용어가 <b>어디서 왔는지</b>부터. (학습용 해석)",
+      body: `
+        <h3>‘thinking’ — 고대 영어 <code>þencan</code>(머릿속에 떠올리다)에서</h3>
+        <div class="etymo"><b>thinking</b><span>← 고대 영어 <code>þencan</code> ‘머릿속에 그리다·헤아리다’ → ‘생각’</span></div>
+        <p>여기서 <strong>thinking</strong>은 사람의 의식이 아니라, 모델이 최종 답을 내기 전에 거치는 <strong>중간 추론 단계</strong>를 가리키는 비유적 용어입니다. API 응답에서 <code>thinking</code> 콘텐츠 블록으로 나타나며, 그 뒤에 <code>text</code> 블록(실제 답변)이 이어집니다.</p>
+        <div class="callout"><span class="callout__i">💡</span><p>왜 ‘확장된(extended)’일까요? 평소엔 보이지 않게 짧게 처리하던 추론을, <strong>토큰 예산을 따로 떼어 더 길게 풀어내도록</strong> 늘렸다는 뜻으로 이해하면 자연스럽습니다.</p></div>
+        <h3>곁들이면 좋은 용어 어원</h3>
+        <div class="etymo"><b>reasoning</b><span>← 라틴어 <code>ratio</code> ‘셈·헤아림’ → 근거를 따라 결론에 이르는 과정</span></div>
+        <div class="etymo"><b>budget</b><span>← 옛 프랑스어 <code>bougette</code> ‘작은 가죽 주머니’ → ‘쓸 수 있는 양의 한도’. <code>budget_tokens</code>는 사고에 쓸 토큰의 한도입니다.</span></div>
+        <div class="etymo"><b>interleaved</b><span><code>inter-</code>(사이에)+<code>leaf</code>(잎·책장) → ‘책장 사이에 끼워 넣다’. 도구 호출 ‘사이사이에’ 사고를 끼워 넣는다는 뜻입니다.</span></div>
+        <p style="color:var(--fl-text-tertiary);font-size:13px">※ 어원 해석은 이해를 돕기 위한 학습용 연결이며, 공식 작명 의도와 다를 수 있습니다.</p>
+      `
+    },
+    {
+      id: "tldr", icon: "⚡", label: "한입요약", kind: "prose",
+      hint: "30초 핵심. 자세한 근거는 다른 렌즈와 <b>원문</b>에서.",
+      body: `
+        <h3>핵심 6줄</h3>
+        <ul>
+          <li><strong>답하기 전에 생각합니다.</strong> 확장된 사고를 켜면 Claude가 단계별 추론을 거친 뒤 답을 내며, 응답에 <code>thinking</code> 블록이 <code>text</code> 블록보다 먼저 담깁니다.</li>
+          <li><strong>켜는 법은 한 줄.</strong> 요청에 <code>thinking: {type: "enabled", budget_tokens: N}</code>을 넣고, <code>budget_tokens</code>는 사고에 쓸 최대 토큰입니다. 복잡한 문제는 크게, 간단한 문제는 작게 잡습니다.</li>
+          <li><strong>받는 건 ‘요약’입니다.</strong> 응답에 오는 사고는 전체 추론의 <strong>요약</strong>입니다. 다만 과금은 요약이 아니라 <strong>전체 사고 토큰</strong> 기준이라, 보이는 양과 청구량이 다를 수 있습니다.</li>
+          <li><strong>표시는 조절됩니다.</strong> <code>display: "summarized"</code>가 기본이고, 네트워크로 사고를 받지 않으려면 <code>"omitted"</code>로 숨겨 첫 응답까지의 시간을 줄일 수 있습니다.</li>
+          <li><strong>스트리밍이 됩니다.</strong> SSE로 <code>thinking_delta</code>와 <code>text_delta</code>를 나눠 받아 실시간 UX를 만들 수 있습니다.</li>
+          <li><strong>도구와 함께 쓸 땐 사고 블록을 되돌려 주세요.</strong> 도구 결과로 대화를 이어갈 때 직전 어시스턴트의 <code>thinking</code> 블록을 그대로 다시 보내야 합니다. ‘인터리브 사고’를 켜면 도구 호출 사이에도 추론할 수 있습니다.</li>
+        </ul>
+      `
+    },
+    {
+      id: "easy", icon: "🧒", label: "비유로 쉽게", kind: "prose",
+      hint: "어려운 말을 <b>일상 비유</b>로. 정확함보다 ‘감 잡기’가 목표예요.",
+      body: `
+        <h3>확장된 사고 = 시험에서 ‘풀이 과정 적기’</h3>
+        <p>객관식만 찍던 학생에게 <strong>풀이를 적으며 풀라</strong>고 하면 정답률이 올라갑니다. 확장된 사고도 똑같아요 — 곧장 답을 내뱉는 대신 중간 계산과 근거를 거치게 해서 어려운 문제를 더 잘 맞히게 합니다.</p>
+        <h3>budget_tokens = 시험지 여백</h3>
+        <p>풀이를 적을 <strong>여백을 얼마나 줄지</strong> 정하는 것이 사고 예산입니다. 어려운 증명 문제엔 여백을 넉넉히, 단순 덧셈엔 좁게. 여백이 좁으면 깊게 못 풀고, 무작정 넓혀도 시간만 더 듭니다.</p>
+        <h3>요약된 사고 = 풀이 노트의 ‘정리본’</h3>
+        <p>학생이 연습장에 빽빽이 푼 걸 그대로 보여주는 대신, <strong>핵심만 옮긴 정리본</strong>을 건넵니다. 그래도 채점(과금)은 연습장에 쓴 전체 분량 기준이에요 — 그래서 ‘보이는 양 ≠ 청구량’이 됩니다.</p>
+        <h3>omitted = ‘답만 주세요’</h3>
+        <p>풀이는 됐고 <strong>답만 빨리</strong> 받고 싶을 때가 있죠. <code>display: "omitted"</code>는 풀이 노트를 건너뛰고 결과를 먼저 손에 쥐어 줍니다.</p>
+        <h3>인터리브 사고 = 자료 한 번 보고 다시 생각하기</h3>
+        <p>문제 풀다 사전을 한 번 찾고(도구 호출), <strong>찾은 내용을 보고 다시 생각</strong>한 뒤 이어 풉니다. 도구 호출 ‘사이사이’에 끼워 넣는 생각이 인터리브 사고예요.</p>
+        <div class="callout"><span class="callout__i">🧭</span><p>한 문장 요약: <strong>“여백(예산)을 정해 풀이 과정을 적게 하면 어려운 문제를 더 잘 맞히고, 노트는 정리본으로 받되 채점은 전체 분량으로 한다.”</strong></p></div>
+      `
+    },
+    {
+      id: "quiz", icon: "🧪", label: "퀴즈", kind: "quiz",
+      hint: "보기를 눌러 바로 확인하세요. 자가 점검용입니다.",
+      quiz: [
+        {
+          q: "확장된 사고를 켜면 API 응답은 어떤 순서로 옵니까?",
+          options: ["text 블록 → thinking 블록", "thinking 블록 → text 블록", "thinking 블록만 온다"],
+          answer: 1,
+          explain: "확장된 사고를 켜면 단계별 추론을 담은 thinking 콘텐츠 블록이 먼저 오고, 그 뒤에 최종 답변인 text 블록이 이어집니다."
+        },
+        {
+          q: "budget_tokens 매개변수의 역할은?",
+          options: ["사고에 할당할 최대 토큰 수", "전체 응답의 최대 토큰 수", "도구 호출 횟수 제한"],
+          answer: 0,
+          explain: "budget_tokens는 사고에 쓸 최대 토큰을 정합니다. 보통 budget_tokens는 max_tokens보다 작아야 합니다(인터리브 사고는 예외)."
+        },
+        {
+          q: "응답에서 본 사고 토큰 수와 청구되는 토큰 수가 다른 이유는?",
+          options: ["요약을 받지만 과금은 전체 사고 토큰 기준이라서", "요약 토큰만 과금되어서", "사고 토큰은 무료라서"],
+          answer: 0,
+          explain: "Messages API는 전체 사고의 요약을 반환하지만, 과금은 요약본이 아니라 전체 사고 토큰을 기준으로 합니다. display: omitted로 숨겨도 과금 기준은 같습니다."
+        },
+        {
+          q: "도구 사용과 확장된 사고를 함께 쓸 때 반드시 지켜야 할 점은?",
+          options: ["tool_choice를 required로 둔다", "도구 결과로 이어갈 때 직전 thinking 블록을 다시 전달한다", "사고를 항상 omitted로 둔다"],
+          answer: 1,
+          explain: "도구 결과로 대화를 계속할 때 마지막 어시스턴트 메시지의 thinking 블록을 API에 그대로 다시 보내야 합니다. tool_choice는 auto 또는 none만 지원됩니다."
+        },
+        {
+          q: "스트리밍 시 사용자에게 보이는 첫 텍스트까지의 시간을 줄이려면?",
+          options: ["budget_tokens를 0으로 둔다", "display: \"omitted\"로 사고를 숨긴다", "인터리브 사고를 켠다"],
+          answer: 1,
+          explain: "display: omitted를 쓰면 사고 토큰을 네트워크로 받지 않아 첫 텍스트 토큰까지의 시간과 최종 응답 시작 시간이 짧아집니다."
+        }
+      ]
+    },
+    {
+      id: "source", icon: "📄", label: "전문(번역)", kind: "prose",
+      hint: "원문 <b>전체를 한국어로</b> 옮긴 렌즈입니다. 영어 코드/프롬프트는 한국어 설명과 함께 복사용 영어 원문도 제공합니다.",
+      body: `
+        <div class="src-note"><span>📄</span><div>출처: <strong>확장 사고로 구축하기(Building with extended thinking)</strong> — Anthropic 공식문서.
+        정확한 내용·갱신은 <a href="https://platform.claude.com/docs/ko/build-with-claude/extended-thinking" target="_blank" rel="noopener">원문 ↗</a>을 확인하세요. 아래는 학습용 한국어 번역본입니다.</div></div>
+
+        <h3>개요</h3>
+        <p>확장된 사고는 Claude에게 복잡한 작업에 대해 향상된 추론 능력을 제공하며, 최종 답변을 내기 전에 단계별 사고 과정을 드러냅니다. API 응답에는 <code>thinking</code> 콘텐츠 블록이 먼저 포함되고, 그 뒤에 실제 답변인 <code>text</code> 콘텐츠 블록이 이어집니다.</p>
+
+        <h3>지원되는 모델</h3>
+        <p>수동 확장 사고(<code>thinking: {type: "enabled", budget_tokens: N}</code>)는 일부 최신 모델(적응형 사고가 항상 켜지는 모델)을 제외한 현재 Claude 모델에서 지원됩니다. 일부 모델에서는 적응형 사고가 권장 대안으로 안내됩니다. 정확한 모델별 지원 여부는 원문 표를 확인하세요.</p>
+
+        <h3>기본 사용법</h3>
+        <p>요청에 <code>thinking</code> 매개변수를 추가하고, <code>budget_tokens</code>로 사고에 할당할 최대 토큰을 지정합니다. 아래는 파이썬 예제입니다(소수 관련 수학 문제에 사고를 켭니다).</p>
+        <div class="tp"><p>anthropic 클라이언트로 메시지를 만들고, thinking을 enabled로 켜고 budget_tokens를 10000으로 잡습니다. 응답 블록을 순회하며 <code>thinking</code> 타입이면 사고를, <code>text</code> 타입이면 답변을 출력합니다.
+        <details><summary>코드 원문(영어/파이썬) — 복사용</summary><pre>import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=16000,
+    thinking={
+        "type": "enabled",
+        "budget_tokens": 10000
+    },
+    messages=[
+        {"role": "user", "content": "Are there an infinite number of primes such that n mod 4 == 3?"}
+    ],
+)
+
+for block in response.content:
+    if block.type == "thinking":
+        print(f"Thinking: {block.thinking}")
+    elif block.type == "text":
+        print(f"Answer: {block.text}")</pre></details></p></div>
+        <div class="tp"><p>cURL로도 동일하게 호출합니다 — <code>thinking</code> 객체에 <code>type</code>과 <code>budget_tokens</code>를 담아 보냅니다.
+        <details><summary>코드 원문(영어/cURL) — 복사용</summary><pre>curl https://api.anthropic.com/v1/messages \\
+     --header "x-api-key: $ANTHROPIC_API_KEY" \\
+     --header "anthropic-version: 2023-06-01" \\
+     --header "content-type: application/json" \\
+     --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 16000,
+    "thinking": { "type": "enabled", "budget_tokens": 10000 },
+    "messages": [ { "role": "user", "content": "What is the GCD of 1071 and 462?" } ]
+}'</pre></details></p></div>
+
+        <h3>요약된 사고(Summarized thinking)</h3>
+        <p>확장된 사고를 켜면 Messages API는 전체 사고 과정의 요약을 반환합니다. 주요 특징은 다음과 같습니다.</p>
+        <ul>
+          <li>과금은 요약 토큰이 아니라 전체 사고 토큰을 기준으로 합니다.</li>
+          <li>그래서 응답에서 보이는 토큰 수와 실제 청구되는 토큰 수가 일치하지 않을 수 있습니다.</li>
+          <li>일부 모델에서는 요약의 처음 몇 줄이 더 상세하게 나타납니다.</li>
+          <li>최소한의 지연으로 스트리밍 가능한 UX를 제공합니다.</li>
+        </ul>
+        <p>표시 기본값은 모델마다 다릅니다. 다수의 Claude 4 모델은 <code>display: "summarized"</code>가 기본이고, 적응형 사고를 쓰는 일부 최신 모델은 <code>display: "omitted"</code>가 기본입니다.</p>
+
+        <h3>생략된 사고(Omitted thinking)</h3>
+        <p>네트워크를 통해 사고 토큰을 받지 않으려면 <code>display: "omitted"</code>를 사용합니다. 스트리밍 시 첫 텍스트 토큰까지의 시간과 최종 응답 시작 시간을 줄여 줍니다.</p>
+        <div class="tp"><p>thinking에 <code>display: "omitted"</code>를 더하면 사고 콘텐츠가 숨겨집니다. 블록을 순회할 때 thinking 내용이 비어 있으면 ‘[생략됨]’으로 처리합니다.
+        <details><summary>코드 원문(영어/파이썬) — 복사용</summary><pre>response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=16000,
+    thinking={
+        "type": "enabled",
+        "budget_tokens": 10000,
+        "display": "omitted",
+    },
+    messages=[{"role": "user", "content": "27 * 453 = ?"}],
+)
+
+for block in response.content:
+    if block.type == "thinking":
+        print(f"Thinking: {block.thinking}" if block.thinking else "Thinking: [omitted]")
+    elif block.type == "text":
+        print(f"Answer: {block.text}")</pre></details></p></div>
+
+        <h3>사고 스트리밍</h3>
+        <p>SSE(Server-Sent Events)로 사고 응답을 스트리밍할 수 있습니다. 이벤트 타입을 보고 <code>thinking_delta</code>면 사고를, <code>text_delta</code>면 답변을 실시간으로 이어 붙입니다.</p>
+        <div class="tp"><p>스트림을 열고 이벤트를 순회합니다. <code>content_block_delta</code>의 델타 타입이 <code>thinking_delta</code>이면 사고 텍스트를, <code>text_delta</code>이면 답변 텍스트를 출력합니다.
+        <details><summary>코드 원문(영어/파이썬) — 복사용</summary><pre>with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=16000,
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    messages=[{"role": "user", "content": "What is the GCD of 1071 and 462?"}],
+) as stream:
+    for event in stream:
+        if event.type == "content_block_delta":
+            if event.delta.type == "thinking_delta":
+                print(event.delta.thinking, end="", flush=True)
+            elif event.delta.type == "text_delta":
+                print(event.delta.text, end="", flush=True)</pre></details></p></div>
+
+        <h3>도구 사용과 확장된 사고</h3>
+        <p>확장된 사고는 도구 사용과 함께 작동하여, Claude가 도구 선택과 결과 처리를 추론하게 합니다. 두 가지 제약이 있습니다.</p>
+        <ul>
+          <li><strong>도구 선택 제한</strong> — <code>tool_choice</code>는 <code>auto</code>(기본값) 또는 <code>none</code>만 지원됩니다.</li>
+          <li><strong>사고 블록 보존</strong> — 도구 결과로 대화를 이어갈 때, 마지막 어시스턴트 메시지의 <code>thinking</code> 블록을 API에 다시 전달해야 합니다.</li>
+        </ul>
+        <div class="tp"><p>첫 요청에서 Claude가 사고 블록과 도구 사용 블록으로 응답하면, 두 블록을 모두 어시스턴트 메시지에 넣고 그 뒤에 <code>tool_result</code>를 더해 대화를 이어 갑니다.
+        <details><summary>코드 원문(영어/파이썬) — 복사용</summary><pre>thinking_block = next((b for b in response.content if b.type == "thinking"), None)
+tool_use_block = next((b for b in response.content if b.type == "tool_use"), None)
+
+continuation = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=16000,
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    tools=[weather_tool],
+    messages=[
+        {"role": "user", "content": "What is the weather in Paris?"},
+        {"role": "assistant", "content": [thinking_block, tool_use_block]},
+        {"role": "user", "content": [
+            {"type": "tool_result", "tool_use_id": tool_use_block.id, "content": "Current temperature: 88F"}
+        ]},
+    ],
+)</pre></details></p></div>
+
+        <h3>인터리브 사고(Interleaved thinking)</h3>
+        <p>인터리브 사고는 도구 호출 사이에 Claude가 추론할 수 있게 합니다. 일부 최신 모델에서는 적응형 사고 사용 시 자동으로 켜지고, 그 외 Claude 4 모델에서는 <code>interleaved-thinking-2025-05-14</code> 베타 헤더가 필요합니다.</p>
+        <div class="tp"><p>요청에 베타 헤더 <code>anthropic-beta: interleaved-thinking-2025-05-14</code>를 더해 인터리브 사고를 활성화합니다.
+        <details><summary>코드 원문(영어/cURL) — 복사용</summary><pre>curl https://api.anthropic.com/v1/messages \\
+  -H "anthropic-beta: interleaved-thinking-2025-05-14" \\
+  -H "x-api-key: $ANTHROPIC_API_KEY" \\
+  ...</pre></details></p></div>
+
+        <h3>프롬프트 캐싱과 확장된 사고</h3>
+        <p>사고 매개변수를 바꾸면(켜기/끄기 또는 예산 변경) 메시지 캐시가 무효화됩니다. 인터리브 사고를 쓰면 무효화 영향이 커집니다. 반면 시스템 프롬프트와 도구 정의 캐시는 사고 매개변수가 바뀌어도 유지됩니다. 또한 일부 최신 모델은 사고 블록 컨텍스트를 기본 유지하지만, 이전 모델과 모든 Haiku는 컨텍스트에서 제거합니다.</p>
+
+        <h3>최대 토큰 및 가격</h3>
+        <ul>
+          <li>모델에 따라 출력 토큰 한도가 다릅니다(예: 일부 모델 최대 128k, 다른 모델 최대 64k).</li>
+          <li><code>budget_tokens</code>는 <code>max_tokens</code>보다 작아야 합니다(인터리브 사고 사용 시에는 초과할 수 있습니다).</li>
+          <li>과금은 요약본이 아니라 전체 사고 토큰을 기준으로 합니다. <code>display: "omitted"</code>로 숨겨도 과금 기준은 같습니다.</li>
+        </ul>
+
+        <h3>모범 사례</h3>
+        <ul>
+          <li><strong>예산 설정</strong> — 복잡한 문제엔 큰 예산(8000~10000), 간단한 문제엔 작은 예산(2000~4000)을 씁니다.</li>
+          <li><strong>생략된 사고</strong> — 사용자에게 사고를 보여주지 않는 경우 <code>display: "omitted"</code>로 지연을 줄입니다.</li>
+          <li><strong>도구 사용</strong> — 도구 결과와 함께 사고 블록을 반드시 포함합니다.</li>
+          <li><strong>캐싱</strong> — 사고 매개변수를 자주 바꾸지 않습니다(캐시 무효화 방지).</li>
+        </ul>
+
+        <h3>더 읽기</h3>
+        <ul>
+          <li>적응형 사고: <a href="https://platform.claude.com/docs/ko/build-with-claude/adaptive-thinking" target="_blank" rel="noopener">Adaptive thinking ↗</a></li>
+          <li>도구 사용 개요: <a href="https://platform.claude.com/docs/ko/agents-and-tools/tool-use/overview" target="_blank" rel="noopener">Tool use overview ↗</a></li>
+          <li>프롬프트 캐싱: <a href="https://platform.claude.com/docs/ko/build-with-claude/prompt-caching" target="_blank" rel="noopener">Prompt caching ↗</a></li>
+        </ul>
+        <p style="color:var(--fl-text-tertiary);font-size:12.5px">※ 학습용 한국어 번역본입니다. 표현은 이해를 돕기 위해 다듬었으며, 모델별 한도·지원 여부 등 정확한 수치는 출처 링크를 확인하세요.</p>
+      `
+    }
+  ]
+};
+
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const d = LENS_DOC, m = d.meta, lenses = d.lenses;
+
+  // 헤더
+  document.getElementById("head").innerHTML = `
+    <div class="lens__icon">${esc(m.icon)}</div>
+    <span class="lens__eyebrow">📚 깊이 읽기 · 5가지 렌즈</span>
+    <h1 class="lens__title">${esc(m.title)}</h1>
+    <p class="lens__oneliner">${esc(m.oneliner)}</p>
+    <div class="lens__source">
+      <span>📄 출처 <a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">${esc(m.sourceTitle)} ↗</a></span>
+      <span>🗓️ ${esc(m.fetched)}</span>
+      <span>🏷️ ${m.tags.map(esc).join(" · ")}</span>
+    </div>`;
+
+  // 탭
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = lenses.map((l, i) => `
+    <button class="lens-tab" role="tab" data-i="${i}" aria-selected="${i === 0}">${esc(l.icon)} ${esc(l.label)}</button>`).join("");
+
+  const panelEl = document.getElementById("panel");
+  function renderQuiz(items) {
+    return items.map((it, qi) => `
+      <div class="quiz-item">
+        <p class="quiz-q"><span>Q${qi + 1}.</span>${esc(it.q)}</p>
+        <div class="quiz-opts" data-answer="${it.answer}">
+          ${it.options.map((o, oi) => `
+            <button class="quiz-opt" type="button" data-oi="${oi}">
+              <span class="quiz-opt__mark">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span>
+            </button>`).join("")}
+        </div>
+        <div class="quiz-explain"><b>해설.</b> ${esc(it.explain)}</div>
+      </div>`).join("");
+  }
+  function render(i) {
+    const l = lenses[i];
+    panelEl.innerHTML = `
+      ${l.hint ? `<div class="lens-panel__hint"><span>${esc(l.icon)}</span><span>${l.hint}</span></div>` : ""}
+      ${l.kind === "quiz" ? renderQuiz(l.quiz) : `<div class="lens-prose">${l.body}</div>`}`;
+    panelEl.className = "lens-panel";
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".lens-tab");
+    if (!b) return;
+    const i = +b.dataset.i;
+    tabsEl.querySelectorAll(".lens-tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+    render(i);
+  });
+  render(0);
+
+  // 퀴즈 채점 (위임)
+  panelEl.addEventListener("click", (e) => {
+    const opt = e.target.closest(".quiz-opt");
+    if (!opt) return;
+    const opts = opt.closest(".quiz-opts");
+    if (opt.disabled) return;
+    const answer = +opts.dataset.answer;
+    const chosen = +opt.dataset.oi;
+    opts.querySelectorAll(".quiz-opt").forEach((b) => {
+      b.disabled = true;
+      const oi = +b.dataset.oi;
+      if (oi === answer) b.classList.add("quiz-opt--correct");
+      if (oi === chosen && chosen !== answer) b.classList.add("quiz-opt--wrong");
+    });
+    const ex = opts.parentElement.querySelector(".quiz-explain");
+    if (ex) ex.classList.add("open");
+  });
+
+  // 푸터
+  document.getElementById("foot").innerHTML = `
+    <footer class="lens__footer">
+      <p>📚 <b>깊이 읽기</b> — 어려운 문서를 5가지 렌즈로 다시 읽는 학습 페이지. 원문을 대체하지 않으며, 정확한 내용은 출처를 확인하세요.</p>
+      <p>Folio 디자인 시스템 기반 · 단일 HTML(외부 의존성 없음, 폰트 CDN 제외) · 학습 템플릿: doc-lenses 각색</p>
+    </footer>`;
+})();
+
+/* 테마 — 기본 시스템 따름, 클릭 시 고정 */
+(function () {
+  const root = document.documentElement, body = document.body;
+  const btn = document.getElementById("themeBtn");
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const saved = () => { try { return localStorage.getItem("nl-theme"); } catch (e) { return null; } };
+  const dark = () => { const s = saved(); return s === "dark" ? true : s === "light" ? false : (mq ? mq.matches : false); };
+  const apply = () => body.classList.toggle("fl-dark", dark());
+  btn.addEventListener("click", () => { const n = dark() ? "light" : "dark"; try { localStorage.setItem("nl-theme", n); } catch (e) {} root.dataset.nlTheme = n; apply(); });
+  if (mq) mq.addEventListener("change", () => { if (!saved()) apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>
