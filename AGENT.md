@@ -71,14 +71,16 @@ tint_options: [blue, purple, green, orange, pink]
    ```
    - 기존 항목은 절대 삭제·수정하지 않는다(아카이브 보존).
    - 단, **최초 발행 시**에는 템플릿에 들어 있던 **예시 항목(`demo: true`)을 모두 제거**한다(이후 실제 호만 쌓는다).
-6. **커밋 & 푸시**:
-   ```bash
-   git add -A
-   git commit -m "publish \"{DATE} {Vol.NN} 뉴스레터 발행\"" --no-verify
-   git push
-   ```
-   → GitHub Pages가 push를 감지해 **자동 재배포**한다(별도 배포 단계 없음).
-7. **슬랙 발송**: 배포 URL을 Incoming Webhook으로 보낸다.
+6. **배포** — 둘 중 하나를 쓴다.
+   - **(권장) Vercel 배포**: Vercel 커넥터/토큰이 연결돼 있으면 클로드가 직접 올린다. 끝나면 `https://…vercel.app` 공개 URL을 받는다.
+     (Cowork에서 깃 푸시가 번거로운 경우 이 방식이 편하다.)
+   - **(대안) GitHub Pages**: 커밋 후 푸시하면 Pages가 자동 재배포한다.
+     ```bash
+     git add -A
+     git commit -m "publish \"{DATE} {Vol.NN} 뉴스레터 발행\"" --no-verify
+     git push
+     ```
+7. **슬랙 발송**: 위에서 받은 배포 URL을 Incoming Webhook으로 보낸다.
    ```bash
    curl -s -X POST "$SLACK_WEBHOOK_URL" \
      -H 'Content-Type: application/json' \
