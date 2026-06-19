@@ -78,7 +78,28 @@ body.fl-dark .nl-ico-moon { display: block; }
 .doc-grid { display: grid; gap: 12px; }
 .doc-card { display: flex; gap: 14px; padding: 16px 18px; background: var(--fl-surface); border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); transition: border-color var(--fl-dur-fast), box-shadow var(--fl-dur-fast), transform var(--fl-dur-fast); }
 .doc-card:hover { border-color: var(--fl-border); box-shadow: var(--fl-shadow-md); transform: translateY(-2px); }
-.doc-card__icon { flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--fl-radius-md); background: var(--fl-tint-purple-bg); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+/* 책 일러스트 — 깊이 읽기 결과물 카드 아이콘 */
+.doc-card__icon { flex-shrink: 0; position: relative; width: 48px; height: 60px; }
+.doc-card__icon .book {
+  position: absolute; inset: 0;
+  border-radius: 3px 6px 6px 3px;
+  background: linear-gradient(135deg, var(--fl-tint-purple-bg), var(--fl-surface));
+  border: 1px solid var(--fl-border); border-left: 6px solid var(--fl-tint-purple);
+  box-shadow: var(--fl-shadow-sm);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform var(--fl-dur-fast);
+}
+.doc-card:hover .doc-card__icon .book { transform: translateY(-2px) rotate(-2deg); }
+.doc-card__icon .book::before { /* 표지 위 가름선 */
+  content: ""; position: absolute; left: 9px; right: 7px; top: 9px; height: 1px;
+  background: var(--fl-border); opacity: 0.6;
+}
+.doc-card__icon .book::after { /* 책장(페이지) 가장자리 */
+  content: ""; position: absolute; right: -3px; top: 4px; bottom: 4px; width: 3px;
+  background: var(--fl-surface); border: 1px solid var(--fl-border-subtle); border-left: none;
+  border-radius: 0 2px 2px 0;
+}
+.doc-card__icon .book__art { font-size: 21px; line-height: 1; margin-top: 4px; }
 .doc-card__body { flex: 1; min-width: 0; }
 .doc-card__title { font-size: 16px; font-weight: 700; line-height: 1.4; letter-spacing: -0.008em; color: var(--fl-text); word-break: keep-all; }
 .doc-card__title .demo { font-size: 10px; font-weight: 600; color: var(--fl-text-quaternary); background: var(--fl-surface-3); padding: 2px 6px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
@@ -189,8 +210,8 @@ const LIBRARY = {
   const m = LIBRARY.meta, docs = LIBRARY.docs;
 
   const cards = docs.length ? docs.map((doc) => `
-    <a class="doc-card" href="${esc(doc.href)}">
-      <div class="doc-card__icon">${esc(doc.icon)}</div>
+    <a class="doc-card" href="${esc(doc.href)}" target="_blank" rel="noopener">
+      <div class="doc-card__icon"><span class="book"><span class="book__art">${esc(doc.icon)}</span></span></div>
       <div class="doc-card__body">
         <div class="doc-card__title">${esc(doc.title)}${doc.demo ? `<span class="demo">예시</span>` : ""}</div>
         <div class="doc-card__desc">${esc(doc.desc)}</div>

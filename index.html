@@ -474,7 +474,7 @@ const ARCHIVE = {
         <div class="ed-month">${esc(monthLabel(g.ym))}<span class="ed-month__count">${g.items.length}호</span></div>
         <div class="ed-list">
           ${g.items.map((e) => `
-            <a class="ed-item ${e._latest ? "ed-item--latest" : ""}" href="${esc(e.href)}">
+            <a class="ed-item ${e._latest ? "ed-item--latest" : ""}" href="${esc(e.href)}" target="_blank" rel="noopener">
               <span class="ed-item__date">${esc(fmtDay(e.date, e.weekday))}</span>
               <span class="ed-item__label">${esc(e.label)}</span>
               <span class="ed-item__title">${esc(e.title)}</span>
