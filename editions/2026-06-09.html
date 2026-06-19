@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -442,38 +451,39 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "멀티모달이 ‘기본’이 됐다 — 글·이미지·음성을 한 화면에서",
-        "summary": "예전에는 텍스트는 챗봇, 이미지는 별도 도구로 나눠 써야 했지만, 이제 한 대화 안에서 사진을 보여주며 말로 묻고 표·요약으로 답을 받는 사용이 자연스러워졌습니다. 캡처한 화면, 손으로 쓴 메모, 도표까지 이해하는 수준이 빠르게 올라가는 중입니다. 입력·출력의 형식 제약이 사라지면서 ‘무엇을 시킬까’만 고민하면 되는 단계로 가고 있어요.",
-        "detail": "특히 회의 화이트보드 사진, 영수증, 제품 라벨처럼 ‘찍어서 묻는’ 활용이 실무에서 바로 통합니다. 다만 흐릿하거나 민감정보가 담긴 이미지는 주의가 필요합니다.",
-        "source": "Anthropic 뉴스",
-        "url": "https://www.anthropic.com/news",
-        "published": "2026-06-09",
-        "foryou": "스크린샷 한 장 붙여넣고 ‘이거 표로 정리해줘’ 한마디면 됩니다. 가장 쉽게 체감하는 변화예요."
+        "title": "애플 WWDC: Gemini 기반 새 Siri + 멀티-AI(아이폰에 Claude)",
+        "summary": "애플이 6월 8일 WWDC에서 구글 Gemini로 구동되는 새 Siri와, 여러 AI를 골라 쓰는 ‘AI 익스텐션’을 공개했습니다. 이로써 아이폰에서 Claude를 기본 옵션으로 선택할 수 있게 된 것이 처음입니다(iOS 27 베타 1).",
+        "detail": "비서·운영체제처럼 일상 접점이 큰 제품이 멀티-AI로 열리는 건 사용자 선택권 측면에서 의미가 큽니다.",
+        "source": "Build Fast with AI",
+        "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+        "published": "2026-06-08",
+        "foryou": "아이폰 사용자라면 iOS 27 베타에서 기본 비서 AI를 직접 골라보세요."
       },
       "articles": [
         {
-          "tag": "연구",
-          "source": "Anthropic 뉴스",
-          "url": "https://www.anthropic.com/news",
-          "time": "오늘",
-          "published": "2026-06-09",
-          "title": "긴 컨텍스트, ‘넣을 수 있다’와 ‘잘 쓴다’는 다르다",
-          "summary": "한 번에 아주 많은 자료를 넣을 수 있게 됐지만, 무작정 다 넣기보다 핵심만 추려 밀도를 높이는 쪽이 더 좋은 답을 낸다는 분석입니다. ‘많이’보다 ‘관련 있게’가 중요하다는 거예요.",
-          "detail": "자료를 통째로 붙이기보다 ‘이 부분만 보고 답해줘’라고 범위를 좁혀주면 정확해집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
-        },
-        {
-          "tag": "새 기능",
-          "source": "Google AI 블로그",
-          "url": "https://blog.google/technology/ai/",
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
           "time": "어제",
           "published": "2026-06-08",
-          "title": "음성으로 묻고 화면으로 답받기 — 대화형 인터페이스의 진화",
-          "summary": "키보드로 길게 쓰지 않아도 말로 묻고 표·차트·이미지로 답을 받는 사용이 자연스러워졌습니다. 이동 중이나 손이 바쁠 때 특히 유용해, AI를 ‘쓰는 순간’ 자체가 늘어나는 흐름입니다.",
-          "detail": "회의 중 떠오른 질문을 음성으로 던져 바로 정리받는 식으로 써보면 체감이 큽니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "title": "OpenAI, GPT-5.5-Cyber 제한 프리뷰 — 보안팀 대상",
+          "summary": "오픈AI가 사이버보안 특화 모델 GPT-5.5-Cyber를 검증된 보안팀·EU 기관 등에 한정 프리뷰로 공개했습니다. 생명과학 모델 업데이트와 바이오디펜스 이니셔티브도 함께 발표했어요.",
+          "detail": "특화 모델은 강력하지만 안전장치와 접근 제한이 함께 갑니다. 일반 사용자에겐 당장 영향이 적습니다.",
+          "foryou": "특화 모델 소식은 ‘이런 방향도 있다’ 정도로 알아두면 됩니다."
+        },
+        {
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+          "time": "어제",
+          "published": "2026-06-08",
+          "title": "메타, 첫 플래그십 LLM ‘Muse Spark’ 공개 + 대규모 투자",
+          "summary": "메타가 멀티모달·추론·에이전트 작업에서 경쟁력 있는 첫 플래그십 모델 Muse Spark를 적은 연산 비용으로 공개했습니다. 동시에 2026년 AI 설비투자를 1,150~1,350억 달러로 제시했어요.",
+          "detail": "거대 투자 경쟁은 비용 하락·성능 향상으로 이어져 일반 사용자에게도 결국 이득이 됩니다.",
+          "foryou": "‘큰 회사들이 더 싸고 좋게 만든다’ — 매일 가볍게 써보는 게 가장 큰 이득입니다."
         }
       ]
     },
@@ -483,38 +493,39 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "‘질문 잘하는 법’이 곧 AI 활용 실력이다",
-        "summary": "같은 AI라도 어떻게 묻느냐에 따라 결과가 완전히 달라집니다. 원하는 형식(표·목록·3줄), 분량, 예시, 읽는 대상을 함께 주면 한 번에 쓸 만한 답이 나와요. 막연히 ‘잘 써줘’ 대신 구체적으로 요청하는 연습이 가장 빠른 실력 향상법입니다. 좋은 질문은 타고나는 게 아니라 몇 가지 패턴을 익히면 됩니다.",
-        "detail": "결과가 마음에 안 들면 처음부터 다시 쓰지 말고 ‘더 짧게’, ‘예시 추가해서’처럼 고쳐 말하세요. 대화로 다듬는 게 핵심입니다.",
-        "source": "Claude 활용 가이드",
-        "url": "https://platform.claude.com/docs/ko/",
-        "published": "2026-06-09",
-        "foryou": "‘표로’, ‘3줄로’, ‘초등학생도 알게’ 같은 한마디를 붙이는 것부터 시작해보세요."
+        "title": "아이폰 Siri에 Claude·ChatGPT — 골라 쓰는 음성 비서",
+        "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈입니다.",
+        "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 진입장벽이 가장 낮습니다.",
+        "source": "Build Fast with AI",
+        "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+        "published": "2026-06-08",
+        "foryou": "베타가 부담되면, 지금 쓰는 AI 앱을 음성으로 불러 쓰는 것부터 익혀보세요."
       },
       "articles": [
         {
-          "tag": "팁",
-          "source": "Google AI 블로그",
-          "url": "https://blog.google/technology/ai/",
-          "time": "오늘",
-          "published": "2026-06-09",
-          "title": "원하는 형식을 말하면 결과가 달라진다",
-          "summary": "‘표로’, ‘3줄로’, ‘예시 포함해서’처럼 형식을 지정하면 한 번에 쓸 만한 답이 나옵니다. 막연한 요청과 구체적 요청의 결과 차이는 생각보다 큽니다.",
-          "detail": "자주 쓰는 요청은 형식까지 포함해 메모해두고 복사해 쓰면 매번 편합니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
-        },
-        {
-          "tag": "업무 활용",
-          "source": "Claude 활용 가이드",
-          "url": "https://platform.claude.com/docs/ko/",
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
           "time": "어제",
           "published": "2026-06-08",
-          "title": "회의록·보고서·이메일 — 초안 맡기기 실전",
-          "summary": "녹취나 메모를 주고 결정·할 일·후속 일정만 뽑게 하거나, 보고서의 거친 초안을 받아 다듬는 식으로 쓰면 효과가 큽니다. 핵심은 사람이 ‘검토·결정’에 집중하도록 단순 작성은 AI에 넘기는 것입니다.",
-          "detail": "회의 직후 ‘결정사항·담당·기한 표로 정리’를 시키면 회의록 정리 시간이 거의 사라집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 질문 응답 강화",
+          "summary": "오픈AI가 ChatGPT의 건강 관련 응답을 빠른 응답형 모델 GPT-5.5 Instant로 끌어올렸습니다. 일상적 질문에 더 적절히 답하도록 개선됐지만, 의료 판단은 전문가 확인이 필요합니다.",
+          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치세요.",
+          "foryou": "민감한 주제일수록 AI 답은 출발점으로만, 결론은 사람이 확인하세요."
+        },
+        {
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-5-2026",
+          "time": "4일 전",
+          "published": "2026-06-05",
+          "title": "쏟아지는 새 모델, 비개발자는 ‘작업별로 골라 쓰기’",
+          "summary": "새 모델이 연달아 나오지만 비개발자에게 중요한 건 ‘무엇이 최신인가’보다 ‘내 작업에 뭐가 맞나’입니다. 요약·번역·초안 같은 일상 작업은 기본 모델로도 충분한 경우가 많습니다.",
+          "detail": "최신 모델로 갈아타기 전에, 지금 쓰는 것으로 충분한지 먼저 따져보세요.",
+          "foryou": "‘최신=최고’가 아닙니다. 내 작업에서 충분하면 그대로 쓰세요."
         }
       ]
     }
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>

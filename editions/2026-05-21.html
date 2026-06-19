@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -442,6 +451,7 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
         "title": "더 오래, 더 복잡한 작업을 한 번에 — 장기 실행 모델의 부상",
@@ -483,6 +493,7 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
         "title": "AI를 믿되 확인하기 — 환각과 정보보안 기본기",
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>

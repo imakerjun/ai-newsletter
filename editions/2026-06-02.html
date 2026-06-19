@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -442,38 +451,39 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "AI 비용은 내려가고 성능은 올라간다 — 매일 쓰기 좋은 시대",
-        "summary": "같은 작업을 더 싸고 빠르게 처리하는 효율 개선이 이어지면서, 개인과 팀이 부담 없이 일상 업무에 AI를 붙이기 좋아졌습니다. 낮은 비용 설정으로도 예전 최고 성능에 가까운 결과를 내는 경우가 많아졌어요. ‘비싸고 느려서 가끔만 쓴다’에서 ‘기본 도구로 매일 쓴다’로 분위기가 바뀌는 중입니다.",
-        "detail": "작업 난이도에 따라 ‘노력 수준(effort)’을 조절하면 비용과 속도를 더 아낄 수 있습니다. 일상 작업은 낮게, 어려운 작업만 높게 두는 식이에요.",
-        "source": "OpenAI 블로그",
-        "url": "https://openai.com/news/",
+        "title": "MS Build: MAI 모델 공개 + 파운드리 1.1만 모델 돌파",
+        "summary": "마이크로소프트가 Build 2026에서 자체 MAI 모델을 공개하고, Foundry 카탈로그를 1만 1천 개 모델 규모로 확장했습니다. OpenAI·앤트로픽·구글의 프런티어 모델을 한곳에서 고르는 ‘모델 마켓플레이스’ 경쟁이 본격화됐어요.",
+        "detail": "모델이 많아질수록 ‘무엇을 고를까’가 일이 됩니다. 평가 기준을 세워 두는 역량이 중요해집니다.",
+        "source": "CNBC",
+        "url": "https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html",
         "published": "2026-06-02",
-        "foryou": "가벼운 일부터 매일 써보는 게 학습의 지름길 — 한 달이면 감이 확 옵니다."
+        "foryou": "회사가 여러 모델을 제공한다면 같은 작업을 둘에 시켜 비교해보세요."
       },
       "articles": [
         {
-          "tag": "동향",
-          "source": "OpenAI 블로그",
-          "url": "https://openai.com/news/",
+          "tag": "소식",
+          "source": "AI Weekly (mml)",
+          "url": "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
           "time": "오늘",
           "published": "2026-06-02",
-          "title": "이미지 생성·편집 품질이 실무에 쓸 수준으로",
-          "summary": "간단한 설명만으로 발표 자료용 이미지를 만들거나 기존 이미지를 손보는 품질이 빠르게 올라왔습니다. 디자이너가 아니어도 초안 시각자료를 직접 만드는 사례가 늘고 있어요.",
-          "detail": "최종 결과물보다 ‘아이디어 시안’을 빠르게 여러 개 뽑는 용도로 쓰면 부담이 적습니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "title": "앤트로픽, Project Glasswing 확대 — 전력·의료 등 핵심 인프라로",
+          "summary": "앤트로픽이 방어적 보안용 Claude Mythos 프리뷰 프로그램(Project Glasswing)을 6월 2일 전력·수도·의료·통신·하드웨어 등 핵심 인프라 분야로 넓혔습니다. 첫 달 보고서에서 1,000여 오픈소스 프로젝트의 취약점 2만여 건을 찾았다고 밝혔어요.",
+          "detail": "AI가 보안 점검의 ‘1차 스크리닝’을 맡고 사람이 확정하는 분업 구도가 자리잡는 모습입니다.",
+          "foryou": "보안·점검 업무라면 ‘AI 1차 검토 + 사람 확정’ 분업을 떠올려 보세요."
         },
         {
-          "tag": "흐름",
-          "source": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
+          "tag": "소식",
+          "source": "LLM-Stats",
+          "url": "https://llm-stats.com/ai-news",
           "time": "어제",
           "published": "2026-06-01",
-          "title": "‘프롬프트’보다 ‘맥락 제공’이 결과를 가른다",
-          "summary": "무엇을 원하는지뿐 아니라 ‘왜 필요한지, 누가 볼지’ 같은 맥락을 함께 주면 결과 품질이 눈에 띄게 오릅니다. 잘 쓰는 사람과 아닌 사람의 차이가 여기서 갈린다는 분석이 많아졌어요.",
-          "detail": "요청 앞에 ‘이건 임원 보고용이야’ 같은 한 줄만 붙여도 톤과 깊이가 달라집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "title": "MiniMax M3 공개 — 프런티어 코딩 + 100만 토큰 컨텍스트",
+          "summary": "MiniMax가 6월 1일 M3를 공개했습니다. 강력한 코딩 성능과 함께 100만 토큰 컨텍스트를 지원해, 아주 긴 자료를 한 번에 다룰 수 있는 점이 특징입니다.",
+          "detail": "긴 컨텍스트는 ‘다 넣을 수 있다’와 ‘잘 쓴다’가 다릅니다. 핵심만 추려 넣는 편이 여전히 유리합니다.",
+          "foryou": "긴 문서 작업이 많다면 ‘한 번에 넣기’가 가능한 모델을 후보로 둬보세요."
         }
       ]
     },
@@ -483,38 +493,39 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "매일 5분, 업무 한 조각을 AI로 자동화하기",
-        "summary": "거창한 도입이 아니라 ‘매주 똑같이 반복하는 일’ 하나를 AI에 맡기는 작은 습관이 가장 큰 변화를 만듭니다. 회의록 정리, 주간 보고 초안, 메일 분류 같은 것부터 시작하면 좋아요. 하루 5분씩 한 달이면 ‘AI 없이 어떻게 일했지’ 싶어집니다. 중요한 건 완벽한 자동화가 아니라 꾸준한 작은 위임입니다.",
-        "detail": "한 번에 모든 걸 자동화하려다 지치는 경우가 많습니다. 한 가지가 안정적으로 돌면 그다음을 늘리는 식이 오래갑니다.",
-        "source": "The Verge — AI",
-        "url": "https://www.theverge.com/ai-artificial-intelligence",
-        "published": "2026-06-02",
-        "foryou": "‘매주 똑같이 하는 일’ 목록을 적어보세요. 거기에 자동화할 거리가 다 있습니다."
+        "title": "100만 토큰 컨텍스트 — 아주 긴 문서도 한 번에",
+        "summary": "최신 모델들이 100만 토큰 안팎의 긴 컨텍스트를 지원하면서, 긴 보고서·계약서·매뉴얼을 통째로 넣고 요약·질문하는 일이 수월해졌습니다. 비개발자도 ‘긴 자료 한 번에 묻기’가 쉬워졌어요.",
+        "detail": "다만 통째로 넣기보다 ‘이 부분만 보고 답해줘’처럼 범위를 좁히면 더 정확합니다.",
+        "source": "LLM-Stats",
+        "url": "https://llm-stats.com/ai-news",
+        "published": "2026-06-01",
+        "foryou": "긴 PDF를 통째로 올리고 ‘핵심 5가지와 위험 요소’를 물어보세요."
       },
       "articles": [
         {
-          "tag": "사례",
-          "source": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
-          "time": "오늘",
-          "published": "2026-06-02",
-          "title": "비개발 직군의 AI 활용 사례 모음",
-          "summary": "기획은 시장 자료 비교, 마케팅은 카피 초안과 A/B 문구, CS는 답변 초안과 분류처럼 직군마다 바로 쓰는 패턴이 자리잡고 있습니다. 남의 사례를 그대로 따라 해보는 게 빠릅니다.",
-          "detail": "내 직무와 비슷한 사례 하나를 골라 이번 주에 그대로 재현해보세요.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Crescendo AI",
+          "url": "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+          "time": "4일 전",
+          "published": "2026-05-29",
+          "title": "AI 답 검증 습관 — 출처 확인과 민감정보 주의",
+          "summary": "AI는 그럴듯하게 틀릴 수 있고, 회사 자료·개인정보를 함부로 입력해서도 안 됩니다. ‘중요한 사실은 출처로 교차 확인’과 ‘민감정보 입력 금지’ 두 습관이면 대부분 안전합니다.",
+          "detail": "‘근거 링크도 같이 줘’라고 요청하면 검증이 훨씬 쉬워집니다.",
+          "foryou": "이름·연락처·기밀은 입력하지 않기 — 가장 먼저 익힐 한 가지입니다."
         },
         {
-          "tag": "꼭 알아두기",
-          "source": "Claude 활용 가이드",
-          "url": "https://platform.claude.com/docs/ko/",
-          "time": "어제",
-          "published": "2026-06-01",
-          "title": "AI를 믿되 확인하기 — 출처와 민감정보",
-          "summary": "AI 답이 그럴듯해도 중요한 사실은 출처로 교차 확인하고, 민감정보는 입력하지 않는 두 습관이면 대부분 안전합니다. 특히 숫자·법규·인용은 반드시 원문을 봐야 합니다.",
-          "detail": "‘근거 링크도 같이 줘’라고 요청하면 검증이 훨씬 쉬워집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Crescendo AI",
+          "url": "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+          "time": "5일 전",
+          "published": "2026-05-28",
+          "title": "회의록·메일 초안은 AI에게, 판단은 나에게",
+          "summary": "녹취·메모를 주고 결정·할 일만 뽑게 하거나 보고서 초안을 받아 다듬는 분업이 가장 현실적인 활용법입니다. 빈 화면을 마주하는 시간을 크게 줄여줍니다.",
+          "detail": "‘완성’이 아니라 ‘초안 3가지 버전’을 시키면 고르고 다듬는 게 빨라집니다.",
+          "foryou": "회의 직후 ‘결정·담당·기한 표로 정리’를 시켜보세요."
         }
       ]
     }
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>

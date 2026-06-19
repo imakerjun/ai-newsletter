@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -433,7 +442,7 @@ const NEWSLETTER = {
       "AI 뉴스레터"
     ],
     "lead": "발행일 기준 지난 24시간의 AI 소식을 관심사 탭으로 나눠 전합니다. 주제마다 ‘딱 하나의 핵심’을 크게, 카드만 봐도 무슨 소식인지 파악되도록 요약했어요.",
-    "greeting": "안녕하세요! 오늘은 애플이 여러 AI를 골라 쓰는 새 Siri를 공개했고(아이폰에 Claude도!), Claude Code는 결과를 ‘아티팩트’ 웹페이지로 공유하는 기능을 선보였어요. 각 탭 맨 위의 큰 카드가 <b>오늘의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다."
+    "greeting": "안녕하세요! 지난 24시간의 AI 소식 중, 업계 주요 뉴스와 비개발자가 바로 써볼 만한 것 두 갈래로 골랐어요. 각 탭 맨 위의 큰 카드가 <b>그날의 핵심 한 건</b>이고, 더 깊은 맥락은 ‘자세히 보기’에 담았습니다."
   },
   "topics": [
     {
@@ -442,38 +451,39 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "애플, Gemini 기반 새 Siri 공개 — 아이폰에서 Claude·ChatGPT도 고른다",
-        "summary": "애플이 구글 Gemini로 구동되는 새 Siri와 함께, 여러 AI를 골라 쓰는 ‘AI 익스텐션’을 발표했습니다. 이로써 아이폰에서 Claude를 기본 옵션으로 선택할 수 있게 된 것이 처음입니다. 관련 변경은 6월 8일 공개된 iOS 27 베타 1에 담겼어요. 음성 비서 영역에서도 ‘한 회사 모델 독점’이 아니라 ‘골라 쓰는’ 구도로 가는 신호입니다.",
-        "detail": "비서·운영체제처럼 일상 접점이 큰 제품이 멀티-AI로 열리는 건 사용자 선택권 측면에서 의미가 큽니다. 다만 어떤 작업에 어떤 모델이 쓰이는지, 입력한 데이터가 어디로 가는지는 확인할 필요가 있습니다.",
-        "source": "Build Fast with AI",
-        "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
-        "published": "2026-06-08",
-        "foryou": "아이폰을 쓴다면 iOS 27 베타에서 어떤 AI를 기본 비서로 둘지 직접 골라보세요."
+        "title": "Gemini 3.5 Pro·Claude Mythos 1·Sonnet 4.8·Grok 5, 한 달에 몰린다",
+        "summary": "구글 Gemini 3.5 Pro의 일반 출시가 이달 예정이고, 앤트로픽 Claude Mythos 1과 Sonnet 4.8, xAI Grok 5까지 주요 모델 소식이 같은 시기에 몰렸습니다. 선택지가 넓어지는 만큼 ‘무엇을 어디에’가 중요해집니다.",
+        "detail": "출시가 몰릴 땐 전부 따라가기보다, 내 핵심 작업 한두 개 기준으로만 비교하면 충분합니다.",
+        "source": "WaveSpeed",
+        "url": "https://wavespeed.ai/blog/posts/june-2026-ai-launch-wave/",
+        "published": "2026-06-16",
+        "foryou": "쏟아지는 출시에 휘둘리지 말고, 내 작업 기준 1~2개만 비교해보세요."
       },
       "articles": [
         {
-          "tag": "모델",
-          "source": "LLM-Stats",
-          "url": "https://llm-stats.com/ai-news",
-          "time": "오늘",
-          "published": "2026-06-17",
-          "title": "구글 Gemini 3.5 Pro·앤트로픽 Claude Sonnet 4.8, 이달 내 출시 예상",
-          "summary": "이달 안에 구글 Gemini 3.5 Pro와 앤트로픽 Claude Sonnet 4.8이 잇따라 공개될 것으로 전망됩니다. xAI Grok 5, 앤트로픽 Claude Mythos 1까지 주요 모델 소식이 같은 시기에 몰리는 분위기예요.",
-          "detail": "비슷한 시기에 모델이 쏟아지면 ‘무엇을 쓰느냐’보다 ‘무엇을 어디에 쓰느냐’가 더 중요해집니다. 작업별로 모델을 갈아 끼우는 감각이 필요해집니다.",
-          "foryou": "내가 자주 하는 작업 1~2개에 어떤 모델이 맞는지 비교해볼 좋은 시점입니다."
+          "tag": "소식",
+          "source": "Gemini News",
+          "url": "https://blog.mean.ceo/google-gemini-news-june-2026/",
+          "time": "3일 전",
+          "published": "2026-06-15",
+          "title": "구글 Gemini 3 Deep Think 출시 — 최상위 추론 모드",
+          "summary": "구글이 수학·과학·논리·다단계 문제에 특화된 최상위 추론 모드 ‘Gemini 3 Deep Think’를 AI Ultra 구독자에게 순차 제공하기 시작했습니다. 어려운 문제를 더 깊게 ‘생각’하게 하는 방향입니다.",
+          "detail": "깊은 추론 모드는 느리고 비싸므로, 정말 어려운 문제에만 쓰는 게 효율적입니다.",
+          "foryou": "평소엔 빠른 모드, 진짜 어려운 문제만 ‘깊게 생각’ 모드로 — 구분해 쓰세요."
         },
         {
-          "tag": "엔터프라이즈",
-          "source": "CNBC",
-          "url": "https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html",
-          "time": "어제",
-          "published": "2026-06-01",
-          "title": "MS 파운드리 모델 카탈로그, 1만 1천 개 돌파",
-          "summary": "마이크로소프트 Foundry 카탈로그가 OpenAI GPT-5.5, 앤트로픽 Claude Opus 4.8·Sonnet·Haiku, 구글 Gemini 등 프런티어 모델을 포함해 1만 1천 개를 넘어섰습니다. 기업이 한곳에서 여러 모델을 골라 쓰는 ‘모델 마켓플레이스’ 경쟁이 본격화되는 모습입니다.",
-          "detail": "모델이 많아질수록 ‘무엇을 고를까’가 일이 됩니다. 그래서 평가 기준을 세워 두고 작업에 맞는 모델을 고르는 역량이 점점 중요해집니다.",
-          "foryou": "여러 모델을 쓸 수 있다면, 같은 작업을 2개 모델에 시켜 비교해보는 습관이 도움이 됩니다."
+          "tag": "소식",
+          "source": "AI Weekly (mml)",
+          "url": "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
+          "time": "8일 전",
+          "published": "2026-06-10",
+          "title": "앤트로픽, 965B 밸류에이션·비공개 IPO 신청 보도",
+          "summary": "앤트로픽이 약 9,650억 달러 가치로 자금 조달을 마무리하고 비공개로 IPO를 신청했다는 소식이 전해졌습니다. AI 업계의 자금·관심이 어디로 쏠리는지를 보여주는 신호입니다.",
+          "detail": "기업 가치·투자 소식은 ‘이 회사가 오래 갈까’를 가늠하는 참고 지표 정도로 보면 됩니다.",
+          "foryou": "내가 의존하는 도구를 만든 회사의 체력을 가늠하는 참고로만 보세요."
         }
       ]
     },
@@ -483,38 +493,39 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 만들어 팀과 공유",
-        "summary": "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 코드나 분석 결과를 별도 변환 없이 보기 좋은 페이지로 내보낼 수 있다는 뜻이에요. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
-        "detail": "사실 지금 보고 있는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 사람이 보기 좋은 형태로 내보내는’ 흐름이 비개발자 활용의 핵심이 되고 있어요.",
+        "title": "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 공유",
+        "summary": "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
+        "detail": "사실 지금 보는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 보기 좋게 내보내는’ 흐름이 핵심입니다.",
         "source": "AI Weekly",
         "url": "https://aiweekly.co/ai-news-today/anthropic-news",
         "published": "2026-06-16",
-        "foryou": "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요 — 이 뉴스레터가 바로 그 예시입니다."
+        "foryou": "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요."
       },
       "articles": [
         {
-          "tag": "기능 업데이트",
+          "tag": "소식",
           "source": "Build Fast with AI",
           "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
-          "time": "오늘",
+          "time": "10일 전",
           "published": "2026-06-08",
-          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 상담 기능 강화",
-          "summary": "OpenAI가 ChatGPT의 건강 관련 응답 능력을 GPT-5.5 Instant로 끌어올렸습니다. 빠른 응답형 모델로 일상적 질문에 더 적절히 답하도록 개선됐어요. 다만 의료 판단은 전문가 확인이 필요하다는 점은 그대로입니다.",
-          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치는 습관이 중요합니다.",
-          "foryou": "민감한 주제일수록 AI 답은 출발점으로만 쓰고 꼭 사람이 확인하세요."
+          "title": "아이폰 Siri에 Claude·ChatGPT — 골라 쓰는 음성 비서",
+          "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈입니다.",
+          "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 진입장벽이 가장 낮습니다.",
+          "foryou": "베타가 부담되면, 지금 쓰는 AI 앱을 음성으로 불러 쓰는 것부터 익혀보세요."
         },
         {
-          "tag": "시도해보기",
+          "tag": "소식",
           "source": "Build Fast with AI",
           "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
-          "time": "어제",
+          "time": "10일 전",
           "published": "2026-06-08",
-          "title": "아이폰 Siri에 Claude·ChatGPT가 붙는다 — 골라 쓰는 비서",
-          "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈이에요.",
-          "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 가장 진입장벽이 낮습니다.",
-          "foryou": "베타가 부담되면, 지금 쓰는 AI 앱 하나를 음성으로 불러 쓰는 것부터 익혀보세요."
+          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 질문 응답 강화",
+          "summary": "오픈AI가 ChatGPT의 건강 관련 응답을 빠른 응답형 모델 GPT-5.5 Instant로 끌어올렸습니다. 일상적 질문에 더 적절히 답하도록 개선됐지만, 의료 판단은 전문가 확인이 필요합니다.",
+          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치세요.",
+          "foryou": "민감한 주제일수록 AI 답은 출발점으로만, 결론은 사람이 확인하세요."
         }
       ]
     }
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>

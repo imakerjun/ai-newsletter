@@ -119,6 +119,143 @@ EVERY_ART = [
      "중요도가 높을수록 교차 확인을 늘리세요. 가벼운 초안은 그대로, 공식 문서는 꼼꼼히."),
 ]
 
+CRITERIA = {
+    "news": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
+    "everyone": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
+}
+
+# ============================================================================
+# 6월 실제 뉴스 풀 (실제 출처·발행일). 각 호는 발행일(D) 이하 날짜의 소식만, 최신순으로 노출.
+# 출처는 실제 매체의 해당 보도/요약 페이지.
+# ============================================================================
+def S(date, src, url, title, summary, detail, foryou):
+    return {"date": date, "src": src, "url": url, "title": title,
+            "summary": summary, "detail": detail, "foryou": foryou, "tag": ""}
+
+NEWS_REAL = [
+    S("2026-05-27", "Crescendo AI", "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+      "오픈AI, 컨슈머에서 엔터프라이즈로 무게 이동",
+      "오픈AI가 일반 소비자 시장보다 기업용에 초점을 옮기고 있다는 분석이 나왔습니다. 같은 시기 앤트로픽은 Claude Code를 앞세워 개발자 시장에서 앞서가는 구도가 뚜렷해졌어요.",
+      "‘누가 더 똑똑한가’ 경쟁이 ‘누구의 워크플로에 자리 잡는가’ 경쟁으로 옮겨가는 흐름입니다.",
+      "내가 쓰는 도구가 어느 진영인지 알아두면 기능 업데이트를 따라가기 쉽습니다."),
+    S("2026-05-28", "LLM-Stats", "https://llm-stats.com/ai-news",
+      "Claude Opus 4.8, 종합 지능 지표 1위 등극",
+      "앤트로픽 Claude Opus 4.8이 5월 28일 종합 지능 인덱스에서 1위에 올랐습니다. 코드·추론 등 여러 항목에서 최상위 점수를 기록했다는 평가입니다.",
+      "벤치마크 1위가 곧 ‘내 업무에 최고’를 뜻하진 않습니다. 실제 내 작업으로 비교해보는 게 중요합니다.",
+      "벤치마크 순위보다 ‘내가 자주 하는 작업’에서의 체감이 더 중요합니다."),
+    S("2026-06-01", "LLM-Stats", "https://llm-stats.com/ai-news",
+      "MiniMax M3 공개 — 프런티어 코딩 + 100만 토큰 컨텍스트",
+      "MiniMax가 6월 1일 M3를 공개했습니다. 강력한 코딩 성능과 함께 100만 토큰 컨텍스트를 지원해, 아주 긴 자료를 한 번에 다룰 수 있는 점이 특징입니다.",
+      "긴 컨텍스트는 ‘다 넣을 수 있다’와 ‘잘 쓴다’가 다릅니다. 핵심만 추려 넣는 편이 여전히 유리합니다.",
+      "긴 문서 작업이 많다면 ‘한 번에 넣기’가 가능한 모델을 후보로 둬보세요."),
+    S("2026-06-02", "CNBC", "https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html",
+      "MS Build: MAI 모델 공개 + 파운드리 1.1만 모델 돌파",
+      "마이크로소프트가 Build 2026에서 자체 MAI 모델을 공개하고, Foundry 카탈로그를 1만 1천 개 모델 규모로 확장했습니다. OpenAI·앤트로픽·구글의 프런티어 모델을 한곳에서 고르는 ‘모델 마켓플레이스’ 경쟁이 본격화됐어요.",
+      "모델이 많아질수록 ‘무엇을 고를까’가 일이 됩니다. 평가 기준을 세워 두는 역량이 중요해집니다.",
+      "회사가 여러 모델을 제공한다면 같은 작업을 둘에 시켜 비교해보세요."),
+    S("2026-06-02", "AI Weekly (mml)", "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
+      "앤트로픽, Project Glasswing 확대 — 전력·의료 등 핵심 인프라로",
+      "앤트로픽이 방어적 보안용 Claude Mythos 프리뷰 프로그램(Project Glasswing)을 6월 2일 전력·수도·의료·통신·하드웨어 등 핵심 인프라 분야로 넓혔습니다. 첫 달 보고서에서 1,000여 오픈소스 프로젝트의 취약점 2만여 건을 찾았다고 밝혔어요.",
+      "AI가 보안 점검의 ‘1차 스크리닝’을 맡고 사람이 확정하는 분업 구도가 자리잡는 모습입니다.",
+      "보안·점검 업무라면 ‘AI 1차 검토 + 사람 확정’ 분업을 떠올려 보세요."),
+    S("2026-06-04", "LLM-Stats", "https://llm-stats.com/ai-news",
+      "NVIDIA, Nemotron 3 Ultra 출시",
+      "NVIDIA가 6월 4일 Nemotron 3 Ultra를 공개했습니다. 오픈 모델 진영의 성능 경쟁이 이어지며 선택지가 넓어지고 있습니다.",
+      "오픈 모델은 비용·자체 운영 면에서 매력이 있지만, 도입엔 운영 역량이 필요합니다.",
+      "당장 쓸 일이 없어도 ‘오픈 모델도 빠르게 큰다’ 정도만 알아두면 충분합니다."),
+    S("2026-06-08", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+      "애플 WWDC: Gemini 기반 새 Siri + 멀티-AI(아이폰에 Claude)",
+      "애플이 6월 8일 WWDC에서 구글 Gemini로 구동되는 새 Siri와, 여러 AI를 골라 쓰는 ‘AI 익스텐션’을 공개했습니다. 이로써 아이폰에서 Claude를 기본 옵션으로 선택할 수 있게 된 것이 처음입니다(iOS 27 베타 1).",
+      "비서·운영체제처럼 일상 접점이 큰 제품이 멀티-AI로 열리는 건 사용자 선택권 측면에서 의미가 큽니다.",
+      "아이폰 사용자라면 iOS 27 베타에서 기본 비서 AI를 직접 골라보세요."),
+    S("2026-06-08", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+      "OpenAI, GPT-5.5-Cyber 제한 프리뷰 — 보안팀 대상",
+      "오픈AI가 사이버보안 특화 모델 GPT-5.5-Cyber를 검증된 보안팀·EU 기관 등에 한정 프리뷰로 공개했습니다. 생명과학 모델 업데이트와 바이오디펜스 이니셔티브도 함께 발표했어요.",
+      "특화 모델은 강력하지만 안전장치와 접근 제한이 함께 갑니다. 일반 사용자에겐 당장 영향이 적습니다.",
+      "특화 모델 소식은 ‘이런 방향도 있다’ 정도로 알아두면 됩니다."),
+    S("2026-06-08", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+      "메타, 첫 플래그십 LLM ‘Muse Spark’ 공개 + 대규모 투자",
+      "메타가 멀티모달·추론·에이전트 작업에서 경쟁력 있는 첫 플래그십 모델 Muse Spark를 적은 연산 비용으로 공개했습니다. 동시에 2026년 AI 설비투자를 1,150~1,350억 달러로 제시했어요.",
+      "거대 투자 경쟁은 비용 하락·성능 향상으로 이어져 일반 사용자에게도 결국 이득이 됩니다.",
+      "‘큰 회사들이 더 싸고 좋게 만든다’ — 매일 가볍게 써보는 게 가장 큰 이득입니다."),
+    S("2026-06-10", "AI Weekly (mml)", "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
+      "앤트로픽, 965B 밸류에이션·비공개 IPO 신청 보도",
+      "앤트로픽이 약 9,650억 달러 가치로 자금 조달을 마무리하고 비공개로 IPO를 신청했다는 소식이 전해졌습니다. AI 업계의 자금·관심이 어디로 쏠리는지를 보여주는 신호입니다.",
+      "기업 가치·투자 소식은 ‘이 회사가 오래 갈까’를 가늠하는 참고 지표 정도로 보면 됩니다.",
+      "내가 의존하는 도구를 만든 회사의 체력을 가늠하는 참고로만 보세요."),
+    S("2026-06-15", "Gemini News", "https://blog.mean.ceo/google-gemini-news-june-2026/",
+      "구글 Gemini 3 Deep Think 출시 — 최상위 추론 모드",
+      "구글이 수학·과학·논리·다단계 문제에 특화된 최상위 추론 모드 ‘Gemini 3 Deep Think’를 AI Ultra 구독자에게 순차 제공하기 시작했습니다. 어려운 문제를 더 깊게 ‘생각’하게 하는 방향입니다.",
+      "깊은 추론 모드는 느리고 비싸므로, 정말 어려운 문제에만 쓰는 게 효율적입니다.",
+      "평소엔 빠른 모드, 진짜 어려운 문제만 ‘깊게 생각’ 모드로 — 구분해 쓰세요."),
+    S("2026-06-16", "WaveSpeed", "https://wavespeed.ai/blog/posts/june-2026-ai-launch-wave/",
+      "Gemini 3.5 Pro·Claude Mythos 1·Sonnet 4.8·Grok 5, 한 달에 몰린다",
+      "구글 Gemini 3.5 Pro의 일반 출시가 이달 예정이고, 앤트로픽 Claude Mythos 1과 Sonnet 4.8, xAI Grok 5까지 주요 모델 소식이 같은 시기에 몰렸습니다. 선택지가 넓어지는 만큼 ‘무엇을 어디에’가 중요해집니다.",
+      "출시가 몰릴 땐 전부 따라가기보다, 내 핵심 작업 한두 개 기준으로만 비교하면 충분합니다.",
+      "쏟아지는 출시에 휘둘리지 말고, 내 작업 기준 1~2개만 비교해보세요."),
+]
+EVERY_REAL = [
+    S("2026-05-27", "Crescendo AI", "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+      "AI 입문 — 매일 5분, 반복 업무 한 조각부터",
+      "거창하게 시작하기보다 ‘매주 똑같이 하는 일’ 하나를 AI에 맡기는 작은 습관이 가장 빠른 입문법입니다. 요약→초안→번역 순으로 한 단계씩 넓혀가면 부담이 없습니다.",
+      "첫 주는 ‘긴 글 요약’ 한 가지만 매일 써보는 것으로 충분합니다.",
+      "오늘 ‘매주 반복하는 일’ 하나를 적어보세요. 거기에 자동화할 거리가 있습니다."),
+    S("2026-05-28", "Crescendo AI", "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+      "회의록·메일 초안은 AI에게, 판단은 나에게",
+      "녹취·메모를 주고 결정·할 일만 뽑게 하거나 보고서 초안을 받아 다듬는 분업이 가장 현실적인 활용법입니다. 빈 화면을 마주하는 시간을 크게 줄여줍니다.",
+      "‘완성’이 아니라 ‘초안 3가지 버전’을 시키면 고르고 다듬는 게 빨라집니다.",
+      "회의 직후 ‘결정·담당·기한 표로 정리’를 시켜보세요."),
+    S("2026-05-29", "Crescendo AI", "https://www.crescendo.ai/news/latest-ai-news-and-updates",
+      "AI 답 검증 습관 — 출처 확인과 민감정보 주의",
+      "AI는 그럴듯하게 틀릴 수 있고, 회사 자료·개인정보를 함부로 입력해서도 안 됩니다. ‘중요한 사실은 출처로 교차 확인’과 ‘민감정보 입력 금지’ 두 습관이면 대부분 안전합니다.",
+      "‘근거 링크도 같이 줘’라고 요청하면 검증이 훨씬 쉬워집니다.",
+      "이름·연락처·기밀은 입력하지 않기 — 가장 먼저 익힐 한 가지입니다."),
+    S("2026-06-01", "LLM-Stats", "https://llm-stats.com/ai-news",
+      "100만 토큰 컨텍스트 — 아주 긴 문서도 한 번에",
+      "최신 모델들이 100만 토큰 안팎의 긴 컨텍스트를 지원하면서, 긴 보고서·계약서·매뉴얼을 통째로 넣고 요약·질문하는 일이 수월해졌습니다. 비개발자도 ‘긴 자료 한 번에 묻기’가 쉬워졌어요.",
+      "다만 통째로 넣기보다 ‘이 부분만 보고 답해줘’처럼 범위를 좁히면 더 정확합니다.",
+      "긴 PDF를 통째로 올리고 ‘핵심 5가지와 위험 요소’를 물어보세요."),
+    S("2026-06-05", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-5-2026",
+      "쏟아지는 새 모델, 비개발자는 ‘작업별로 골라 쓰기’",
+      "새 모델이 연달아 나오지만 비개발자에게 중요한 건 ‘무엇이 최신인가’보다 ‘내 작업에 뭐가 맞나’입니다. 요약·번역·초안 같은 일상 작업은 기본 모델로도 충분한 경우가 많습니다.",
+      "최신 모델로 갈아타기 전에, 지금 쓰는 것으로 충분한지 먼저 따져보세요.",
+      "‘최신=최고’가 아닙니다. 내 작업에서 충분하면 그대로 쓰세요."),
+    S("2026-06-08", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+      "아이폰 Siri에 Claude·ChatGPT — 골라 쓰는 음성 비서",
+      "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈입니다.",
+      "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 진입장벽이 가장 낮습니다.",
+      "베타가 부담되면, 지금 쓰는 AI 앱을 음성으로 불러 쓰는 것부터 익혀보세요."),
+    S("2026-06-08", "Build Fast with AI", "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+      "ChatGPT, ‘GPT-5.5 Instant’로 건강 질문 응답 강화",
+      "오픈AI가 ChatGPT의 건강 관련 응답을 빠른 응답형 모델 GPT-5.5 Instant로 끌어올렸습니다. 일상적 질문에 더 적절히 답하도록 개선됐지만, 의료 판단은 전문가 확인이 필요합니다.",
+      "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치세요.",
+      "민감한 주제일수록 AI 답은 출발점으로만, 결론은 사람이 확인하세요."),
+    S("2026-06-16", "AI Weekly", "https://aiweekly.co/ai-news-today/anthropic-news",
+      "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 공유",
+      "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
+      "사실 지금 보는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 보기 좋게 내보내는’ 흐름이 핵심입니다.",
+      "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요."),
+]
+
+def reltime(D, ds):
+    delta = (D - datetime.date.fromisoformat(ds)).days
+    return "오늘" if delta == 0 else ("어제" if delta == 1 else f"{delta}일 전")
+
+def mk_topic_real(tid, label, icon, tint, desc, pool, D):
+    diso = D.isoformat()
+    elig = sorted([s for s in pool if s["date"] <= diso], key=lambda s: s["date"], reverse=True)
+    pick = elig[:3] if len(elig) >= 3 else elig
+    hl = pick[0]
+    arts = pick[1:3]
+    def art(s):
+        return {"tag": "소식", "source": s["src"], "url": s["url"], "time": reltime(D, s["date"]),
+                "published": s["date"], "title": s["title"], "summary": s["summary"],
+                "detail": s["detail"], "foryou": s["foryou"]}
+    return {"id": tid, "label": label, "icon": icon, "tint": tint, "desc": desc, "criteria": CRITERIA[tid],
+            "highlight": {"kicker": "오늘의 핵심", "title": hl["title"], "summary": hl["summary"], "detail": hl["detail"],
+                          "source": hl["src"], "url": hl["url"], "published": hl["date"], "foryou": hl["foryou"]},
+            "articles": [art(s) for s in arts]}
+
 def mk_topic(tid, label, icon, tint, desc, hl_pool, art_pool, i, pub_today, pub_prev):
     hl = hl_pool[i % len(hl_pool)]
     a1 = art_pool[i % len(art_pool)]
@@ -127,7 +264,7 @@ def mk_topic(tid, label, icon, tint, desc, hl_pool, art_pool, i, pub_today, pub_
         return {"tag": a[0], "source": SRC[a[1]][0], "url": SRC[a[1]][1], "time": t, "published": pub,
                 "title": a[2], "summary": a[3], "detail": a[4],
                 "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."}
-    return {"id": tid, "label": label, "icon": icon, "tint": tint, "desc": desc,
+    return {"id": tid, "label": label, "icon": icon, "tint": tint, "desc": desc, "criteria": CRITERIA[tid],
             "highlight": {"kicker": "오늘의 핵심", "title": hl[0], "summary": hl[1], "detail": hl[4],
                           "source": SRC[hl[2]][0], "url": SRC[hl[2]][1], "published": pub_today, "foryou": hl[3]},
             "articles": [art(a1, "오늘", pub_today), art(a2, "어제", pub_prev)]}
@@ -153,10 +290,16 @@ for idx, dt in enumerate(dates):
     date_ko = f"{dt.year}년 {dt.month}월 {dt.day}일 ({wd})"
     label = f"Vol.{vol:02d}"
     prev = (dt - datetime.timedelta(days=1)).isoformat()
-    news = mk_topic("news", "AI 최신 소식", "📰", "blue",
-                    "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_HL, NEWS_ART, idx, iso, prev)
-    every = mk_topic("everyone", "비개발자를 위한 AI 소식", "🧭", "green",
-                     "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_HL, EVERY_ART, idx, iso, prev)
+    if dt.month == 6:  # 6월은 실제 뉴스 풀(날짜 필터)
+        news = mk_topic_real("news", "AI 최신 소식", "📰", "blue",
+                             "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_REAL, dt)
+        every = mk_topic_real("everyone", "비개발자를 위한 AI 소식", "🧭", "green",
+                              "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_REAL, dt)
+    else:              # 그 외(5월)는 데모 풀
+        news = mk_topic("news", "AI 최신 소식", "📰", "blue",
+                        "발행일 기준 지난 24시간의 주요 AI 소식.", NEWS_HL, NEWS_ART, idx, iso, prev)
+        every = mk_topic("everyone", "비개발자를 위한 AI 소식", "🧭", "green",
+                         "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.", EVERY_HL, EVERY_ART, idx, iso, prev)
     nl = {
         "meta": {
             "icon": "🗞️", "edition": label, "cadence": "일간",

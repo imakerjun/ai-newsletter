@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -442,38 +451,39 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "AI가 ‘답하는 도구’에서 ‘대신 일하는 동료’로 바뀌고 있다",
-        "summary": "올해 AI의 가장 큰 변화는 ‘에이전트’입니다. 한 번 묻고 한 번 답하던 챗봇과 달리, 목표만 주면 스스로 단계를 나눠 자료를 찾고 문서를 만들고 도구를 호출해 결과물까지 가져옵니다. 이미 리서치·코딩·고객지원에서 사람은 시작과 검토만 맡고 중간 실행은 AI가 처리하는 방식이 늘고 있어요. 평가 기준도 ‘얼마나 똑똑한가’에서 ‘얼마나 끝까지 해내는가’로 옮겨가는 중입니다.",
-        "detail": "다만 여러 단계를 자동으로 밟는 만큼, 중간에 잘못된 가정을 하면 그 위에 계속 쌓일 수 있습니다. 그래서 중요한 결정 지점에서는 멈추고 확인받게 설계하는 편이 안전합니다.",
-        "source": "MIT Technology Review",
-        "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
-        "published": "2026-06-17",
-        "foryou": "‘대신 해줬으면 하는 반복 업무’ 하나를 끝까지 맡겨보는 게 첫걸음입니다."
+        "title": "Gemini 3.5 Pro·Claude Mythos 1·Sonnet 4.8·Grok 5, 한 달에 몰린다",
+        "summary": "구글 Gemini 3.5 Pro의 일반 출시가 이달 예정이고, 앤트로픽 Claude Mythos 1과 Sonnet 4.8, xAI Grok 5까지 주요 모델 소식이 같은 시기에 몰렸습니다. 선택지가 넓어지는 만큼 ‘무엇을 어디에’가 중요해집니다.",
+        "detail": "출시가 몰릴 땐 전부 따라가기보다, 내 핵심 작업 한두 개 기준으로만 비교하면 충분합니다.",
+        "source": "WaveSpeed",
+        "url": "https://wavespeed.ai/blog/posts/june-2026-ai-launch-wave/",
+        "published": "2026-06-16",
+        "foryou": "쏟아지는 출시에 휘둘리지 말고, 내 작업 기준 1~2개만 비교해보세요."
       },
       "articles": [
         {
-          "tag": "연구",
-          "source": "Anthropic 뉴스",
-          "url": "https://www.anthropic.com/news",
-          "time": "오늘",
-          "published": "2026-06-17",
-          "title": "긴 컨텍스트, ‘넣을 수 있다’와 ‘잘 쓴다’는 다르다",
-          "summary": "한 번에 아주 많은 자료를 넣을 수 있게 됐지만, 무작정 다 넣기보다 핵심만 추려 밀도를 높이는 쪽이 더 좋은 답을 낸다는 분석입니다. ‘많이’보다 ‘관련 있게’가 중요하다는 거예요.",
-          "detail": "자료를 통째로 붙이기보다 ‘이 부분만 보고 답해줘’라고 범위를 좁혀주면 정확해집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Gemini News",
+          "url": "https://blog.mean.ceo/google-gemini-news-june-2026/",
+          "time": "2일 전",
+          "published": "2026-06-15",
+          "title": "구글 Gemini 3 Deep Think 출시 — 최상위 추론 모드",
+          "summary": "구글이 수학·과학·논리·다단계 문제에 특화된 최상위 추론 모드 ‘Gemini 3 Deep Think’를 AI Ultra 구독자에게 순차 제공하기 시작했습니다. 어려운 문제를 더 깊게 ‘생각’하게 하는 방향입니다.",
+          "detail": "깊은 추론 모드는 느리고 비싸므로, 정말 어려운 문제에만 쓰는 게 효율적입니다.",
+          "foryou": "평소엔 빠른 모드, 진짜 어려운 문제만 ‘깊게 생각’ 모드로 — 구분해 쓰세요."
         },
         {
-          "tag": "새 기능",
-          "source": "Google AI 블로그",
-          "url": "https://blog.google/technology/ai/",
-          "time": "어제",
-          "published": "2026-06-16",
-          "title": "음성으로 묻고 화면으로 답받기 — 대화형 인터페이스의 진화",
-          "summary": "키보드로 길게 쓰지 않아도 말로 묻고 표·차트·이미지로 답을 받는 사용이 자연스러워졌습니다. 이동 중이나 손이 바쁠 때 특히 유용해, AI를 ‘쓰는 순간’ 자체가 늘어나는 흐름입니다.",
-          "detail": "회의 중 떠오른 질문을 음성으로 던져 바로 정리받는 식으로 써보면 체감이 큽니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "AI Weekly (mml)",
+          "url": "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
+          "time": "7일 전",
+          "published": "2026-06-10",
+          "title": "앤트로픽, 965B 밸류에이션·비공개 IPO 신청 보도",
+          "summary": "앤트로픽이 약 9,650억 달러 가치로 자금 조달을 마무리하고 비공개로 IPO를 신청했다는 소식이 전해졌습니다. AI 업계의 자금·관심이 어디로 쏠리는지를 보여주는 신호입니다.",
+          "detail": "기업 가치·투자 소식은 ‘이 회사가 오래 갈까’를 가늠하는 참고 지표 정도로 보면 됩니다.",
+          "foryou": "내가 의존하는 도구를 만든 회사의 체력을 가늠하는 참고로만 보세요."
         }
       ]
     },
@@ -483,38 +493,39 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "‘질문 잘하는 법’이 곧 AI 활용 실력이다",
-        "summary": "같은 AI라도 어떻게 묻느냐에 따라 결과가 완전히 달라집니다. 원하는 형식(표·목록·3줄), 분량, 예시, 읽는 대상을 함께 주면 한 번에 쓸 만한 답이 나와요. 막연히 ‘잘 써줘’ 대신 구체적으로 요청하는 연습이 가장 빠른 실력 향상법입니다. 좋은 질문은 타고나는 게 아니라 몇 가지 패턴을 익히면 됩니다.",
-        "detail": "결과가 마음에 안 들면 처음부터 다시 쓰지 말고 ‘더 짧게’, ‘예시 추가해서’처럼 고쳐 말하세요. 대화로 다듬는 게 핵심입니다.",
-        "source": "Claude 활용 가이드",
-        "url": "https://platform.claude.com/docs/ko/",
-        "published": "2026-06-17",
-        "foryou": "‘표로’, ‘3줄로’, ‘초등학생도 알게’ 같은 한마디를 붙이는 것부터 시작해보세요."
+        "title": "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 공유",
+        "summary": "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
+        "detail": "사실 지금 보는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 보기 좋게 내보내는’ 흐름이 핵심입니다.",
+        "source": "AI Weekly",
+        "url": "https://aiweekly.co/ai-news-today/anthropic-news",
+        "published": "2026-06-16",
+        "foryou": "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요."
       },
       "articles": [
         {
-          "tag": "팁",
-          "source": "Google AI 블로그",
-          "url": "https://blog.google/technology/ai/",
-          "time": "오늘",
-          "published": "2026-06-17",
-          "title": "원하는 형식을 말하면 결과가 달라진다",
-          "summary": "‘표로’, ‘3줄로’, ‘예시 포함해서’처럼 형식을 지정하면 한 번에 쓸 만한 답이 나옵니다. 막연한 요청과 구체적 요청의 결과 차이는 생각보다 큽니다.",
-          "detail": "자주 쓰는 요청은 형식까지 포함해 메모해두고 복사해 쓰면 매번 편합니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+          "time": "9일 전",
+          "published": "2026-06-08",
+          "title": "아이폰 Siri에 Claude·ChatGPT — 골라 쓰는 음성 비서",
+          "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈입니다.",
+          "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 진입장벽이 가장 낮습니다.",
+          "foryou": "베타가 부담되면, 지금 쓰는 AI 앱을 음성으로 불러 쓰는 것부터 익혀보세요."
         },
         {
-          "tag": "업무 활용",
-          "source": "Claude 활용 가이드",
-          "url": "https://platform.claude.com/docs/ko/",
-          "time": "어제",
-          "published": "2026-06-16",
-          "title": "회의록·보고서·이메일 — 초안 맡기기 실전",
-          "summary": "녹취나 메모를 주고 결정·할 일·후속 일정만 뽑게 하거나, 보고서의 거친 초안을 받아 다듬는 식으로 쓰면 효과가 큽니다. 핵심은 사람이 ‘검토·결정’에 집중하도록 단순 작성은 AI에 넘기는 것입니다.",
-          "detail": "회의 직후 ‘결정사항·담당·기한 표로 정리’를 시키면 회의록 정리 시간이 거의 사라집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+          "time": "9일 전",
+          "published": "2026-06-08",
+          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 질문 응답 강화",
+          "summary": "오픈AI가 ChatGPT의 건강 관련 응답을 빠른 응답형 모델 GPT-5.5 Instant로 끌어올렸습니다. 일상적 질문에 더 적절히 답하도록 개선됐지만, 의료 판단은 전문가 확인이 필요합니다.",
+          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치세요.",
+          "foryou": "민감한 주제일수록 AI 답은 출발점으로만, 결론은 사람이 확인하세요."
         }
       ]
     }
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>

@@ -215,6 +215,15 @@ body {
 .nl-panel__title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nl-panel__desc { margin: 8px 0 0; color: var(--fl-text-tertiary); font-size: 13.5px; }
 
+/* 선정 기준 (왜 이 소식인가 — 기본 접힘) */
+.nl-criteria { margin-top: 12px; border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-md); background: var(--fl-surface-2); padding: 0 14px; }
+.nl-criteria summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--fl-text-secondary); display: flex; align-items: center; gap: 6px; }
+.nl-criteria summary::-webkit-details-marker { display: none; }
+.nl-criteria summary::after { content: "▸"; margin-left: auto; color: var(--fl-text-tertiary); font-size: 11px; }
+.nl-criteria[open] summary::after { content: "▾"; }
+.nl-criteria__body { padding: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--fl-text-secondary); }
+.nl-criteria__body b { color: var(--fl-text); }
+
 /* ---- 핵심 하이라이트 (주제당 1개) ---- */
 .nl-hl {
   margin-top: 18px; padding: 22px 24px;
@@ -442,38 +451,39 @@ const NEWSLETTER = {
       "icon": "📰",
       "tint": "blue",
       "desc": "발행일 기준 지난 24시간의 주요 AI 소식.",
+      "criteria": "발행 시각 기준 <b>지난 24시간</b>(부족하면 최대 72시간)에 나온 소식 중에서 ① 영향 범위 ② 새로움·중요도 ③ 출처 신뢰도(공식·1차 보도) ④ 실용성 ⑤ 관심사 적합도 순으로 점수를 매겨 가장 높은 것을 골랐어요. 루머·광고·중복은 제외합니다.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "‘평가(eval)’가 AI 활용의 필수 인프라가 되다",
-        "summary": "결과물 품질을 눈대중이 아니라 기준을 세워 점검하고 반복 개선하는 ‘평가’가 표준이 되고 있습니다. ‘좋아 보인다’에서 ‘무엇을 좋은 답으로 볼지 미리 정하고 측정한다’로 옮겨가는 흐름이에요. 평가 기준이 있으면 AI를 바꾸거나 프롬프트를 고칠 때 나아졌는지 객관적으로 알 수 있습니다.",
-        "detail": "거창한 도구가 없어도 됩니다. 좋은 답의 조건을 체크리스트로 적고 결과를 대조하는 것만으로도 훌륭한 평가의 시작입니다.",
-        "source": "Anthropic 뉴스",
-        "url": "https://www.anthropic.com/news",
+        "title": "Gemini 3.5 Pro·Claude Mythos 1·Sonnet 4.8·Grok 5, 한 달에 몰린다",
+        "summary": "구글 Gemini 3.5 Pro의 일반 출시가 이달 예정이고, 앤트로픽 Claude Mythos 1과 Sonnet 4.8, xAI Grok 5까지 주요 모델 소식이 같은 시기에 몰렸습니다. 선택지가 넓어지는 만큼 ‘무엇을 어디에’가 중요해집니다.",
+        "detail": "출시가 몰릴 땐 전부 따라가기보다, 내 핵심 작업 한두 개 기준으로만 비교하면 충분합니다.",
+        "source": "WaveSpeed",
+        "url": "https://wavespeed.ai/blog/posts/june-2026-ai-launch-wave/",
         "published": "2026-06-16",
-        "foryou": "AI 결과를 그냥 믿기 전에 ‘무엇이 좋은 답인가’ 기준 3가지만 적어보세요."
+        "foryou": "쏟아지는 출시에 휘둘리지 말고, 내 작업 기준 1~2개만 비교해보세요."
       },
       "articles": [
         {
-          "tag": "제품",
-          "source": "The Verge — AI",
-          "url": "https://www.theverge.com/ai-artificial-intelligence",
-          "time": "오늘",
-          "published": "2026-06-16",
-          "title": "노트·메신저에 ‘요약’ 기능이 기본 탑재되는 추세",
-          "summary": "긴 대화 스레드나 문서를 한 줄로 줄여주는 요약 기능이 별도 도구가 아니라 기본 기능으로 들어오고 있습니다. 정보를 따라잡는 부담을 줄여준다는 점에서 호응이 큽니다.",
-          "detail": "안 읽은 메신저 스레드를 ‘핵심만 요약’으로 따라잡는 것만으로도 하루가 가벼워집니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
-        },
-        {
-          "tag": "보안",
-          "source": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
+          "tag": "소식",
+          "source": "Gemini News",
+          "url": "https://blog.mean.ceo/google-gemini-news-june-2026/",
           "time": "어제",
           "published": "2026-06-15",
-          "title": "AI 시대의 정보보안 — 무엇을 입력하면 안 되나",
-          "summary": "편리함만큼 ‘무엇을 넣어도 되는가’가 중요해졌습니다. 고객 정보·미공개 자료·계정 정보는 외부 AI에 입력하지 않는 게 기본 원칙이에요. 회사별 정책을 확인하는 것이 첫걸음입니다.",
-          "detail": "‘이 내용이 외부로 나가도 괜찮은가?’를 한 번 자문하는 습관이 사고를 막습니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "title": "구글 Gemini 3 Deep Think 출시 — 최상위 추론 모드",
+          "summary": "구글이 수학·과학·논리·다단계 문제에 특화된 최상위 추론 모드 ‘Gemini 3 Deep Think’를 AI Ultra 구독자에게 순차 제공하기 시작했습니다. 어려운 문제를 더 깊게 ‘생각’하게 하는 방향입니다.",
+          "detail": "깊은 추론 모드는 느리고 비싸므로, 정말 어려운 문제에만 쓰는 게 효율적입니다.",
+          "foryou": "평소엔 빠른 모드, 진짜 어려운 문제만 ‘깊게 생각’ 모드로 — 구분해 쓰세요."
+        },
+        {
+          "tag": "소식",
+          "source": "AI Weekly (mml)",
+          "url": "https://mml-studio.com/blog/ai-weekly-june-1-7-2026/",
+          "time": "6일 전",
+          "published": "2026-06-10",
+          "title": "앤트로픽, 965B 밸류에이션·비공개 IPO 신청 보도",
+          "summary": "앤트로픽이 약 9,650억 달러 가치로 자금 조달을 마무리하고 비공개로 IPO를 신청했다는 소식이 전해졌습니다. AI 업계의 자금·관심이 어디로 쏠리는지를 보여주는 신호입니다.",
+          "detail": "기업 가치·투자 소식은 ‘이 회사가 오래 갈까’를 가늠하는 참고 지표 정도로 보면 됩니다.",
+          "foryou": "내가 의존하는 도구를 만든 회사의 체력을 가늠하는 참고로만 보세요."
         }
       ]
     },
@@ -483,38 +493,39 @@ const NEWSLETTER = {
       "icon": "🧭",
       "tint": "green",
       "desc": "지난 24시간 소식 중, 오늘 바로 적용·시도해볼 만한 것.",
+      "criteria": "같은 24시간 소식 중에서 <b>비개발자가 오늘 바로 적용·시도해볼 수 있는 것</b>(주요 기능 업데이트·코드 없이 쓰는 활용법·새 도구)을 우선해 골랐어요.",
       "highlight": {
         "kicker": "오늘의 핵심",
-        "title": "AI를 믿되 확인하기 — 환각과 정보보안 기본기",
-        "summary": "AI는 그럴듯하게 틀릴 수 있고(환각), 회사 자료나 개인정보를 함부로 입력해서도 안 됩니다. 다행히 ‘중요한 사실은 출처로 교차 확인’과 ‘민감정보는 입력 금지’ 두 가지 습관만으로도 대부분의 위험을 피할 수 있어요. AI를 안 쓰는 게 아니라, 안전하게 쓰는 법을 아는 것이 핵심입니다. 특히 숫자·인용·법규 같은 건 반드시 원문을 확인하세요.",
-        "detail": "‘이 답의 근거가 뭐야? 출처 알려줘’라고 되묻는 습관이 환각을 거르는 가장 쉬운 방법입니다. 출처를 못 대면 의심하세요.",
-        "source": "Claude 활용 가이드",
-        "url": "https://platform.claude.com/docs/ko/",
+        "title": "Claude Code, 작업 결과를 ‘아티팩트’ 웹페이지로 공유",
+        "summary": "Claude Code가 작업 결과물을 ‘아티팩트(artifacts)’라는 인터랙티브 웹페이지로 만들어 팀과 바로 공유하는 기능을 선보였습니다. 비개발자도 ‘이런 페이지로 만들어줘’ 한마디로 공유 가능한 산출물을 얻을 수 있습니다.",
+        "detail": "사실 지금 보는 이 뉴스레터도 같은 발상에서 출발했습니다. ‘결과를 보기 좋게 내보내는’ 흐름이 핵심입니다.",
+        "source": "AI Weekly",
+        "url": "https://aiweekly.co/ai-news-today/anthropic-news",
         "published": "2026-06-16",
-        "foryou": "이름·연락처·계정·기밀은 넣지 않기. 사내 정보보안 정책을 한 번 확인해두면 안심입니다."
+        "foryou": "오늘 당장: 정리한 자료를 ‘공유용 웹페이지로 만들어줘’라고 시켜보세요."
       },
       "articles": [
         {
-          "tag": "입문",
-          "source": "The Verge — AI",
-          "url": "https://www.theverge.com/ai-artificial-intelligence",
-          "time": "오늘",
-          "published": "2026-06-16",
-          "title": "처음 쓰는 사람을 위한 AI 사용 5단계",
-          "summary": "거창하게 시작하기보다 작은 일 하나를 매일 맡겨보는 게 가장 빠른 입문법입니다. 요약→초안→번역→정리→자동화 순으로 한 단계씩 넓혀가면 부담이 없어요.",
-          "detail": "첫 주는 ‘긴 글 요약’ 한 가지만 매일 써보는 걸로 충분합니다.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+          "time": "8일 전",
+          "published": "2026-06-08",
+          "title": "아이폰 Siri에 Claude·ChatGPT — 골라 쓰는 음성 비서",
+          "summary": "iOS 27 베타에서 Siri가 여러 AI를 골라 쓰는 형태로 바뀌면서, 비개발자도 음성으로 원하는 AI를 불러 쓰는 경험이 가까워졌습니다. 별도 앱 없이 익숙한 비서 안에서 AI를 바꿔 끼우는 셈입니다.",
+          "detail": "새 도구를 배우는 부담 없이 ‘쓰던 자리(비서)’에서 AI를 경험하는 게 진입장벽이 가장 낮습니다.",
+          "foryou": "베타가 부담되면, 지금 쓰는 AI 앱을 음성으로 불러 쓰는 것부터 익혀보세요."
         },
         {
-          "tag": "리터러시",
-          "source": "Anthropic 뉴스",
-          "url": "https://www.anthropic.com/news",
-          "time": "어제",
-          "published": "2026-06-15",
-          "title": "AI가 만든 결과, 어디까지 믿을까",
-          "summary": "AI는 자신감 있게 틀리기도 합니다. 그래서 ‘무엇을 검증해야 하는가’를 아는 것이 활용 실력의 일부예요. 핵심 사실·수치는 사람이 최종 확인한다는 원칙을 세워두면 됩니다.",
-          "detail": "중요도가 높을수록 교차 확인을 늘리세요. 가벼운 초안은 그대로, 공식 문서는 꼼꼼히.",
-          "foryou": "내 업무 맥락에 대입해 한 가지만 적용해 보세요."
+          "tag": "소식",
+          "source": "Build Fast with AI",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026",
+          "time": "8일 전",
+          "published": "2026-06-08",
+          "title": "ChatGPT, ‘GPT-5.5 Instant’로 건강 질문 응답 강화",
+          "summary": "오픈AI가 ChatGPT의 건강 관련 응답을 빠른 응답형 모델 GPT-5.5 Instant로 끌어올렸습니다. 일상적 질문에 더 적절히 답하도록 개선됐지만, 의료 판단은 전문가 확인이 필요합니다.",
+          "detail": "건강·법률처럼 민감한 영역은 ‘참고용 초안’으로만 쓰고 전문가 확인을 거치세요.",
+          "foryou": "민감한 주제일수록 AI 답은 출발점으로만, 결론은 사람이 확인하세요."
         }
       ]
     }
@@ -593,6 +604,7 @@ const NEWSLETTER = {
         <h3 class="nl-panel__title">${esc(t.label)}</h3>
       </div>
       <p class="nl-panel__desc">${esc(t.desc)}</p>
+      ${t.criteria ? `<details class="nl-criteria"><summary>ⓘ 이 소식들은 이렇게 골랐어요</summary><div class="nl-criteria__body">${html(t.criteria)}</div></details>` : ""}
 
       <section class="nl-hl">
         <span class="nl-hl__kicker">⭐ ${esc(t.highlight.kicker)}</span>
