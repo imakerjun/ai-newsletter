@@ -238,9 +238,11 @@ def _load_extra(p, origin):
         return []
     out = []
     for it in j.get("items", []):
-        pub = parse_date(it.get("published"))
+        raw = (it.get("published") or "").strip()
+        date_only = bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw))
+        pub = dt.datetime.strptime(raw, "%Y-%m-%d").replace(tzinfo=KST) if date_only else parse_date(raw)
         if it.get("url") and it.get("title"):
-            out.append(dict(title=it["title"], url=it["url"], published=pub, summary=(it.get("summary") or "")[:800],
+            out.append(dict(title=it["title"], url=it["url"], published=pub, date_only=date_only, summary=(it.get("summary") or "")[:800],
                             source=it.get("source") or hn_source(it["url"]), lang=it.get("lang", "en"), origin=origin, role_hint=it.get("role") or None))
     log(f"{os.path.basename(p)}: {len(out)} items")
     return out
@@ -282,7 +284,11 @@ def main():
 
     def in_window(it, hours):
         p = it.get("published")
-        return p is not None and (publish_at - dt.timedelta(hours=hours)) <= p < publish_at
+        if p is None:
+            return False
+        if it.get("date_only"):  # 날짜만 아는 항목(WebSearch·WebFetch): 날짜 단위로 판정
+            return (publish_at - dt.timedelta(hours=hours)).date() <= p.date() <= publish_at.date()
+        return (publish_at - dt.timedelta(hours=hours)) <= p < publish_at
 
     def ai_filter(it):
         if it["origin"] != "rss":
