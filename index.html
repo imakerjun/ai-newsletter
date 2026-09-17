@@ -109,6 +109,13 @@ a { color: inherit; text-decoration: none; }
 .ed-month__count { font-weight: 500; color: var(--fl-text-quaternary); }
 .ed-month::after { content: ""; flex: 1; height: 1px; background: var(--fl-border-subtle); }
 
+/* 이전 호 접기 — 파일은 그대로, 목록에서만 기본 숨김 */
+.ed-older { margin-top: 8px; }
+.ed-older__summary { cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: var(--fl-text-tertiary); padding: 10px 0; user-select: none; }
+.ed-older__summary::-webkit-details-marker { display: none; }
+.ed-older__summary::before { content: "▸ "; }
+.ed-older[open] > .ed-older__summary::before { content: "▾ "; }
+
 /* 호 리스트 — 밀도 높은 한 줄 행 */
 .ed-list { border: 1px solid var(--fl-border-subtle); border-radius: var(--fl-radius-lg); overflow: hidden; background: var(--fl-surface); }
 .ed-item {
@@ -557,8 +564,8 @@ const ARCHIVE = {
     g.items.push(Object.assign({ _latest: idx === 0 }, e));
   });
 
-  const listHTML = eds.length
-    ? groups.map((g) => `
+  const CURRENT_YM = "2026-09"; // 이 달 이후만 기본 노출, 이전 달은 접어서 보관(삭제 아님)
+  const monthBlock = (g) => `
         <div class="ed-month">${esc(monthLabel(g.ym))}<span class="ed-month__count">${g.items.length}호</span></div>
         <div class="ed-list">
           ${g.items.map((e) => `
@@ -571,7 +578,17 @@ const ARCHIVE = {
               ${e.demo ? `<span class="ed-item__demo">예시</span>` : ""}
               <span class="ed-item__arrow">→</span>
             </a>`).join("")}
-        </div>`).join("")
+        </div>`;
+
+  const currentGroups = groups.filter((g) => g.ym >= CURRENT_YM);
+  const olderGroups = groups.filter((g) => g.ym < CURRENT_YM);
+  const olderCount = olderGroups.reduce((n, g) => n + g.items.length, 0);
+
+  const listHTML = eds.length
+    ? currentGroups.map(monthBlock).join("")
+      + (olderCount
+          ? `<details class="ed-older"><summary class="ed-older__summary">이전 호 더보기 (${olderCount}호, ~${esc(monthLabel(olderGroups[olderGroups.length - 1].ym))})</summary>${olderGroups.map(monthBlock).join("")}</details>`
+          : "")
     : `<div class="hub__empty">아직 발행된 호가 없습니다. 첫 호가 발행되면 여기에 표시됩니다.</div>`;
 
   document.getElementById("hub").innerHTML = `
