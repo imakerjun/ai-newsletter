@@ -221,7 +221,14 @@ def hn_source(url):
 
 
 def load_websearch(dirpath):
-    p = os.path.join(dirpath, "websearch.json")
+    """websearch.json + feeds.json (클라우드 루틴이 WebFetch 로 읽은 피드 항목) 을 같은 형식으로 읽는다."""
+    out = []
+    for name, origin in (("websearch.json", "websearch"), ("feeds.json", "feedfetch")):
+        out += _load_extra(os.path.join(dirpath, name), origin)
+    return out
+
+
+def _load_extra(p, origin):
     if not os.path.exists(p):
         return []
     try:
@@ -234,8 +241,8 @@ def load_websearch(dirpath):
         pub = parse_date(it.get("published"))
         if it.get("url") and it.get("title"):
             out.append(dict(title=it["title"], url=it["url"], published=pub, summary=(it.get("summary") or "")[:800],
-                            source=it.get("source") or hn_source(it["url"]), lang=it.get("lang", "en"), origin="websearch", role_hint=it.get("role")))
-    log(f"websearch: {len(out)} items")
+                            source=it.get("source") or hn_source(it["url"]), lang=it.get("lang", "en"), origin=origin, role_hint=it.get("role") or None))
+    log(f"{os.path.basename(p)}: {len(out)} items")
     return out
 
 
