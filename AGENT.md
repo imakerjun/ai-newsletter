@@ -175,3 +175,23 @@ tint_options: [blue, purple, green, orange, pink]
 
 **규칙:** 원문을 그대로 복제하지 말 것(요약·각색 + 원문 링크). 사실은 출처에 근거하고, 어원·비유는
 이해를 돕는 학습용 해석임을 밝힌다. `_TEMPLATE_lens.html`의 구조·CSS·스크립트는 바꾸지 않는다(데이터만).
+
+---
+
+## 6. 자동 발행 파이프라인 (2026-09-17부터)
+
+2026-06-18(Vol.23) 이후 멈춰 있던 발행을 스크립트 파이프라인 + 클라우드 루틴으로 재가동했다. **매일(주말 포함)** 08:00 KST 기준 직전 24시간 뉴스를 요약한다.
+
+```
+_scripts/collect.py DATE     # HN Algolia(날짜 필터) + RSS 11종 → work/DATE/candidates.json  (표준 라이브러리만)
+_scripts/discover.sh DATE    # claude -p + WebSearch 보강(±1일 뉴스 6~10건, 직무 활용 3~6건) → work/DATE/websearch.json
+_scripts/write.py DATE       # WRITER_PROMPT.md + newsletter.schema.json 으로 claude -p 가 뉴스레터 JSON 작성
+_scripts/build.py DATE       # 템플릿 주입 → editions/DATE.html, index.html 아카이브 갱신. 후보 밖 URL·중복 URL은 제거(허위 링크 차단)
+_scripts/publish.sh DATE     # 위 넷을 한 번에(로컬 1일분).  _scripts/backfill.sh FROM TO [PAR]  # 기간 백필
+```
+
+- 후보가 8건 미만이면 윈도우를 48h→72h로 넓히고 `time`에 사실대로 표기한다. 직무 탭은 최근 14일 후보 중 역할 키워드 매칭 풀(`role_pool`)에서 고른다.
+- Vol 은 시간순 연번, `index.html` 목록은 날짜 내림차순. 기존 `editions/*.html` 은 `--force` 없이 덮어쓰지 않는다.
+- `_scripts/work/` 는 중간 산출물(후보·프롬프트·원시 응답)로 git 에 올리지 않는다.
+- **매일 자동 실행**: Claude Code 클라우드 루틴 「ai-newsletter 데일리 발행」(cron `0 23 * * *` UTC = 08:00 KST)이 `_scripts/ROUTINE_PROMPT.md` 절차대로 저장소를 체크아웃해 collect → WebSearch 보강 → 작성 → build → main 푸시한다. 루틴 상태: https://claude.ai/code/routines
+- 로컬에서 수동 발행/재발행: `_scripts/publish.sh 2026-09-20` (환경변수 `NL_MODEL=opus` 로 모델 변경 가능). 슬랙 웹훅 발송은 `SLACK_WEBHOOK_URL` 이 있을 때만 §1-7 대로 수동으로.

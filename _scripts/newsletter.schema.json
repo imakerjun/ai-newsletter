@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "lead_title",
+    "greeting",
+    "topics"
+  ],
+  "properties": {
+    "lead_title": {
+      "type": "string",
+      "description": "아카이브 목록에 보일 한 줄 제목(오늘 핵심 1~2건, 40자 이내)"
+    },
+    "greeting": {
+      "type": "string",
+      "description": "인사말 2~3문장. <b> 태그 허용"
+    },
+    "topics": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "desc",
+          "criteria",
+          "highlight",
+          "articles"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "news",
+              "everyone",
+              "planner",
+              "data",
+              "pm"
+            ]
+          },
+          "desc": {
+            "type": "string"
+          },
+          "criteria": {
+            "type": "string"
+          },
+          "highlight": {
+            "type": "object",
+            "required": [
+              "kicker",
+              "title",
+              "summary",
+              "detail",
+              "source",
+              "url",
+              "published",
+              "foryou"
+            ],
+            "properties": {
+              "kicker": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "published": {
+                "type": "string"
+              },
+              "foryou": {
+                "type": "string"
+              }
+            }
+          },
+          "articles": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": [
+                "tag",
+                "source",
+                "url",
+                "time",
+                "published",
+                "title",
+                "summary",
+                "detail",
+                "foryou"
+              ],
+              "properties": {
+                "tag": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "time": {
+                  "type": "string"
+                },
+                "published": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "detail": {
+                  "type": "string"
+                },
+                "foryou": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
