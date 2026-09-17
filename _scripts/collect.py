@@ -14,7 +14,8 @@ collect.py DATE  →  _scripts/work/DATE/candidates.json
 후보가 MIN_CANDIDATES 미만이면 윈도우를 48h → 72h로 넓힌다(widened_hours에 기록).
 직무 탭(planner/data/pm)용 role_pool 은 최근 14일 후보 중 역할 키워드 매칭으로 따로 담는다.
 """
-import sys, os, re, json, html, time, datetime as dt, urllib.request, urllib.parse, urllib.error
+import sys, os, re, json, html, time, subprocess, datetime as dt, urllib.request, urllib.parse
+from urllib.error import URLError
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -24,7 +25,7 @@ WORK = os.path.join(ROOT, "_scripts", "work")
 KST = dt.timezone(dt.timedelta(hours=9))
 UTC = dt.timezone.utc
 PUBLISH_HOUR_KST = 8
-MIN_CANDIDATES = 8
+MIN_CANDIDATES = 12
 MAX_TEXT = 2500
 ROLE_DAYS = 14
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 ai-newsletter-bot"}
@@ -42,9 +43,15 @@ FEEDS = [
     ("AI타임스", "https://www.aitimes.com/rss/allArticle.xml", "ko"),
     ("ZDNet Korea", "https://feeds.feedburner.com/zdkorea", "ko"),
     ("바이라인네트워크", "https://byline.network/feed/", "ko"),
+    # 개발자·AI 교육자 관점 소스 (Anthropic 은 공식 RSS 미제공 — HN·WebSearch 로 보완)
+    ("GitHub 블로그", "https://github.blog/feed/", "en"),
+    ("Simon Willison", "https://simonwillison.net/atom/everything/", "en"),
+    ("InfoQ AI/ML", "https://feed.infoq.com/ai-ml-data-eng/", "en"),
 ]
 
 AI_KW = re.compile(r"\b(AI|A\.I\.|LLM|LLMs|OpenAI|Anthropic|Claude|Gemini|GPT[-\d]*|ChatGPT|DeepMind|Copilot|agent|agents|agentic|model|models|Mistral|Llama|xAI|Grok|Nvidia|NVIDIA|Hugging ?Face|Cursor|Codex|Sora|Midjourney|diffusion|transformer|inference|GPU|TPU|machine learning|deep learning|neural|chatbot|Perplexity|Meta AI|Apple Intelligence|Siri|Alexa|robot|robotics|autonomous|Waymo|Tesla FSD|Scale AI|Databricks|Snowflake|Notion|Figma)\b|인공지능|생성형|챗GPT|오픈AI|앤트로픽|클로드|제미나이|엔비디아|에이전트|딥마인드|거대언어|LLM", re.I)
+# 개발자·AI 교육자 관점(사용자 지정, 2026-09-18): 모델 API/SDK, 코딩 에이전트, 평가·프롬프트 엔지니어링, 오픈소스, AI 교육
+DEV_EDU_KW = re.compile(r"\b(API|SDK|open[- ]?source|open[- ]?weight|fine-?tun\w*|benchmark|eval(uation)?s?|prompt engineering|context window|token|inference cost|coding agent|code review|pull request|GitHub Copilot|Claude Code|Codex|Cursor|Windsurf|MCP|Model Context Protocol|RAG|retrieval|vector (db|database)|embedding|quantiz\w*|LoRA|RLHF|RLAIF|system prompt|jailbreak|red[- ]?team|hallucinat\w*|curriculum|syllabus|bootcamp|workshop|teaching|tutorial|course|classroom|edtech)\b|파인튜닝|오픈소스|오픈\s?웨이트|프롬프트\s?엔지니어링|코딩\s?에이전트|평가셋|벤치마크|커리큘럼|강의|교육과정|워크숍|튜토리얼", re.I)
 # 한국어 피드(AI타임스 등)는 이미 AI 매체라 별도 필터 없이 포함, 종합지(ZDNet·바이라인)는 키워드 필터 적용.
 ROLE_KW = {
     "planner": re.compile(r"product|roadmap|user research|survey|brainstorm|Notion|Figma|Miro|Canva|prototype|PRD|planning|기획|리서치|프로토타입|노션|피그마|Deep Research|deep research|Gamma|Slides|presentation", re.I),
@@ -59,10 +66,21 @@ def log(*a):
 
 
 def http_get(url, timeout=25):
+    """urllib 로 받되, 로컬 macOS 에서 종종 나는 'Missing Authority Key Identifier' SSL 검증
+    실패(파이썬 3.13+가 시스템 키체인보다 엄격 — curl/브라우저는 통과)는 curl 로 폴백한다."""
     req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        raw = r.read()
-        ctype = r.headers.get("Content-Type", "")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            ctype = r.headers.get("Content-Type", "")
+    except URLError as e:
+        if "CERTIFICATE_VERIFY_FAILED" not in str(e):
+            raise
+        cp = subprocess.run(["curl", "-sSL", "--max-time", str(timeout), "-A", UA["User-Agent"], url],
+                            capture_output=True, timeout=timeout + 5)
+        if cp.returncode != 0 or not cp.stdout:
+            raise
+        raw, ctype = cp.stdout, ""
     m = re.search(r"charset=([\w-]+)", ctype)
     enc = m.group(1) if m else "utf-8"
     try:
@@ -189,7 +207,7 @@ def fetch_feed(label, url, lang):
     return out
 
 
-def fetch_hn(start, end, min_points=25, max_pages=5):
+def fetch_hn(start, end, min_points=15, max_pages=6):
     out = []
     for page in range(max_pages):
         q = urllib.parse.urlencode({
@@ -242,8 +260,10 @@ def _load_extra(p, origin):
         date_only = bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw))
         pub = dt.datetime.strptime(raw, "%Y-%m-%d").replace(tzinfo=KST) if date_only else parse_date(raw)
         if it.get("url") and it.get("title"):
+            role = it.get("role") or None
             out.append(dict(title=it["title"], url=it["url"], published=pub, date_only=date_only, summary=(it.get("summary") or "")[:800],
-                            source=it.get("source") or hn_source(it["url"]), lang=it.get("lang", "en"), origin=origin, role_hint=it.get("role") or None))
+                            source=it.get("source") or hn_source(it["url"]), lang=it.get("lang", "en"), origin=origin,
+                            role_hint=(role if role != "dev_edu" else None), dev_edu_hint=(role == "dev_edu")))
     log(f"{os.path.basename(p)}: {len(out)} items")
     return out
 
@@ -337,6 +357,7 @@ def main():
     def ser(it):
         p = it.get("published")
         hrs = round((publish_at - p).total_seconds() / 3600, 1) if p else None
+        blob = it["title"] + " " + it.get("summary", "") + " " + it.get("text", "")
         return {
             "title": it["title"], "url": it["url"], "source": it["source"], "lang": it["lang"], "origin": it["origin"],
             "published": p.astimezone(KST).isoformat() if p else None,
@@ -345,6 +366,7 @@ def main():
             "score": it.get("score"), "hn": it.get("hn"),
             "summary": it.get("summary", ""), "text": it.get("text", ""),
             "roles": it.get("roles", []),
+            "dev_edu": bool(it.get("dev_edu_hint")) or bool(DEV_EDU_KW.search(blob)),
         }
 
     out = {

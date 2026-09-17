@@ -18,7 +18,7 @@ def build_prompt(date):
     slim = {"candidates": [], "role_pool": []}
     for k in slim:
         for it in c[k]:
-            slim[k].append({kk: it[kk] for kk in ("title", "url", "source", "lang", "published_date", "hours_before_publish", "score", "summary", "text", "roles") if it.get(kk) not in (None, "", [], 0)})
+            slim[k].append({kk: it[kk] for kk in ("title", "url", "source", "lang", "published_date", "hours_before_publish", "score", "summary", "text", "roles", "dev_edu") if it.get(kk) not in (None, "", [], 0)})
     tpl = open(os.path.join(HERE, "WRITER_PROMPT.md"), encoding="utf-8").read()
     return (tpl.replace("{DATE}", date).replace("{WINDOW}", str(c["window_hours"]))
             .replace("{WINDOW_START}", c["window_start"][:16]).replace("{PUBLISH_AT}", c["publish_at"][:16])
