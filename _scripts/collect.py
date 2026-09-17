@@ -315,10 +315,13 @@ def main():
     role_pool = [it for it in role_pool if it["roles"]]
     log(f"role_pool={len(role_pool)}")
 
-    # 3) 원문 본문 앞부분 가져오기(요약 근거). 점수 높은 순으로 최대 40건 + 직무 풀 최대 30건.
-    cands.sort(key=lambda it: (-(it.get("score") or 0), it["published"] or publish_at), reverse=False)
-    cands.sort(key=lambda it: -(it.get("score") or 0))
-    targets = cands[:40] + [it for it in role_pool if it not in cands][:30]
+    # 3) 원문 본문 앞부분 가져오기(요약 근거). 순위: HN 은 점수, 공식 블로그·매체 RSS·WebSearch·WebFetch 는 기본 점수(잘리지 않게).
+    DEFAULT_SCORE = {"websearch": 80, "feedfetch": 70, "rss": 60}
+    def rank(it):
+        return it.get("score") if it.get("origin") == "hn" and it.get("score") is not None else DEFAULT_SCORE.get(it.get("origin"), 0)
+    cands.sort(key=lambda it: -rank(it))
+    MAX_CANDS = 50
+    targets = cands[:MAX_CANDS] + [it for it in role_pool if it not in cands][:30]
     if not no_fetch:
         with ThreadPoolExecutor(max_workers=10) as ex:
             futs = {ex.submit(page_text, it["url"]): it for it in targets if "openai.com" not in it["url"]}
@@ -348,7 +351,7 @@ def main():
         "date": date, "publish_at": publish_at.isoformat(), "window_hours": widened,
         "window_start": (publish_at - dt.timedelta(hours=widened)).isoformat(),
         "counts": {"candidates": len(cands), "role_pool": len(role_pool), "feeds": len(feed_items), "hn": len(hn_items), "websearch": len(ws_items)},
-        "candidates": [ser(it) for it in cands[:40]],
+        "candidates": [ser(it) for it in cands[:MAX_CANDS]],
         "role_pool": [ser(it) for it in role_pool[:30]],
     }
     path = os.path.join(outdir, "candidates.json")

@@ -193,5 +193,6 @@ _scripts/publish.sh DATE     # 위 넷을 한 번에(로컬 1일분).  _scripts/
 - 후보가 8건 미만이면 윈도우를 48h→72h로 넓히고 `time`에 사실대로 표기한다. 직무 탭은 최근 14일 후보 중 역할 키워드 매칭 풀(`role_pool`)에서 고른다.
 - Vol 은 시간순 연번, `index.html` 목록은 날짜 내림차순. 기존 `editions/*.html` 은 `--force` 없이 덮어쓰지 않는다.
 - `_scripts/work/` 는 중간 산출물(후보·프롬프트·원시 응답)로 git 에 올리지 않는다.
+- ⚠️ **클라우드 샌드박스 네트워크**: 루틴 환경은 외부 호스트 직접 접속(RSS·HN API)이 정책상 403으로 막힌다(2026-09-17 첫 실행에서 확인). 그래서 루틴에서는 `collect.py` 수집이 비고, 에이전트가 **WebFetch**(서버 측)로 같은 피드를 읽어 `work/DATE/feeds.json` 에 넣은 뒤 `collect.py` 가 병합한다(`ROUTINE_PROMPT.md` 2b). WebSearch·WebFetch 는 정상 동작.
 - **매일 자동 실행**: Claude Code 클라우드 루틴 「ai-newsletter 데일리 발행」(cron `0 23 * * *` UTC = 08:00 KST)이 `_scripts/ROUTINE_PROMPT.md` 절차대로 저장소를 체크아웃해 collect → WebSearch 보강 → 작성 → build → main 푸시한다. 루틴 상태: https://claude.ai/code/routines
 - 로컬에서 수동 발행/재발행: `_scripts/publish.sh 2026-09-20` (환경변수 `NL_MODEL=opus` 로 모델 변경 가능). 슬랙 웹훅 발송은 `SLACK_WEBHOOK_URL` 이 있을 때만 §1-7 대로 수동으로.
